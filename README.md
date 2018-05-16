@@ -1,2 +1,2 @@
 开发中
-[预览](./build/index.html)
+[预览](https://zaqmjuop.github.io/todoist/)
