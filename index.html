@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="shortcut icon" href="./assets/images/favicon.png" type="image/x-icon">
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/styles/index.css">
+</head>
+
+<body>
+  <nav>
+    <div class="container flex">
+      <div id="nav-left">
+        <div>
+          <img id="logo" src="./assets/images/favicon.png" alt="logo">
+        </div>
+      </div>
+      <div class="flex flex-justify-between" id="nav-right">
+        <div id="nav-search">
+          <input type="text">
+        </div>
+        <div id="nav-buttons" class="flex flex-justify-between flex-center">
+          <i class="fa fa-plus"></i>
+          <i class="fa fa-check-circle-o"></i>
+          <i class="fa fa-bell"></i>
+          <i class="fa fa-cog"></i>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div id="app" class="container flex flex-justify-between">
+    <div id="left-menu">
+      <ul id="top-filters">
+        <li class="item">
+          <i class="fa fa-lg fa-inbox item-icon"></i>
+          <span>所有任务</span>
+        </li>
+        <li class="item">
+          <i class="fa fa-lg fa-calendar-o item-icon"></i>
+          <span>今天</span>
+        </li>
+        <li class="item">
+          <i class="fa fa-lg fa-calendar item-icon"></i>
+          <span>未来7天</span>
+        </li>
+      </ul>
+      <ul id="bottom-filters">
+        <li class="flex flex-justify-between flex-center">
+          <div>
+            <i class="fa fa-lg fa-angle-down item-icon"></i>
+            <span>项目</span>
+          </div>
+          <i class="fa fa-plus item-icon"></i>
+        </li>
+        <li class="flex flex-justify-between flex-center">
+          <div>
+            <i class="fa fa-lg fa-angle-down item-icon"></i>
+            <span>标签</span>
+          </div>
+          <i class="fa fa-plus item-icon"></i>
+        </li>
+        <li class="flex flex-justify-between flex-center">
+          <div>
+            <i class="fa fa-lg fa-angle-down item-icon"></i>
+            <span>过滤器</span>
+          </div>
+          <i class="fa fa-plus item-icon"></i>
+        </li>
+      </ul>
+    </div>
+    <div id="mission" class="content">
+      <div class="content-header" class="flex flex-justify-between flex-center">
+        <h4>所有任务</h4>
+        <div>
+          <i class="fa fa-signal"></i>
+        </div>
+      </div>
+      <div class="content-body">
+        <ul id="mission-list">
+          <li class="mission-item">
+            <div class="item-left">
+              <i class="fa fa-circle-o item-icon"></i>
+              <span>健身房续费 #健康</span>
+            </div>
+            <div class="item-right">
+              <span class="text-sm-center">2019年5月1日</span>
+            </div>
+          </li>
+          <li class="mission-item">
+            <div class="item-left">
+              <i class="fa fa-circle-o item-icon"></i>
+              <span>健身房续费 #健康</span>
+            </div>
+            <div class="item-right">
+              <span class="text-sm-center">2019年5月1日</span>
+            </div>
+          </li>
+          <li id="mission-form">
+            <div class="input-group">
+              <input type="text" placeholder="例如：明天下午6点买礼物 p1 #杂物">
+              <div class="input-group-append">
+                <input type="datetime-local" />
+              </div>
+            </div>
+            <div id="mission-buttons" class="flex flex-justify-between flex-center">
+              <div>
+                <button class="btn-dark">添加任务</button>
+                <button class="btn-link">取消</button>
+              </div>
+              <div class="flex flex-justify-between flex-center w-25">
+                <i class="fa fa-credit-card"></i>
+                <i class="fa fa-clock-o"></i>
+                <i class="fa fa-flag"></i>
+                <i class="fa fa-ellipsis-h"></i>
+              </div>
+            </div>
+          </li>
+          <li id="add-mission" class="flex flex-justify-between flex-center">
+            <div class="item-left">
+              <i class="fa fa-plus item-icon"></i>
+              <span>添加任务</span>
+            </div>
+            <div class="item-right">
+              <i class="fa fa-history" title="显示已存档的任务"></i>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="dialog">
+    <div class="curtain"></div>
+    <div class="alert">
+      <span class="msg">asd</span>
+      <div class="text-right">
+        <button>确定</button>
+      </div>
+    </div>
+  </div> -->
+
+
+
+
+
+
+
+
+  <script src="./assets/scripts/index.js"></script>
+</body>
+
+</html>

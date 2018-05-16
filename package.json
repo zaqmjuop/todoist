@@ -1,0 +1,32 @@
+{
+  "name": "todoist",
+  "version": "1.0.0",
+  "description": "模仿todoist.com",
+  "main": ".eslintrc.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "parcel index.html",
+    "build": "parcel build index.html -d ./build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zaqmjuop/todoist.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zaqmjuop/todoist/issues"
+  },
+  "homepage": "https://github.com/zaqmjuop/todoist#readme",
+  "dependencies": {
+    "eslint": "^4.19.1"
+  },
+  "devDependencies": {
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.11.0"
+  }
+}
