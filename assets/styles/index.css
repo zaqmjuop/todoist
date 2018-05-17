@@ -1,6 +1,13 @@
 body{
   background-color: #FAFAFA;
 }
+a{
+  color: #000;
+  text-decoration: none;
+}
+a:hover{
+  cursor: pointer;
+}
 nav{
   background-color: #3D3D3D;
   position: fixed;
@@ -94,6 +101,9 @@ nav{
   justify-content: space-between;
   align-items: center;
 }
+#mission-list>.mission-item i[name=finish]:hover::before{
+  content: "\f05d";
+}
 .text-sm-center{
   font-size: 0.625rem;
   align-content: center;
@@ -157,8 +167,10 @@ button[class~=btn-dark]{
 }
 button[class~=btn-link]{
   background-color: transparent;
-  color: #000;
-  font-weight: 500;
+  color: #000;  
+}
+button[class~=btn-link]:hover{
+  text-decoration: underline;
 }
 .alert{
   position: fixed;
@@ -190,4 +202,11 @@ button[class~=btn-link]{
 }
 .alert-buttons{
   text-align:right;
+}
+.hide{
+  display: none;
+}
+.text-lg-center{
+  margin: 0 auto;
+  font-size: 1.2rem;
 }

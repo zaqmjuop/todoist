@@ -5,6 +5,6 @@ module.exports = {
     es6: true
   },
   "rules": {
-    'no-console': ["error", { allow: ["warn", "error"] }]
+    'no-console': ["error", { allow: ["log", "warn", "error"] }]
   }
 };
