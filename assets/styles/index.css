@@ -15,6 +15,7 @@ nav{
   left: 0;
   width: 100%;
   color: #FFFFFF;
+  padding: 5px;
 }
 .container{
   width: 1000px;
@@ -44,9 +45,63 @@ nav{
 }
 #nav-right{
   width: 650px;
+  position: relative;
 }
 #nav-buttons{
   width: 200px;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translate(0, -50%);
+  z-index: 1;
+}
+#nav-search{
+  width: 100%;
+  position: relative;
+}
+#nav-search>i{
+  position: absolute;
+  left: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #fff;
+  z-index: 3;
+}
+#nav-search>input{
+  background-color: #3D3D3D;
+  outline: none;
+  border: none;
+  border-radius: 3px;
+  padding: 5px 0 5px 26px;
+  margin: 0;
+  width: 300px;
+  z-index: 2;
+  position: relative;
+}
+#nav-search>input:hover{
+  background-color: #575757;
+}
+#nav-search>input:focus{
+  background-color: #fff;
+  animation: inputGrow 0.2s ease-in;
+  animation-fill-mode: both;
+}
+#nav-search>input:focus + i{
+  color: #575757;
+}
+@keyframes inputGrow{
+  from {background-color: #575757;}
+  to {
+    background-color: #fff;
+    width: 100%;
+  }
+}
+@keyframes inputGrow1{
+  from {background-color: #fff;
+    width: 100%;}
+  to {
+    background-color: #575757;
+  }
 }
 #left-menu{
   padding-top: 30px;
@@ -209,4 +264,7 @@ button[class~=btn-link]:hover{
 .text-lg-center{
   margin: 0 auto;
   font-size: 1.2rem;
+}
+.float-right{
+  float: right;
 }
