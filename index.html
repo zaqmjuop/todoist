@@ -14,13 +14,13 @@
 <body>
   <nav>
     <div class="container flex">
-      <div id="nav-left" >
+      <div id="nav-left">
         <div class="flex flex-center">
           <img id="logo" src="./assets/images/favicon.png" alt="logo">
         </div>
       </div>
-      <div  id="nav-right">
-        <div id="nav-search">          
+      <div id="nav-right">
+        <div id="nav-search">
           <input type="text" placeholder="快速查找" title="快速查找">
           <i class="fa fa-search"></i>
         </div>
@@ -37,7 +37,7 @@
   <div id="app" class="container flex flex-justify-between">
     <div id="left-menu">
       <ul id="top-filters">
-        <li class="item">
+        <li class="item active">
           <i class="fa fa-lg fa-inbox item-icon"></i>
           <span>所有任务</span>
         </li>
@@ -83,7 +83,11 @@
       </div>
       <div class="content-body">
         <ul id="mission-list">
-          <li class="mission-item" id="item-0">
+          <!-- <li class="mission-item" draggable="true" id="item-0">
+            <div class="item-curtain"></div>
+            <div class="item-before">
+              <i class="fa fa-arrows"></i>
+            </div>
             <div class="item-left">
               <a>
                 <i name="finish" class="fa fa-circle-o item-icon fa-lg"></i>
@@ -94,23 +98,13 @@
               <span class="text-sm-center">2019年5月1日</span>
             </div>
           </li>
-          <li class="mission-item" id="item-1">
-            <div class="item-left">
-              <a>
-                <i name="finish" class="fa fa-circle-o item-icon fa-lg"></i>
-              </a>
-              <span>健身房续费 #健康</span>
-            </div>
-            <div class="item-right">
-              <span class="text-sm-center">2019年5月1日</span>
-            </div>
-          </li>
+          <li class="mission-item item-placeholder"></li> -->
         </ul>
         <div id="mission-form" class="hide">
           <div class="input-group">
-            <input type="text" placeholder="例如：明天下午6点买礼物 p1 #杂物">
+            <input name="content" type="text" placeholder="例如：明天下午6点买礼物 p1 #杂物">
             <div class="input-group-append">
-              <input type="datetime-local" />
+              <input name="date" type="date" />
             </div>
           </div>
           <div id="mission-buttons" class="flex flex-justify-between flex-center">
@@ -140,23 +134,6 @@
       </div>
     </div>
   </div>
-
-  <!-- <div class="dialog">
-    <div class="curtain"></div>
-    <div class="alert">
-      <span class="msg">asd</span>
-      <div class="text-right">
-        <button>确定</button>
-      </div>
-    </div>
-  </div> -->
-
-
-
-
-
-
-
 
   <script src="./assets/scripts/index.js"></script>
 </body>

@@ -1,5 +1,7 @@
 import missions from './indexeddb/missions';
 
+const isKeyEnter = event => ((event instanceof KeyboardEvent) && (event.keyCode === 13));
+
 const isElement = element => (element && (element.nodeType === 1));
 
 const isString = str => (str && (typeof str === 'string'));
@@ -56,8 +58,14 @@ class Dom {
   }
 
   attr(key, value) {
-    this.dom.setAttribute(key, value);
-    return this;
+    if (!key || !isString(key)) throw new TypeError('没有key参数');
+    let result = this;
+    if (value !== undefined) {
+      this.dom.setAttribute(key, `${value}`);
+    } else {
+      result = this.dom.getAttribute(key);
+    }
+    return result;
   }
 
   addClass(content) {
@@ -208,11 +216,28 @@ class Mission {
     if (this.init === 1) return false;
     const openForm = $(this.adderElement).find('*[name=open-form]');
     $(openForm).on('click', () => {
-      $(this.formElement).removeClass('hide');
+      const adderParent = $(this.adderElement).parent();
+      adderParent.insertBefore(this.formElement, this.adderElement);
+      $(this.formElement).find('input[name=content]').value = '';
+      $(this.formElement).find('input[name=date]').value = '';
+      $(this.formElement).attr('data-item-id', '').removeClass('hide');
     });
     const submit = $(this.formElement).find('button[name=submit]');
     $(submit).on('click', () => {
-      this.createMission();
+      const itemId = $(this.formElement).attr('data-item-id');
+      if (!itemId) {
+        this.createMission();
+      } else {
+        this.updateMission();
+      }
+    });
+    const formInputs = $(this.formElement).children('input');
+    formInputs.forEach((input) => {
+      $(input).on('keypress', (event) => {
+        if (isKeyEnter(event)) {
+          submit.click();
+        }
+      });
     });
     const hideForm = $(this.formElement).find('*[name=hide-form]');
     $(hideForm).on('click', () => {
@@ -237,38 +262,118 @@ class Mission {
     return element && listElement && formElement && adderElement;
   }
 
+  static transformItem(missionItem) {
+    if (!isElement(missionItem) || !missionItem.classList.contains('mission-item')) throw new TypeError('不是任务列表的子元素');
+    const parent = $(missionItem).parent();
+    const nextItem = missionItem.nextSibling;
+    const form = $('#mission-form')[0];
+    const content = $(missionItem).find('*[name=content]').innerText;
+    const date = $(missionItem).find('*[name=date]').innerText;
+    const missionItems = parent.querySelectorAll('.mission-item');
+    missionItems.forEach((item) => {
+      if (item.id !== missionItem.id) {
+        $(item).removeClass('hide');
+      }
+    });
+    $(missionItem).addClass('hide');
+    parent.insertBefore(form, nextItem);
+    $(form).removeClass('hide').attr('data-item-id', missionItem.id);
+    $(form).find('input[name=content]').value = content;
+    $(form).find('input[name=date]').value = date;
+    return form;
+  }
+
   static createMissionItem(leftText, rightText, id) {
     if (!Mission.isElementComplete()) throw new ReferenceError('界面元素不完整');
-    const item = $('<li>').addClass('mission-item').attr('id', `item-${id}`);
+    const item = $('<li>').addClass('mission-item').attr('id', `item-${id}`).attr('draggable', 'true');
+    const before = $('<div>').addClass('item-before');
+    const moveIcon = $('<i>').addClass('fa fa-arrows');
     const left = $('<div>').addClass('item-left');
     const right = $('<div>').addClass('item-right');
     const icon = $('<i>').addClass('fa fa-circle-o item-icon fa-lg').attr('name', 'finish');
-    const text = $('<span>').text(leftText);
-    const date = $('<span>').addClass('text-sm-center').text(rightText);
+    const text = $('<span>').attr('name', 'content').text(leftText);
+    const date = $('<span>').attr('name', 'date').addClass('text-sm-center').text(rightText);
     const link = $('<a>').append(icon);
     window.link = link;
+    text.on('click', () => {
+      Mission.transformItem(item.dom);
+    });
     link.on('click', () => {
       missions.ready()
         .then(() => missions.delete(id))
         .then(() => item.remove());
     });
+    moveIcon.on('click', () => {
+      console.log('这里要改成keydown draggable="true" keyup draggable="false"');
+    });
+    item.on('dragstart', (event) => {
+      const parent = item.parent();
+      $(parent).attr('drag', item.dom.id);
+      event.dataTransfer.setData('Text', item.dom.id);
+      item.addClass('item-curtain');
+    });
+    item.on('dragover', (event) => {
+      event.preventDefault();
+      const parent = item.parent();
+      const itemNext = item.dom.nextSibling;
+      const dragId = $(parent).attr('drag');
+      const dragItem = $(parent).find(`#${dragId}`);
+      const dragNext = dragItem.nextSibling;
+      parent.insertBefore(item.dom, dragNext);
+      parent.insertBefore(dragItem, itemNext);
+    });
+    item.on('drop', (event) => {
+      event.preventDefault();
+      const parent = item.parent();
+      const itemNext = item.dom.nextSibling;
+      const dragId = event.dataTransfer.getData('Text');
+      const dragItem = $(parent).find(`#${dragId}`);
+      const dragNext = dragItem.nextSibling;
+      parent.insertBefore(item.dom, dragNext);
+      parent.insertBefore(dragItem, itemNext);
+      item.removeClass('item-curtain');
+    });
+    before.append(moveIcon);
     left.append(link).append(text);
     right.append(date);
-    item.append(left).append(right);
+    item.append(before).append(left).append(right);
     return item.dom;
   }
 
   createMission() {
     const form = this.formElement;
-    const contentInput = $(form).find('input[type=text]');
+    const contentInput = $(form).find('input[name=content]');
     if (!contentInput.value) return false;
-    const dateInput = $(form).find('input[type=datetime-local]');
+    const dateInput = $(form).find('input[type=date]');
     const item = { content: contentInput.value, date: dateInput.value };
     missions.create(item).then((id) => {
       const missionItem = Mission.createMissionItem(contentInput.value, dateInput.value, id);
       contentInput.value = '';
       dateInput.value = '';
       $(this.listElement).append(missionItem);
+    });
+    $(this.formElement).attr('data-item-id', '');
+    return this;
+  }
+
+  updateMission() {
+    const itemId = $(this.formElement).attr('data-item-id');
+    if (!itemId) return false;
+    const item = $(`#${itemId}`)[0];
+    if (!item) throw new ReferenceError(`找不到#${itemId}元素`);
+    const contentInput = $(this.formElement).find('input[name=content]');
+    const dateInput = $(this.formElement).find('input[name=date]');
+    const content = contentInput.value;
+    const date = dateInput.value;
+    const id = Number(itemId.match(/^item-(\d+)$/)[1]);
+    const data = { id, content, date };
+    missions.save(data).then(() => {
+      $(item).find('*[name=content]').innerText = content;
+      $(item).find('*[name=date]').innerText = date;
+      $(item).removeClass('hide');
+      contentInput.value = '';
+      dateInput.value = '';
+      $(this.formElement).addClass('hide');
     });
     return this;
   }

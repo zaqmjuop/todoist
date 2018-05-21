@@ -125,7 +125,7 @@ nav{
 #top-filters .item:hover{
   background-color: #fff;
 }
-#top-filters .item:active{
+#top-filters .active{
   background-color: #fff;
   font-weight: 700;
 }
@@ -155,9 +155,30 @@ nav{
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
+}
+#mission-list>.mission-item span{
+  cursor: text;
 }
 #mission-list>.mission-item i[name=finish]:hover::before{
   content: "\f05d";
+}
+#mission-list>.mission-item>.item-before{
+  position: absolute;
+  left: -1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: none;
+}
+#mission-list>.mission-item:hover>.item-before{
+  display: inline-block;
+}
+#mission-list .item-placeholder{
+  background-color: #eee;
+  min-height: 1rem;
+}
+#mission-list .hide{
+  display: none;
 }
 .text-sm-center{
   font-size: 0.625rem;
@@ -267,4 +288,8 @@ button[class~=btn-link]:hover{
 }
 .float-right{
   float: right;
+}
+.item-curtain{
+  background-color: #ddd;
+  opacity: 0.5;
 }
