@@ -346,12 +346,14 @@ class Mission {
     if (!contentInput.value) return false;
     const dateInput = $(form).find('input[type=date]');
     const item = { content: contentInput.value, date: dateInput.value };
-    missions.create(item).then((id) => {
-      const missionItem = Mission.createMissionItem(contentInput.value, dateInput.value, id);
-      contentInput.value = '';
-      dateInput.value = '';
-      $(this.listElement).append(missionItem);
-    });
+    missions.ready()
+      .then(() => missions.create(item))
+      .then((id) => {
+        const missionItem = Mission.createMissionItem(contentInput.value, dateInput.value, id);
+        contentInput.value = '';
+        dateInput.value = '';
+        $(this.listElement).append(missionItem);
+      });
     $(this.formElement).attr('data-item-id', '');
     return this;
   }
@@ -367,14 +369,16 @@ class Mission {
     const date = dateInput.value;
     const id = Number(itemId.match(/^item-(\d+)$/)[1]);
     const data = { id, content, date };
-    missions.save(data).then(() => {
-      $(item).find('*[name=content]').innerText = content;
-      $(item).find('*[name=date]').innerText = date;
-      $(item).removeClass('hide');
-      contentInput.value = '';
-      dateInput.value = '';
-      $(this.formElement).addClass('hide');
-    });
+    missions.ready()
+      .then(() => missions.save(data))
+      .then(() => {
+        $(item).find('*[name=content]').innerText = content;
+        $(item).find('*[name=date]').innerText = date;
+        $(item).removeClass('hide');
+        contentInput.value = '';
+        dateInput.value = '';
+        $(this.formElement).addClass('hide');
+      });
     return this;
   }
 
