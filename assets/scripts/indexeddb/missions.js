@@ -9,7 +9,7 @@ missions.save = item => missions.set(item);
 missions.init = () => {
   if (missions.init === 1) return this;
   missions.init = 1;
-  return missions.ready().then(() => missions.addColumns(['date', 'content']));
+  return missions.ready().then(() => missions.addColumns(['date', 'content', 'order']));
 };
 missions.init();
 

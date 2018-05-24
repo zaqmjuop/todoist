@@ -248,21 +248,7 @@ button[class~=btn-link]{
 button[class~=btn-link]:hover{
   text-decoration: underline;
 }
-.alert{
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  border: 2px solid #000;
-  min-width: 160px;
-  min-height: 90px;
-  transform: translate(-50%, -50%);
-  padding: 1rem;
-  background-color: #fff;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  z-index: 8;
-}
+
 .curtain{
   position: fixed;
   width: 100%;
@@ -274,9 +260,6 @@ button[class~=btn-link]:hover{
   z-index: 7;
 }
 .text-right{
-  text-align:right;
-}
-.alert-buttons{
   text-align:right;
 }
 .hide{
@@ -291,5 +274,38 @@ button[class~=btn-link]:hover{
 }
 .item-curtain{
   background-color: #ddd;
-  opacity: 0.5;
+  opacity: 1;
+  font-weight: 700;
+}
+#alert-box{
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+#alert-box>*:nth-child(n+2){
+  margin-top: 3px;
+}
+.alert,.confirm{
+  border-radius: 5px;
+  background-color: #555555;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+}
+#alert-box a{
+  margin-left: 1rem;
+  font-weight: 700;
+}
+#alert-box a:hover{
+  text-decoration: underline;
+}
+#alert-box *[name=submit]{
+  color: #E99388;
+}
+#alert-box *[name=cancal]{
+  color: #999;
 }
