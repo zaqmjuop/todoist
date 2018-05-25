@@ -309,3 +309,21 @@ button[class~=btn-link]:hover{
 #alert-box *[name=cancal]{
   color: #999;
 }
+#the-top>.body{
+  position: fixed;
+  top: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #fff;
+  z-index: 10000;
+  border-radius: 5px;
+  box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.5);
+  min-width: 40%;
+  padding: 25px 30px;
+}
+#the-top .header{
+  margin: 0 0 0.5rem 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #555;
+}

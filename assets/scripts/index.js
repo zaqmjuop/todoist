@@ -1,217 +1,10 @@
 import missions from './indexeddb/missions';
-
-const isKeyEnter = event => ((event instanceof KeyboardEvent) && (event.keyCode === 13));
-
-const isElement = element => (element && (element.nodeType === 1));
-
-const isString = str => (str && (typeof str === 'string'));
-
-const getParent = (element) => {
-  if (!isElement(element)) return false;
-  return element.parentNode;
-};
-
-const getParents = (element) => {
-  if (!isElement(element)) return false;
-  const result = [];
-  let parent = element;
-  for (let index = 0; index < 999; index += 1) {
-    parent = getParent(parent);
-    if (!isElement(parent)) break;
-    result.push(parent);
-  }
-  return result;
-};
-
-const Index = {
-  i: 0,
-  getIndex: () => {
-    Index.i += 1;
-    return Index.i;
-  },
-};
-
-class Dom {
-  constructor(query) {
-    if (typeof query === 'string') {
-      const eleReg = /^<(.+)>$/;
-      const eleMatch = query.match(eleReg);
-      if (eleMatch) {
-        const tagName = eleMatch[1].toLocaleUpperCase();
-        this.dom = document.createElement(tagName);
-      } else {
-        return document.querySelectorAll(query);
-      }
-    } else if (query instanceof Dom) {
-      this.dom = query.dom;
-    } else if (isElement(query) || (query === document)) {
-      this.dom = query;
-    } else {
-      console.warn(query);
-      throw new TypeError('无效参数');
-    }
-    return this;
-  }
-
-  static of(str) {
-    return new Dom(str);
-  }
-
-  attr(key, value) {
-    if (!key || !isString(key)) throw new TypeError('没有key参数');
-    let result = this;
-    if (value !== undefined) {
-      this.dom.setAttribute(key, `${value}`);
-    } else {
-      result = this.dom.getAttribute(key);
-    }
-    return result;
-  }
-
-  addClass(content) {
-    if (!content || (typeof content !== 'string')) throw new TypeError('参数应该是字符串');
-    const ary = content.split(' ');
-    ary.forEach(value => this.dom.classList.add(value));
-    return this;
-  }
-
-  removeClass(content) {
-    if (!content || (typeof content !== 'string')) throw new TypeError('参数应该是字符串');
-    const ary = content.split(' ');
-    ary.forEach(value => this.dom.classList.remove(value));
-    return this;
-  }
-
-  hasClass(content) {
-    if (!content || (typeof content !== 'string')) throw new TypeError('参数应该是字符串');
-    return this.dom.classList.contains(content);
-  }
-
-  append(object) {
-    const element = (object instanceof Dom) ? object.dom : object;
-    if (!element || (element.nodeType !== 1)) throw new TypeError('参数不是html元素');
-    this.dom.appendChild(element);
-    return this;
-  }
-
-  remove(object) {
-    if (!object) {
-      this.dom.remove();
-    } else if (isElement(object)) {
-      this.dom.removeChild(object);
-    } else if (isString(object)) {
-      const element = this.dom.querySelector(object);
-      this.dom.removeChild(element);
-    }
-    return this;
-  }
-
-  text(content) {
-    this.dom.innerText = content;
-    return this;
-  }
-
-  html(content) {
-    this.dom.innerHTML = content;
-    return this;
-  }
-
-  find(query) {
-    return this.dom.querySelector(query);
-  }
-
-  children(query) {
-    return this.dom.querySelectorAll(query);
-  }
-
-  parent() {
-    const parent = this.dom.parentNode;
-    const result = (parent && (parent.nodeType === 1)) ? parent : undefined;
-    return result;
-  }
-
-  parents(query) {
-    const parents = getParents(this.dom);
-    let result = [];
-    if (query && isString(query)) {
-      const all = document.querySelectorAll(query);
-      all.forEach((parent) => {
-        if (parents.includes(parent)) {
-          result.push(parent);
-        }
-      });
-    } else {
-      result = parents;
-    }
-    return result;
-  }
-
-  on(event, callback) {
-    this.dom.addEventListener(event, callback);
-    return this;
-  }
-
-  off(event, callback) {
-    this.dom.removeEventListener(event, callback);
-    return this;
-  }
-}
+import Utils from './utils';
+import Dom from './dom';
+import Message from './message';
 
 const $ = Dom.of;
-window.$ = $;
 
-class Message {
-  static prepareBox() {
-    if (!document.body) throw new ReferenceError('页面加载未完成');
-    let box = $('#alert-box')[0];
-    if (!box) {
-      box = $('<div>').attr('id', 'alert-box').dom;
-      $(document.body).append(box);
-    }
-    return box;
-  }
-
-  static alert(message) {
-    if (!message) throw new TypeError(`参数不能为${message}`);
-    if (!document.body) throw new ReferenceError('页面加载未完成');
-    const box = Message.prepareBox();
-    const popup = $('<div>').addClass('alert');
-    const content = $('<span>').attr('name', 'message').html(message);
-    const buttons = $('<span>').attr('name', 'buttons');
-    const cancel = $('<a>').attr('name', 'cancal').text('隐藏');
-    cancel.on('click', () => {
-      popup.dom.remove();
-    });
-    buttons.append(cancel);
-    popup.append(content).append(buttons);
-    $(box).append(popup);
-    return popup;
-  }
-
-  static confirm(message, submitCallback, submitText) {
-    if (!message) throw new TypeError(`参数不能为${message}`);
-    if (!document.body) throw new ReferenceError('页面加载未完成');
-    const box = Message.prepareBox();
-    const popup = $('<div>').addClass('confirm');
-    const content = $('<span>').attr('name', 'message').html(message);
-    const buttons = $('<span>').attr('name', 'buttons');
-    const submit = $('<a>').attr('name', 'submit').text('确定');
-    if (isString(submitText)) {
-      submit.text(submitText);
-    }
-    const cancel = $('<a>').attr('name', 'cancal').text('隐藏');
-    if (submitCallback && (typeof submitCallback === 'function')) {
-      submit.on('click', submitCallback);
-    }
-    cancel.on('click', () => {
-      popup.dom.remove();
-    });
-    buttons.append(cancel);
-    popup.append(content).append(buttons);
-    $(box).append(popup);
-    return popup;
-  }
-}
 
 class Mission {
   constructor() {
@@ -267,7 +60,7 @@ class Mission {
     const formInputs = $(this.formElement).children('input');
     formInputs.forEach((input) => {
       $(input).on('keypress', (event) => {
-        if (isKeyEnter(event)) {
+        if (Utils.isKeyEnter(event)) {
           submit.click();
         }
       });
@@ -299,7 +92,7 @@ class Mission {
     document.ondrop = (event) => {
       const data = event.dataTransfer.getData('Text').match(/^item-\d+$/);
       const itemId = data && data[0];
-      if (isString(itemId)) {
+      if (Utils.isString(itemId)) {
         const dragItem = $(`#${itemId}`)[0];
         if (!dragItem) return false;
         $(dragItem).removeClass('item-curtain').attr('draggable', 'false');
@@ -318,8 +111,8 @@ class Mission {
       });
       const prevItem = missionItems[dragIndex - 1];
       const nextItem = missionItems[dragIndex + 1];
-      const prevOrder = (isElement(prevItem)) ? Number($(prevItem).attr('order')) : 0;
-      const nextOrder = (isElement(nextItem)) ? Number($(nextItem).attr('order')) : (prevOrder + 2);
+      const prevOrder = (Utils.isElement(prevItem)) ? Number($(prevItem).attr('order')) : 0;
+      const nextOrder = (Utils.isElement(nextItem)) ? Number($(nextItem).attr('order')) : (prevOrder + 2);
       if (!Number.isFinite(prevOrder) || !Number.isFinite(nextOrder)) throw new ReferenceError('拖动的条目前后存在条目没有有效order属性');
       const newOrder = (prevOrder + nextOrder) / 2;
       missions.ready()
@@ -341,7 +134,7 @@ class Mission {
       const hideFormButton = $(this.formElement).find('*[name=hide-form]');
       let isInMission = false;
       paths.forEach((element) => {
-        if (!isElement(element)) return;
+        if (!Utils.isElement(element)) return;
         if (this.element.isSameNode(element)) isInMission = true;
       });
       if (!isInMission) hideFormButton.click();
@@ -360,7 +153,7 @@ class Mission {
   }
 
   static transformItem(missionItem) {
-    if (!isElement(missionItem) || !missionItem.classList.contains('mission-item')) throw new TypeError('不是任务列表的子元素');
+    if (!Utils.isElement(missionItem) || !missionItem.classList.contains('mission-item')) throw new TypeError('不是任务列表的子元素');
     const parent = $(missionItem).parent();
     const nextItem = missionItem.nextSibling;
     const form = $('#mission-form')[0];
@@ -490,9 +283,9 @@ class Mission {
 
   static hideForm() {
     const form = document.querySelector('#mission-form');
-    if (!isElement(form)) throw new ReferenceError('没有找到mission-form');
+    if (!Utils.isElement(form)) throw new ReferenceError('没有找到mission-form');
     const hideFormButton = $(form).find('*[name=hide-form]');
-    if (!isElement(form)) throw new ReferenceError('没有找到mission-form表单取消按钮');
+    if (!Utils.isElement(form)) throw new ReferenceError('没有找到mission-form表单取消按钮');
     return hideFormButton.click();
   }
 
@@ -504,6 +297,7 @@ class Mission {
 document.addEventListener('DOMContentLoaded', () => {
   const mission = new Mission();
   window.mission = mission;
+  window.$ = $;
   mission.createMission();
   window.show = () => (
     missions.ready()

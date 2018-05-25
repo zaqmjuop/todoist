@@ -25,7 +25,7 @@
           <i class="fa fa-search"></i>
         </div>
         <div id="nav-buttons" class="flex flex-justify-between flex-center">
-          <i class="fa fa-plus"></i>
+          <i class="fa fa-plus" title="快速添加任务"></i>
           <i class="fa fa-check-circle-o"></i>
           <i class="fa fa-bell"></i>
           <i class="fa fa-cog"></i>
@@ -33,6 +33,37 @@
       </div>
     </div>
   </nav>
+
+  <div id="the-top" class="hide">
+    <div class="curtain"></div>
+    <div class="body">
+      <div class="header">
+        <span>快速添加任务</span>
+        <span class="float-right">
+          <i class="fa fa-times"></i>
+        </span>
+      </div>
+      <div class="input-group">
+        <input name="content" type="text" placeholder="例如：明天下午6点买礼物 p1 #杂物">
+        <div class="input-group-append">
+          <input name="date" type="date" />
+        </div>
+      </div>
+      <div id="mission-buttons" class="flex flex-justify-between flex-center">
+        <div>
+          <button name="submit" class="btn-dark">添加任务</button>
+          <button name="hide-form" class="btn-link">取消</button>
+        </div>
+        <div class="flex flex-justify-between flex-center w-25">
+          <i class="fa fa-credit-card" title="项目"></i>
+          <i class="fa fa-clock-o" title="提醒"></i>
+          <i class="fa fa-flag" title="优先级"></i>
+          <i class="fa fa-ellipsis-h" title="更多选项"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
   <div id="app" class="container flex flex-justify-between">
     <div id="left-menu">
