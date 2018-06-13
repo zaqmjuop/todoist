@@ -1,3 +1,6 @@
+html{
+  font-size:16px;
+}
 body{
   background-color: #FAFAFA;
 }
@@ -105,13 +108,16 @@ nav{
 }
 #left-menu{
   padding-top: 30px;
+  padding-bottom: 50px;
   width: 350px;
   position: fixed;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 .content{
   width: 650px;
   background-color: #fff;
-  min-height: 1000px;
+  min-height: 500px;
   border: 1px solid #eee;
   margin-left: 350px;
   padding: 40px;
@@ -255,9 +261,11 @@ button[class~=btn-link]:hover{
   height: 100%;
   left: 0;
   top: 0;
-  background-color: #000;
   opacity: 0.2;
   z-index: 7;
+}
+.bg-black{
+  background-color: #000;
 }
 .text-right{
   text-align:right;
@@ -326,4 +334,49 @@ button[class~=btn-link]:hover{
   font-size: 0.875rem;
   font-weight: 700;
   color: #555;
+}
+.relative{
+  position: relative;
+}
+.text-gray{
+  color: gray;
+}
+@keyframes toBlack
+{
+  to {color: #000;}
+}
+.hover-black:hover{
+  animation: toBlack 0.3s ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+.list-menu{
+  background-color: #fff;
+  border-radius: 3px;
+  box-shadow: 0 0 3px 0 #555;
+  position: absolute;
+  min-width: 200px;
+  top: 1.7rem;
+  right: 0;
+  opacity: 1;
+  z-index: 11;
+}
+.list-menu ul{
+  background-color: #fff;
+  list-style: none;
+  padding: 3px 0;
+  margin: 0;
+  position: relative;
+}
+.list-menu ul:nth-child(n+2){
+  border-top: 1px solid #ccc;
+}
+.list-menu li{
+  padding: 8px 10px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  user-select: none;
+}
+.list-menu li:hover{
+  background-color: #eee;
 }

@@ -7,16 +7,21 @@ const $ = Dom.of;
 
 class Mission {
   constructor() {
+    if (Mission.instance instanceof Mission) return Mission.instance;
     this.element = document.querySelector('#mission');
     this.listElement = document.querySelector('#mission-list');
     this.formElement = document.querySelector('#mission-form');
     this.adderElement = document.querySelector('#add-mission');
+    this.leftMenu = document.querySelector('#left-menu');
+    this.navbar = document.querySelector('nav');
+    this.contentHeader = this.element.querySelector('*[name=content-header]');
     if (!this.element || !this.listElement || !this.formElement || !this.adderElement) {
       throw new ReferenceError('界面元素不完整');
     }
     this.init();
     this.loadDB();
     this.counter = 1;
+    Mission.instance = this;
     return this;
   }
 
@@ -49,6 +54,7 @@ class Mission {
     });
     const submit = $(this.formElement).find('button[name=submit]');
     $(submit).on('click', () => {
+      console.log(submit)
       const itemId = $(this.formElement).attr('data-item-id');
       if (!itemId) {
         this.createMission();
@@ -68,8 +74,10 @@ class Mission {
     $(hideForm).on('click', () => {
       $(this.formElement).addClass('hide');
       const handleId = $(this.formElement).attr('data-item-id');
-      const handleItem = $(`#${handleId}`)[0];
-      $(handleItem).removeClass('hide');
+      if (handleId) {
+        const handleItem = $(`#${handleId}`)[0];
+        if (handleItem) $(handleItem).removeClass('hide');
+      }
     });
     const finishItemButtons = $(this.listElement).children('*[name=finish]');
     finishItemButtons.forEach((button) => {
@@ -79,6 +87,8 @@ class Mission {
       });
     });
     this.initDocument();
+    this.initWindow();
+    this.initContentHeader();
     this.init = 1;
     return this;
   }
@@ -140,6 +150,40 @@ class Mission {
       return isInMission;
     });
     document.supportMission = 1;
+    return this;
+  }
+
+  initWindow() {
+    if (window.supportMission) return false;
+    window.onresize = () => {
+      this.readjustLeftMenuHeight();
+    };
+    window.addEventListener('load', () => {
+      this.readjustLeftMenuHeight();
+    });
+    window.supportMission = 1;
+    return this;
+  }
+
+  initContentHeader() {
+    const sortIcon = this.contentHeader.querySelector('*[name=sort]');
+    const sortMenu = sortIcon.nextElementSibling;
+    const sortCurtain = sortMenu.querySelector('.curtain');
+    if (Utils.isElement(sortIcon)) {
+      sortIcon.addEventListener('click', () => {
+        $(sortMenu).toggleClass('hide');
+      });
+    }
+    if (Utils.isElement(sortCurtain)) {
+      sortCurtain.addEventListener('mousedown', (event) => {
+        $(sortMenu).addClass('hide');
+        event.stopPropagation();
+      });
+    }
+  }
+
+  readjustLeftMenuHeight() {
+    this.leftMenu.style.height = `${window.innerHeight - 100}px`;
     return this;
   }
 
@@ -241,7 +285,7 @@ class Mission {
     const form = this.formElement;
     const contentInput = $(form).find('input[name=content]');
     if (!contentInput.value) return false;
-    const dateInput = $(form).find('input[type=date]');
+    const dateInput = $(form).find('input[name=date]');
     this.counter += 1;
     const item = { content: contentInput.value, date: dateInput.value, order: this.counter };
     missions.ready()
@@ -250,7 +294,9 @@ class Mission {
         const missionItem = Mission.createMissionItem(contentInput.value, dateInput.value, id);
         contentInput.value = '';
         dateInput.value = '';
+        //
         $(this.listElement).append(missionItem);
+        //
       });
     $(this.formElement).attr('data-item-id', '');
     return this;
@@ -278,6 +324,37 @@ class Mission {
         $(this.formElement).addClass('hide');
       });
     return this;
+  }
+
+  sortMissionsByDate(option) {
+    const missionItems = this.listElement.querySelectorAll('.mission-item');
+    const items = [];
+    missionItems.forEach((item) => {
+      items.push(item);
+    });
+    const sort = items.sort((item1, item2) => {
+      const date1 = item1.querySelector('*[name=date]').innerText;
+      const date2 = item2.querySelector('*[name=date]').innerText;
+      const time1 = (date1) ? new Date(date1).getTime() : 0;
+      const time2 = (date2) ? new Date(date2).getTime() : 0;
+      return time1 >= time2;
+    });
+    const result = (option === 'reverse') ? sort.reverse() : sort;
+    result.forEach((item, index) => {
+      const order = index + 1;
+      const content = item.querySelector('*[name=content]').innerText;
+      const date = item.querySelector('*[name=date]').innerText;
+      const id = Number(item.id.match(/^item-(\d+)$/)[1]);
+      const updateData = {
+        id, content, date, order,
+      };
+      missions.ready()
+        .then(() => missions.set(updateData))
+        .then(() => {
+          item.setAttribute('order', order);
+          this.listElement.appendChild(item);
+        });
+    });
   }
 
   static hideForm() {

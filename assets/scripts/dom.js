@@ -1,17 +1,26 @@
-import Utils from './utils';
+
+const isElement = (element) => {
+  const result = element && (element.nodeType === 1);
+  return result;
+};
+
+const isString = (str) => {
+  const result = str && (typeof str === 'string');
+  return result;
+};
 
 const getParent = (element) => {
-  if (!Utils.isElement(element)) return false;
+  if (!isElement(element)) return false;
   return element.parentNode;
 };
 
 const getParents = (element) => {
-  if (!Utils.isElement(element)) return false;
+  if (!isElement(element)) return false;
   const result = [];
   let parent = element;
   for (let index = 0; index < 999; index += 1) {
     parent = getParent(parent);
-    if (!Utils.isElement(parent)) break;
+    if (!isElement(parent)) break;
     result.push(parent);
   }
   return result;
@@ -30,7 +39,7 @@ class Dom {
       }
     } else if (query instanceof Dom) {
       this.dom = query.dom;
-    } else if (Utils.isElement(query) || (query === document)) {
+    } else if (isElement(query) || (query === document)) {
       this.dom = query;
     } else {
       console.warn(query);
@@ -44,7 +53,7 @@ class Dom {
   }
 
   attr(key, value) {
-    if (!key || !Utils.isString(key)) throw new TypeError('没有key参数');
+    if (!key || !isString(key)) throw new TypeError('没有key参数');
     let result = this;
     if (value !== undefined) {
       this.dom.setAttribute(key, `${value}`);
@@ -57,20 +66,39 @@ class Dom {
   addClass(content) {
     if (!content || (typeof content !== 'string')) throw new TypeError('参数应该是字符串');
     const ary = content.split(' ');
-    ary.forEach(value => this.dom.classList.add(value));
+    ary.forEach((value) => {
+      if (value) {
+        this.dom.classList.add(value);
+      }
+    });
     return this;
   }
 
   removeClass(content) {
     if (!content || (typeof content !== 'string')) throw new TypeError('参数应该是字符串');
     const ary = content.split(' ');
-    ary.forEach(value => this.dom.classList.remove(value));
+    ary.forEach((value) => {
+      if (value) {
+        this.dom.classList.remove(value);
+      }
+    });
     return this;
   }
 
   hasClass(content) {
     if (!content || (typeof content !== 'string')) throw new TypeError('参数应该是字符串');
+    if (content.match(' ')) throw new TypeError('参数不能含有空格');
     return this.dom.classList.contains(content);
+  }
+
+  toggleClass(content) {
+    if (!content || (typeof content !== 'string')) throw new TypeError('参数应该是字符串');
+    if (this.hasClass(content)) {
+      this.removeClass(content);
+    } else {
+      this.addClass(content);
+    }
+    return this;
   }
 
   append(object) {
@@ -83,9 +111,9 @@ class Dom {
   remove(object) {
     if (!object) {
       this.dom.remove();
-    } else if (Utils.isElement(object)) {
+    } else if (isElement(object)) {
       this.dom.removeChild(object);
-    } else if (Utils.isString(object)) {
+    } else if (isString(object)) {
       const element = this.dom.querySelector(object);
       this.dom.removeChild(element);
     }
@@ -119,7 +147,7 @@ class Dom {
   parents(query) {
     const parents = getParents(this.dom);
     let result = [];
-    if (query && Utils.isString(query)) {
+    if (query && isString(query)) {
       const all = document.querySelectorAll(query);
       all.forEach((parent) => {
         if (parents.includes(parent)) {
@@ -140,6 +168,19 @@ class Dom {
   off(event, callback) {
     this.dom.removeEventListener(event, callback);
     return this;
+  }
+
+  static isElement(element) {
+    return element && (element.nodeType === 1);
+  }
+  hasParent(element) {
+    if (!Dom.isElement(element)) return false;
+    const parents = this.parents();
+    let result = false;
+    parents.forEach((parent) => {
+      if (element.isSameNode(parent)) result = true;
+    });
+    return result;
   }
 }
 
