@@ -54,7 +54,6 @@ class Mission {
     });
     const submit = $(this.formElement).find('button[name=submit]');
     $(submit).on('click', () => {
-      console.log(submit)
       const itemId = $(this.formElement).attr('data-item-id');
       if (!itemId) {
         this.createMission();
@@ -136,19 +135,20 @@ class Mission {
         });
       $(this.listElement).attr('drag', '');
     };
-    $(document).on('click', (event) => {
-      const isFormHide = $(this.formElement).hasClass('hide');
-      if (isFormHide) return false;
-      const paths = event.path;
-      const hideFormButton = $(this.formElement).find('*[name=hide-form]');
-      let isInMission = false;
-      paths.forEach((element) => {
-        if (!Utils.isElement(element)) return;
-        if (this.element.isSameNode(element)) isInMission = true;
-      });
-      if (!isInMission) hideFormButton.click();
-      return isInMission;
-    });
+    // $(document).on('click', (event) => {
+    //   // 点击任务列表以外的区域，则隐藏新建任务的表单
+    //   const isFormHide = $(this.formElement).hasClass('hide');
+    //   if (isFormHide) return false;
+    //   const paths = event.path;
+    //   const hideFormButton = $(this.formElement).find('*[name=hide-form]');
+    //   let isInMission = false;
+    //   paths.forEach((element) => {
+    //     if (!Utils.isElement(element)) return;
+    //     if (this.element.isSameNode(element)) isInMission = true;
+    //   });
+    //   if (!isInMission) hideFormButton.click();
+    //   return isInMission;
+    // });
     document.supportMission = 1;
     return this;
   }
@@ -358,6 +358,7 @@ class Mission {
   }
 
   static hideForm() {
+    // 隐藏新建任务表单
     const form = document.querySelector('#mission-form');
     if (!Utils.isElement(form)) throw new ReferenceError('没有找到mission-form');
     const hideFormButton = $(form).find('*[name=hide-form]');

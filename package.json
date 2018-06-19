@@ -8,8 +8,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "parcel index.html",
-    "build": "parcel build index.html -d ./docs"
+    "dev": "parcel dev.html",
+    "build": "parcel build dev.html -d ./docs",
+    "buildjs": "parcel build assets/scripts/index.js -d ./docs"
   },
   "repository": {
     "type": "git",
