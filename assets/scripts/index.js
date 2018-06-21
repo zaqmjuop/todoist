@@ -9,7 +9,6 @@ const $ = Dom.of;
 document.addEventListener('DOMContentLoaded', () => {
   const dateInput = document.querySelector('input[name=date]');
   const mission = new Mission();
-  const topFilters = document.querySelector('#top-filters');
   window.mission = mission;
   window.$ = $;
   mission.createMission();

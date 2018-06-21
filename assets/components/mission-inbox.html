@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <style scoped>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    .mission-content {
+      margin: 1em 0;
+    }
+
+    .header>ul>li {
+      display: inline;
+    }
+
+    .body>ul>li {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .body>ul {
+      padding: 0;
+    }
+
+    .body>ul>li>.item-main {
+      width: 90%;
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #eee;
+    }
+
+    .body>ul>li>* {
+      padding: 10px 0px;
+    }
+
+    .body>ul>li>.item-main .item-date {
+      display: flex;
+      align-items: center;
+      font-size: 80%;
+    }
+
+    .mission-form {
+      width: 100%;
+    }
+
+    .mission-form .mission-form-submits {
+      margin-top: 0.5em;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="mission-content">
+    <div class="header flex flex-justify-between" part="header">
+      <h4>所有任务</h4>
+      <ul>
+        <li>
+          <i class="fa fa-signal"></i>
+        </li>
+      </ul>
+    </div>
+    <div class="body">
+      <ul>
+        <li>
+          <span>
+            <i class="fa fa-arrows"></i>
+          </span>
+          <div class="item-main">
+            <div>
+              <span>
+                <i name="finish" class="fa fa-circle-o item-icon fa-lg"></i>
+              </span>
+              <span class="item-content">
+                内容
+              </span>
+            </div>
+            <div class="item-date">
+              日期2018
+            </div>
+          </div>
+          <span>
+            <i class="fa fa-ellipsis-h"></i>
+          </span>
+        </li>
+        <li>
+          <span></span>
+          <div class="item-main">
+            <div class="mission-form">
+              <div class="input-group">
+                <input name="content" type="text" placeholder="例如：明天下午6点买礼物 p2 #杂物">
+                <div class="input-group-append">
+                  <input name="date" type="text" placeholder="日期" />
+                </div>
+              </div>
+              <div class="mission-form-submits flex flex-justify-between flex-center">
+                <div>
+                  <button class="btn-dark">添加任务</button>
+                  <button class="btn-link">取消</button>
+                </div>
+                <!-- <div>
+                  <i class="fa fa-credit-card" title="项目"></i>
+                  <i class="fa fa-clock-o" title="提醒"></i>
+                  <i class="fa fa-flag" title="优先级"></i>
+                  <i class="fa fa-ellipsis-h" title="更多选项"></i>
+                </div> -->
+              </div>
+            </div>
+          </div>
+          <span></span>
+        </li>
+        <li>
+          <span></span>
+          <div class="item-main flex flex-justify-between">
+            <span>
+              <i class="fa fa-plus"></i>
+              <span>添加任务</span>
+            </span>
+            <span>
+              <i class="fa fa-history"></i>
+            </span>
+          </div>
+          <span></span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</body>
+
+</html>

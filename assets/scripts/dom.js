@@ -1,187 +1,320 @@
 
-const isElement = (element) => {
-  const result = element && (element.nodeType === 1);
-  return result;
-};
-
 const isString = (str) => {
-  const result = str && (typeof str === 'string');
+  const result = (typeof str === 'string');
   return result;
 };
 
-const getParent = (element) => {
-  if (!isElement(element)) return false;
-  return element.parentNode;
-};
-
-const getParents = (element) => {
-  if (!isElement(element)) return false;
-  const result = [];
-  let parent = element;
-  for (let index = 0; index < 999; index += 1) {
-    parent = getParent(parent);
-    if (!isElement(parent)) break;
-    result.push(parent);
-  }
+const isEffectiveString = (str) => {
+  const result = !!(str && isString(str));
   return result;
 };
+
+const collectClasses = (classes) => {
+  if (!isEffectiveString(classes)) throw new TypeError(`参数classes不能为 ${classes}`);
+  return classes.replace(/\s+/g, ' ').split(' ');
+};
+
+let isGlobalInited = 0;
 
 class Dom {
   constructor(query) {
-    if (typeof query === 'string') {
-      const eleReg = /^<(.+)>$/;
-      const eleMatch = query.match(eleReg);
-      if (eleMatch) {
-        const tagName = eleMatch[1].toLocaleUpperCase();
-        this.dom = document.createElement(tagName);
-      } else {
-        return document.querySelectorAll(query);
-      }
-    } else if (query instanceof Dom) {
+    // 允许的参数类型 1.Dom实例对象 2.HTMLElement 3.创建元素所需tagName 4.querySelector
+    // 查找只用querySelector匹配符合条件的第一个元素 查找集合用Dom.all(query)
+    if (!query) throw new TypeError('参数无效');
+    if (query instanceof Dom) {
+      // 参数是Dom的实例对象
       this.dom = query.dom;
-    } else if (isElement(query) || (query === document)) {
+    } else if (query instanceof HTMLElement) {
+      // 参数是元素
       this.dom = query;
-    } else {
-      console.warn(query);
-      throw new TypeError('无效参数');
+    } else if (isEffectiveString(query)) {
+      const isCreateReg = /^<(.+)>$/;
+      const createMatch = query.match(isCreateReg);
+      if (createMatch) {
+        // 创建元素 如('<div>')
+        this.dom = document.createElement(createMatch[1]);
+      } else {
+        // 查找元素
+        this.dom = document.querySelector(query);
+      }
     }
     return this;
+  }
+
+  static all(query) {
+    return document.querySelectorAll(query);
   }
 
   static of(str) {
     return new Dom(str);
   }
 
-  attr(key, value) {
-    if (!key || !isString(key)) throw new TypeError('没有key参数');
-    let result = this;
-    if (value !== undefined) {
-      this.dom.setAttribute(key, `${value}`);
+  static degenerate(query) {
+    // 参数的类型
+    // 参数如果是Dom的实例对象,则返回该实例包含的HTMLElement
+    // 参数如果是HTMLElement,则返回参数自身
+    // 参数如果是query则返回querySelector的结果
+    let result;
+    if (query instanceof Dom) {
+      result = query.dom;
+    } else if (query instanceof HTMLElement) {
+      result = query;
+    } else if (isEffectiveString(query)) {
+      result = document.querySelector(query);
     } else {
+      throw new TypeError(`参数query不能是${query}`);
+    }
+    return result;
+  }
+
+  attr(key, value) {
+    // 查看或修改元素的属性
+    // 如果参数key是text或html 则修改innerText或innerHTML
+    if (!isEffectiveString(key)) throw new TypeError(`参数key不能为 ${key}`);
+    let result;
+    if (isEffectiveString(value)) {
+      // 修改属性
+      if (key.toLocaleLowerCase().match(/^text$/)) {
+        this.text(value);
+      } else if (key.toLocaleLowerCase().match(/^html$/)) {
+        this.html(value);
+      } else {
+        this.dom.setAttribute(key, value);
+      }
+      result = this;
+    } else {
+      // 查看属性
       result = this.dom.getAttribute(key);
     }
     return result;
   }
 
-  addClass(content) {
-    if (!content || (typeof content !== 'string')) throw new TypeError('参数应该是字符串');
-    const ary = content.split(' ');
-    ary.forEach((value) => {
-      if (value) {
-        this.dom.classList.add(value);
+  addClass(classes) {
+    // 添加class
+    const collect = collectClasses(classes);
+    collect.forEach((clas) => {
+      if (!this.dom.classList.contains(clas)) {
+        this.dom.classList.add(clas);
       }
     });
     return this;
   }
 
-  removeClass(content) {
-    if (!content || (typeof content !== 'string')) throw new TypeError('参数应该是字符串');
-    const ary = content.split(' ');
-    ary.forEach((value) => {
-      if (value) {
-        this.dom.classList.remove(value);
+  removeClass(classes) {
+    // 移除class
+    const collect = collectClasses(classes);
+    collect.forEach((clas) => {
+      if (this.dom.classList.contains(clas)) {
+        this.dom.classList.remove(clas);
       }
     });
     return this;
   }
 
-  hasClass(content) {
-    if (!content || (typeof content !== 'string')) throw new TypeError('参数应该是字符串');
-    if (content.match(' ')) throw new TypeError('参数不能含有空格');
-    return this.dom.classList.contains(content);
+  hasClass(classes) {
+    // 判断是否含有class 如果参数是classes 那么只有全部classes都含有时返回true
+    const collect = collectClasses(classes);
+    let result = true;
+    collect.forEach((clas) => {
+      if (!this.dom.classList.contains(clas)) {
+        result = false;
+      }
+    });
+    return result;
   }
 
-  toggleClass(content) {
-    if (!content || (typeof content !== 'string')) throw new TypeError('参数应该是字符串');
-    if (this.hasClass(content)) {
-      this.removeClass(content);
+  toggleClass(classes) {
+    // 切换class存在 如果参数是classes 那么只有全部classes存在才算存在
+    const isClassesExist = this.hasClass(classes);
+    if (isClassesExist) {
+      this.removeClass(classes);
     } else {
-      this.addClass(content);
+      this.addClass(classes);
     }
     return this;
   }
 
-  append(object) {
-    const element = (object instanceof Dom) ? object.dom : object;
-    if (!element || (element.nodeType !== 1)) throw new TypeError('参数不是html元素');
-    this.dom.appendChild(element);
+  append(query) {
+    // 添加元素 如果参数是Selector，则对所有匹配元素操作
+    const elements = isEffectiveString(query)
+      ? document.querySelectorAll(query)
+      : [Dom.degenerate(query)];
+    elements.forEach((element) => {
+      this.dom.appendChild(element);
+    });
     return this;
   }
 
-  remove(object) {
-    if (!object) {
-      this.dom.remove();
-    } else if (isElement(object)) {
-      this.dom.removeChild(object);
-    } else if (isString(object)) {
-      const element = this.dom.querySelector(object);
+  remove(query) {
+    // 删除元素 如果参数是Selector，则对所有匹配元素操作
+    const elements = isEffectiveString(query)
+      ? this.dom.querySelectorAll(query)
+      : [Dom.degenerate(query)];
+    elements.forEach((element) => {
       this.dom.removeChild(element);
-    }
+    });
     return this;
   }
 
   text(content) {
+    // 修改innerText
     this.dom.innerText = content;
     return this;
   }
 
   html(content) {
+    // 修改innerHTML
     this.dom.innerHTML = content;
     return this;
   }
 
-  find(query) {
-    return this.dom.querySelector(query);
+  child(query) {
+    // 查找单个子元素
+    let element;
+    if (isEffectiveString(query)) {
+      element = this.dom.querySelector(query);
+    } else {
+      element = Dom.degenerate(query);
+    }
+    return element;
   }
 
-  children(query) {
-    return this.dom.querySelectorAll(query);
+  children(selector) {
+    // 查找子元素集合 若没有参数则返回children()
+    let elements;
+    if (selector === undefined) {
+      elements = this.dom.children();
+    } else {
+      if (!isEffectiveString(selector)) throw new TypeError(`selector不能为${selector}`);
+      elements = this.dom.querySelectorAll(selector);
+    }
+    return elements;
   }
 
-  parent() {
-    const parent = this.dom.parentNode;
-    const result = (parent && (parent.nodeType === 1)) ? parent : undefined;
-    return result;
+  parent(query) {
+    // 查找单个父元素 query可选 可以是querySelector或Dom实例对象
+    return Dom.getParent(this.dom, query);
   }
 
   parents(query) {
-    const parents = getParents(this.dom);
-    let result = [];
-    if (query && isString(query)) {
-      const all = document.querySelectorAll(query);
-      all.forEach((parent) => {
-        if (parents.includes(parent)) {
-          result.push(parent);
-        }
-      });
-    } else {
-      result = parents;
-    }
-    return result;
+    // 查找父元素集合 query可选 可以是querySelector
+    return Dom.getParents(this.dom, query);
+  }
+
+  hasParent(query) {
+    // 查看是否存在query匹配的父元素 query可以是querySelector或Dom实例对象
+    return Dom.hasParent(this.dom, query);
   }
 
   on(event, callback) {
+    // 绑定事件
+    if (!isEffectiveString(event)) throw new TypeError(`event不能是${event}`);
+    if (typeof callback !== 'function') throw new TypeError(`callback不能是${callback}`);
     this.dom.addEventListener(event, callback);
     return this;
   }
 
   off(event, callback) {
+    // 取消事件
+    if (!isEffectiveString(event)) throw new TypeError(`event不能是${event}`);
+    if (typeof callback !== 'function') throw new TypeError(`callback不能是${callback}`);
     this.dom.removeEventListener(event, callback);
     return this;
   }
 
+  clear(event) {
+    // 清空事件
+    if (!isEffectiveString(event)) throw new TypeError(`event不能是${event}`);
+    this.dom[`on${event}`] = undefined;
+    return this;
+  }
+
   static isElement(element) {
+    // 是否是HTMLElement
     return element && (element.nodeType === 1);
   }
-  hasParent(element) {
-    if (!Dom.isElement(element)) return false;
-    const parents = this.parents();
-    let result = false;
-    parents.forEach((parent) => {
-      if (element.isSameNode(parent)) result = true;
-    });
+
+  static getParentsTree(element) {
+    // 获取父元素树
+    if (!Dom.isElement(element)) throw new TypeError(`element不能是${element}`);
+    const tree = [];
+    let buffer = element;
+    while (buffer.parentElement) {
+      buffer = buffer.parentElement;
+      tree.push(buffer);
+    }
+    return tree;
+  }
+
+  static getParent(element, query) {
+    // 查找单个父元素 element是HTMLElement, query可选 可以是querySelector或Dom实例对象
+    if (!Dom.isElement(element)) throw new TypeError(`element不能是${element}`);
+    let result;
+    const tree = Dom.getParentsTree(element);
+    const all = document.querySelectorAll(query);
+    if (query === undefined) {
+      result = element.parentElement;
+    } else {
+      let parentsCollect;
+      if (isEffectiveString(query)) {
+        parentsCollect = tree;
+      } else if (query instanceof Dom) {
+        parentsCollect = [query.dom];
+      } else {
+        throw new TypeError(`query不能是${query}`);
+      }
+      parentsCollect.forEach((parent) => {
+        all.forEach((item) => {
+          if (item.isSameNode(parent)) {
+            result = parent;
+          }
+        });
+      });
+    }
     return result;
   }
+
+  static getParents(element, query) {
+    // 查找父元素集合 element是HTMLElement, query可选 可以是querySelector
+    if (!Dom.isElement(element)) throw new TypeError(`element不能是${element}`);
+    let result;
+    const tree = Dom.getParentsTree(element);
+    const all = document.querySelectorAll(query);
+    if (query === undefined) {
+      result = tree;
+    } else {
+      let parentsCollect;
+      result = [];
+      if (isEffectiveString(query)) {
+        parentsCollect = tree;
+      } else {
+        throw new TypeError(`query不能是${query}`);
+      }
+      parentsCollect.forEach((parent) => {
+        all.forEach((item) => {
+          if (item.isSameNode(parent)) {
+            result.push(parent);
+          }
+        });
+      });
+    }
+    return result;
+  }
+
+  static hasParent(element, query) {
+    // 查看是否存在query匹配的父元素 query可以是querySelector或Dom实例对象
+    if ((!isEffectiveString(query)) && !(query instanceof Dom)) throw new TypeError(`query不能是${query}`);
+    return !!Dom.getParent(element, query);
+  }
+
+  static globalInit() {
+    if (isGlobalInited) return false;
+    isGlobalInited += 1;
+    HTMLCollection.prototype.forEach = Array.prototype.forEach;
+    return isGlobalInited;
+  }
 }
+
+Dom.globalInit();
 
 export default Dom;

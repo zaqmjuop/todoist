@@ -41,18 +41,18 @@ class Mission {
 
   init() {
     if (this.init === 1) return false;
-    const openForm = $(this.adderElement).find('*[name=open-form]');
+    const openForm = $(this.adderElement).child('*[name=open-form]');
     $(openForm).on('click', () => {
       const adderParent = $(this.adderElement).parent();
       const missionItems = this.listElement.querySelectorAll('.mission-item');
       missionItems.forEach(item => $(item).removeClass('hide'));
       adderParent.insertBefore(this.formElement, this.adderElement);
-      $(this.formElement).find('input[name=content]').value = '';
-      $(this.formElement).find('input[name=date]').value = '';
-      $(this.formElement).find('*[name=submit]').innerText = '添加任务';
+      $(this.formElement).child('input[name=content]').value = '';
+      $(this.formElement).child('input[name=date]').value = '';
+      $(this.formElement).child('*[name=submit]').innerText = '添加任务';
       $(this.formElement).attr('data-item-id', '').removeClass('hide');
     });
-    const submit = $(this.formElement).find('button[name=submit]');
+    const submit = $(this.formElement).child('button[name=submit]');
     $(submit).on('click', () => {
       const itemId = $(this.formElement).attr('data-item-id');
       if (!itemId) {
@@ -69,7 +69,7 @@ class Mission {
         }
       });
     });
-    const hideForm = $(this.formElement).find('*[name=hide-form]');
+    const hideForm = $(this.formElement).child('*[name=hide-form]');
     $(hideForm).on('click', () => {
       $(this.formElement).addClass('hide');
       const handleId = $(this.formElement).attr('data-item-id');
@@ -200,10 +200,10 @@ class Mission {
     const parent = $(missionItem).parent();
     const nextItem = missionItem.nextSibling;
     const form = $('#mission-form')[0];
-    const content = $(missionItem).find('*[name=content]').innerText;
-    const date = $(missionItem).find('*[name=date]').innerText;
+    const content = $(missionItem).child('*[name=content]').innerText;
+    const date = $(missionItem).child('*[name=date]').innerText;
     const missionItems = parent.querySelectorAll('.mission-item');
-    const submit = $(form).find('*[name=submit]');
+    const submit = $(form).child('*[name=submit]');
     missionItems.forEach((item) => {
       if (item.id !== missionItem.id) {
         $(item).removeClass('hide');
@@ -212,8 +212,8 @@ class Mission {
     $(missionItem).addClass('hide');
     parent.insertBefore(form, nextItem);
     $(form).removeClass('hide').attr('data-item-id', missionItem.id);
-    $(form).find('input[name=content]').value = content;
-    $(form).find('input[name=date]').value = date;
+    $(form).child('input[name=content]').value = content;
+    $(form).child('input[name=date]').value = date;
     $(submit).text('保存');
     return form;
   }
@@ -252,7 +252,7 @@ class Mission {
       const parent = item.parent();
       const itemNext = item.dom.nextSibling;
       const dragId = $(parent).attr('drag');
-      const dragItem = $(parent).find(`#${dragId}`);
+      const dragItem = $(parent).child(`#${dragId}`);
       const index = { itemIndex: 0, dragIndex: 0 };
       const childNodes = parent.children;
       childNodes.forEach = Array.prototype.forEach;
@@ -268,7 +268,7 @@ class Mission {
       const parent = item.parent();
       const itemNext = item.dom.nextSibling;
       const dragId = event.dataTransfer.getData('Text');
-      const dragItem = $(parent).find(`#${dragId}`);
+      const dragItem = $(parent).child(`#${dragId}`);
       const dragNext = dragItem.nextSibling;
       parent.insertBefore(item.dom, dragNext);
       parent.insertBefore(dragItem, itemNext);
@@ -283,9 +283,9 @@ class Mission {
 
   createMission() {
     const form = this.formElement;
-    const contentInput = $(form).find('input[name=content]');
+    const contentInput = $(form).child('input[name=content]');
     if (!contentInput.value) return false;
-    const dateInput = $(form).find('input[name=date]');
+    const dateInput = $(form).child('input[name=date]');
     this.counter += 1;
     const item = { content: contentInput.value, date: dateInput.value, order: this.counter };
     missions.ready()
@@ -307,8 +307,8 @@ class Mission {
     if (!itemId) return false;
     const item = $(`#${itemId}`)[0];
     if (!item) throw new ReferenceError(`找不到#${itemId}元素`);
-    const contentInput = $(this.formElement).find('input[name=content]');
-    const dateInput = $(this.formElement).find('input[name=date]');
+    const contentInput = $(this.formElement).child('input[name=content]');
+    const dateInput = $(this.formElement).child('input[name=date]');
     const content = contentInput.value;
     const date = dateInput.value;
     const id = Number(itemId.match(/^item-(\d+)$/)[1]);
@@ -316,8 +316,8 @@ class Mission {
     missions.ready()
       .then(() => missions.save(data))
       .then(() => {
-        $(item).find('*[name=content]').innerText = content;
-        $(item).find('*[name=date]').innerText = date;
+        $(item).child('*[name=content]').innerText = content;
+        $(item).child('*[name=date]').innerText = date;
         $(item).removeClass('hide');
         contentInput.value = '';
         dateInput.value = '';
@@ -361,7 +361,7 @@ class Mission {
     // 隐藏新建任务表单
     const form = document.querySelector('#mission-form');
     if (!Utils.isElement(form)) throw new ReferenceError('没有找到mission-form');
-    const hideFormButton = $(form).find('*[name=hide-form]');
+    const hideFormButton = $(form).child('*[name=hide-form]');
     if (!Utils.isElement(form)) throw new ReferenceError('没有找到mission-form表单取消按钮');
     return hideFormButton.click();
   }
