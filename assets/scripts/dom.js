@@ -251,7 +251,7 @@ class Dom {
 
   static isElement(element) {
     // 是否是HTMLElement
-    return element && (element.nodeType === 1);
+    return element && (element instanceof HTMLElement) && (element.nodeType === 1);
   }
 
   static getParentsTree(element) {
