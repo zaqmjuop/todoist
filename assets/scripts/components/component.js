@@ -23,7 +23,7 @@ const ajax = {
     // ajax get
     if (typeof url !== 'string') throw new TypeError('路径错误');
     if (!(callback instanceof Function)) throw new TypeError('回调函数错误');
-    const xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+    const xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new window.ActiveXObject('Microsoft.XMLHTTP');
     xmlhttp.open('GET', url, true);
     xmlhttp.send();
     xmlhttp.onreadystatechange = (res) => {
@@ -74,8 +74,19 @@ class Component {
         }
       });
       if (Object.keys(elements).length > 0) {
+        elements.template = result.template;
         result.elements = elements;
       }
+    }
+    if (result.methods && (typeof result.methods === 'object')) {
+      // 绑定param.methods下的function的this指向
+      const methodNames = Object.keys(result.methods);
+      methodNames.forEach((methodName) => {
+        const method = result.methods[methodName];
+        if (method && (typeof method === 'function')) {
+          result.methods[methodName] = method.bind(result);
+        }
+      });
     }
     try {
       // 生命周期

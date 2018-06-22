@@ -72,18 +72,26 @@ class Dom {
     // 如果参数key是text或html 则修改innerText或innerHTML
     if (!isEffectiveString(key)) throw new TypeError(`参数key不能为 ${key}`);
     let result;
-    if (isEffectiveString(value)) {
-      // 修改属性
-      if (key.toLocaleLowerCase().match(/^text$/)) {
-        this.text(value);
-      } else if (key.toLocaleLowerCase().match(/^html$/)) {
-        this.html(value);
+    if (key.toLocaleLowerCase().match(/^text$/)) {
+      // this.attr(text[,innerText])
+      result = this.text(value);
+    } else if (key.toLocaleLowerCase().match(/^html$/)) {
+      // this.attr(html[,innerHTML])
+      result = this.html(value);
+    } else if ((this.dom.tagName === 'INPUT') && (key === 'value')) {
+      // this.attr(value[, val])
+      if (value !== undefined) {
+        this.dom.value = String(value);
+        result = this;
       } else {
-        this.dom.setAttribute(key, value);
+        result = this.dom.value;
       }
+    } else if (value !== undefined) {
+      // 默认情况设置属性
+      this.dom.setAttribute(key, value);
       result = this;
     } else {
-      // 查看属性
+      // 默认情况查看属性
       result = this.dom.getAttribute(key);
     }
     return result;
@@ -157,15 +165,27 @@ class Dom {
   }
 
   text(content) {
-    // 修改innerText
-    this.dom.innerText = content;
-    return this;
+    // 查看或修改innerText
+    let result;
+    if (content !== undefined) {
+      this.dom.innerText = String(content);
+      result = this;
+    } else {
+      result = this.dom.innerText;
+    }
+    return result;
   }
 
   html(content) {
-    // 修改innerHTML
-    this.dom.innerHTML = content;
-    return this;
+    // 查看或修改innerHTML
+    let result;
+    if (content !== undefined) {
+      this.dom.innerHTML = String(content);
+      result = this;
+    } else {
+      result = this.dom.innerHTML;
+    }
+    return result;
   }
 
   child(query) {

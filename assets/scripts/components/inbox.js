@@ -1,35 +1,74 @@
-import Component from './component';
 import Dom from '../dom';
-
-const findPart = (element) => {
-  // 返回元素的子元素所有含有part属性的元素集合
-  const result = [];
-  element.children.forEach((child) => {
-    if (child.getAttribute('part')) {
-      result.push(child);
-    }
-  });
-  return result;
-};
-
-const findParts = (element) => {
-  const elementPlayer = Dom.of(element);
-  const part = findPart(element);
-  console.log(part);
-  // const result = {};
-  // element.children.forEach((child) => {
-  //   console.log(child.getAttribute('part'));
-  // });
-  return 1;
-};
+import datepicker from '../lib/datepicker';
+import missions from '../indexeddb/missions';
+import Component from './component';
+import missionListItemParam from './missionListItem';
 
 const missionInboxParam = {
   query: 'mission-content',
-  url: './assets/components/mission-inbox.html',
-  created: () => {
-    const parts = findParts(missionInboxParam.template);
-    console.log('created', missionInboxParam.template);
+  url: './assets/components/missionInbox.html',
+  data: {
+    counter: 0,
+  },
+  selectors: {
+    form: '.form',
+    showForm: '.show-form',
+    contentInput: 'input[name=content]',
+    dateInput: 'input[name=date]',
+    cancelForm: '.cancel-form',
+    submit: '.submit',
+    list: '.body ul',
+  },
+  methods: {
+    createMission() {
+      // 创建一条任务
+      const content = Dom.of(this.elements.contentInput).attr('value');
+      const date = Dom.of(this.elements.dateInput).attr('value');
+      if (!content) return false;
+      this.data.counter += 1;
+      const model = { content, date, order: this.data.counter };
+      missions.ready()
+        .then(() => missions.create(model))
+        .then((id) => {
+          // listItem应该是另一个子组件
+          // const listItem = Mission.createMissionItem(contentInput.value, dateInput.value, id);
+          // Dom.of(this.elements.list).append(listItem);
+          const listItem = Dom.of('<mission-list-item>').dom;
+          Dom.of(this.elements.list).append(listItem);
+          missionListItemParam.present = model;
+          Component.pjaxCreate(missionListItemParam);
+          // 尝试
+          Dom.of(this.elements.contentInput).attr('value', '');
+          Dom.of(this.elements.dateInput).attr('value', '');
+        });
+      Dom.of(this.elements.form).attr('data-item-id', '');
+      return this;
+    },
+  },
+  created() {
+    datepicker(this.elements.dateInput);
+    Dom.of(this.elements.showForm).on('click', (event) => {
+      // 展开form
+      Dom.of(this.elements.form).attr('data-item-id', '').removeClass('hide');
+      event.preventDefault();
+      this.elements.contentInput.focus();
+    });
+    Dom.of(this.elements.cancelForm).on('click', () => {
+      // 隐藏form
+      Dom.of(this.elements.form).addClass('hide');
+      this.elements.contentInput.blur();
+    });
+    Dom.of(this.elements.submit).on('click', () => {
+      // 提交表单
+      const itemId = Dom.of(this.elements.form).attr('data-item-id');
+      if (!itemId) {
+        this.methods.createMission();
+      } else {
+        // this.methods.updateMission();
+      }
+    });
   },
 };
+
 
 export default missionInboxParam;
