@@ -24,7 +24,7 @@ const missionInboxParam = {
       // 创建一条任务
       const content = Dom.of(this.elements.contentInput).attr('value');
       const date = Dom.of(this.elements.dateInput).attr('value');
-      if (!content) return false;
+      if (!content) { return false; }
       this.data.counter += 1;
       const model = { content, date, order: this.data.counter };
       missions.ready()

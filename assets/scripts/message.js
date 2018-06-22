@@ -5,7 +5,7 @@ const $ = Dom.of;
 
 class Message {
   static prepareBox() {
-    if (!document.body) throw new ReferenceError('页面加载未完成');
+    if (!document.body) { throw new ReferenceError('页面加载未完成'); }
     let box = $('#alert-box')[0];
     if (!box) {
       box = $('<div>').attr('id', 'alert-box').dom;
@@ -15,8 +15,8 @@ class Message {
   }
 
   static alert(message) {
-    if (!message) throw new TypeError(`参数不能为${message}`);
-    if (!document.body) throw new ReferenceError('页面加载未完成');
+    if (!message) { throw new TypeError(`参数不能为${message}`); }
+    if (!document.body) { throw new ReferenceError('页面加载未完成'); }
     const box = Message.prepareBox();
     const popup = $('<div>').addClass('alert');
     const content = $('<span>').attr('name', 'message').html(message);
@@ -32,8 +32,8 @@ class Message {
   }
 
   static confirm(message, submitCallback, submitText) {
-    if (!message) throw new TypeError(`参数不能为${message}`);
-    if (!document.body) throw new ReferenceError('页面加载未完成');
+    if (!message) { throw new TypeError(`参数不能为${message}`); }
+    if (!document.body) { throw new ReferenceError('页面加载未完成'); }
     const box = Message.prepareBox();
     const popup = $('<div>').addClass('confirm');
     const content = $('<span>').attr('name', 'message').html(message);

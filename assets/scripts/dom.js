@@ -10,7 +10,7 @@ const isEffectiveString = (str) => {
 };
 
 const collectClasses = (classes) => {
-  if (!isEffectiveString(classes)) throw new TypeError(`参数classes不能为 ${classes}`);
+  if (!isEffectiveString(classes)) { throw new TypeError(`参数classes不能为 ${classes}`); }
   return classes.replace(/\s+/g, ' ').split(' ');
 };
 
@@ -20,7 +20,7 @@ class Dom {
   constructor(query) {
     // 允许的参数类型 1.Dom实例对象 2.HTMLElement 3.创建元素所需tagName 4.querySelector
     // 查找只用querySelector匹配符合条件的第一个元素 查找集合用Dom.all(query)
-    if (!query) throw new TypeError('参数无效');
+    if (!query) { throw new TypeError('参数无效'); }
     if (query instanceof Dom) {
       // 参数是Dom的实例对象
       this.dom = query.dom;
@@ -70,7 +70,7 @@ class Dom {
   attr(key, value) {
     // 查看或修改元素的属性
     // 如果参数key是text或html 则修改innerText或innerHTML
-    if (!isEffectiveString(key)) throw new TypeError(`参数key不能为 ${key}`);
+    if (!isEffectiveString(key)) { throw new TypeError(`参数key不能为 ${key}`); }
     let result;
     if (key.toLocaleLowerCase().match(/^text$/)) {
       // this.attr(text[,innerText])
@@ -205,7 +205,7 @@ class Dom {
     if (selector === undefined) {
       elements = this.dom.children();
     } else {
-      if (!isEffectiveString(selector)) throw new TypeError(`selector不能为${selector}`);
+      if (!isEffectiveString(selector)) { throw new TypeError(`selector不能为${selector}`); }
       elements = this.dom.querySelectorAll(selector);
     }
     return elements;
@@ -228,23 +228,23 @@ class Dom {
 
   on(event, callback) {
     // 绑定事件
-    if (!isEffectiveString(event)) throw new TypeError(`event不能是${event}`);
-    if (typeof callback !== 'function') throw new TypeError(`callback不能是${callback}`);
+    if (!isEffectiveString(event)) { throw new TypeError(`event不能是${event}`); }
+    if (typeof callback !== 'function') { throw new TypeError(`callback不能是${callback}`); }
     this.dom.addEventListener(event, callback);
     return this;
   }
 
   off(event, callback) {
     // 取消事件
-    if (!isEffectiveString(event)) throw new TypeError(`event不能是${event}`);
-    if (typeof callback !== 'function') throw new TypeError(`callback不能是${callback}`);
+    if (!isEffectiveString(event)) { throw new TypeError(`event不能是${event}`); }
+    if (typeof callback !== 'function') { throw new TypeError(`callback不能是${callback}`); }
     this.dom.removeEventListener(event, callback);
     return this;
   }
 
   clear(event) {
     // 清空事件
-    if (!isEffectiveString(event)) throw new TypeError(`event不能是${event}`);
+    if (!isEffectiveString(event)) { throw new TypeError(`event不能是${event}`); }
     this.dom[`on${event}`] = undefined;
     return this;
   }
@@ -256,7 +256,7 @@ class Dom {
 
   static getParentsTree(element) {
     // 获取父元素树
-    if (!Dom.isElement(element)) throw new TypeError(`element不能是${element}`);
+    if (!Dom.isElement(element)) { throw new TypeError(`element不能是${element}`); }
     const tree = [];
     let buffer = element;
     while (buffer.parentElement) {
@@ -268,7 +268,7 @@ class Dom {
 
   static getParent(element, query) {
     // 查找单个父元素 element是HTMLElement, query可选 可以是querySelector或Dom实例对象
-    if (!Dom.isElement(element)) throw new TypeError(`element不能是${element}`);
+    if (!Dom.isElement(element)) { throw new TypeError(`element不能是${element}`); }
     let result;
     const tree = Dom.getParentsTree(element);
     const all = document.querySelectorAll(query);
@@ -296,7 +296,7 @@ class Dom {
 
   static getParents(element, query) {
     // 查找父元素集合 element是HTMLElement, query可选 可以是querySelector
-    if (!Dom.isElement(element)) throw new TypeError(`element不能是${element}`);
+    if (!Dom.isElement(element)) { throw new TypeError(`element不能是${element}`); }
     let result;
     const tree = Dom.getParentsTree(element);
     const all = document.querySelectorAll(query);
@@ -323,12 +323,12 @@ class Dom {
 
   static hasParent(element, query) {
     // 查看是否存在query匹配的父元素 query可以是querySelector或Dom实例对象
-    if ((!isEffectiveString(query)) && !(query instanceof Dom)) throw new TypeError(`query不能是${query}`);
+    if ((!isEffectiveString(query)) && !(query instanceof Dom)) { throw new TypeError(`query不能是${query}`); }
     return !!Dom.getParent(element, query);
   }
 
   static globalInit() {
-    if (isGlobalInited) return false;
+    if (isGlobalInited) { return false; }
     isGlobalInited += 1;
     HTMLCollection.prototype.forEach = Array.prototype.forEach;
     return isGlobalInited;
