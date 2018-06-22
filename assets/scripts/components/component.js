@@ -58,6 +58,25 @@ class Component {
     const result = Object.assign(this, param);
     this.selector = document.querySelector(this.query) || document.querySelector(`*[query=${this.query}]`);
     if (!Utils.isElement(this.selector)) { throw new TypeError(`选择器 ${param.query} 未找到匹配项`); }
+    if (result.selectors && (typeof result.selectors === 'object')) {
+      // 接受{}类型的属性param.selectors 遍历param.selectors的键，取每个键的值作为querySelector参数，
+      // 然后找到对应的HTMLElement集合并设置在this.elements属性中
+      // 例如存在param.selectors.foo = '.foo' 则得到this.elements.foo = querySelector('.foo')
+      const selectorNames = Object.keys(result.selectors);
+      const elements = {};
+      selectorNames.forEach((name) => {
+        const selector = result.selectors[name];
+        if (selector && Utils.isString(selector)) {
+          const element = result.template.querySelector(selector);
+          if (Utils.isElement(element)) {
+            elements[name] = element;
+          }
+        }
+      });
+      if (Object.keys(elements).length > 0) {
+        result.elements = elements;
+      }
+    }
     try {
       // 生命周期
       if (Utils.isFunction(result.created)) {
