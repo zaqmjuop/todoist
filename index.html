@@ -76,85 +76,90 @@
       </ul>
     </div>
     <div id="mission" class="content">
-      <div>asd</div>
+      <div>
+        <button id="inbox">inbox</button>
+        <button id="today">today</button>
+        <button id="next-week">next week</button>
+      </div>
       <mission-content></mission-content>
-      <mission-today></mission-today>
-      <div name="content-header" class="content-header flex flex-justify-between flex-center">
-        <h4>所有任务</h4>
-        <div>
-          <div class="relative">
-            <i class="fa fa-signal text-gray hover-black" name="sort" title="排序"></i>
-            <div class="list-menu hide">
-              <ul>
-                <li onclick="mission.sortMissionsByDate('reverse')">按日期降序排序</li>
-                <li onclick="mission.sortMissionsByDate()">按日期升序排序</li>
-                <li>按优先级排序</li>
-                <li>按任务接收人排序</li>
-              </ul>
-              <ul>
-                <li>从模板导入</li>
-                <li>导出模板</li>
-              </ul>
-              <ul>
-                <li>打印</li>
-              </ul>
-              <ul>
-                <li>电邮任务到此项目</li>
-                <li>订阅项目日历</li>
-              </ul>
-              <div class="curtain" style="z-index: -1;"></div>
+      <div class="mission-content">
+        <div name="content-header" class="content-header flex flex-justify-between flex-center">
+          <h4>所有任务</h4>
+          <div>
+            <div class="relative">
+              <i class="fa fa-signal text-gray hover-black" name="sort" title="排序"></i>
+              <div class="list-menu hide">
+                <ul>
+                  <li onclick="mission.sortMissionsByDate('reverse')">按日期降序排序</li>
+                  <li onclick="mission.sortMissionsByDate()">按日期升序排序</li>
+                  <li>按优先级排序</li>
+                  <li>按任务接收人排序</li>
+                </ul>
+                <ul>
+                  <li>从模板导入</li>
+                  <li>导出模板</li>
+                </ul>
+                <ul>
+                  <li>打印</li>
+                </ul>
+                <ul>
+                  <li>电邮任务到此项目</li>
+                  <li>订阅项目日历</li>
+                </ul>
+                <div class="curtain" style="z-index: -1;"></div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="content-body">
-        <ul id="mission-list">
-          <!-- <li class="mission-item" draggable="true" id="item-0">
-            <div class="item-curtain"></div>
-            <div class="item-before">
-              <i class="fa fa-arrows"></i>
+        <div class="content-body">
+          <ul id="mission-list">
+            <!-- <li class="mission-item" draggable="true" id="item-0">
+                        <div class="item-curtain"></div>
+                        <div class="item-before">
+                          <i class="fa fa-arrows"></i>
+                        </div>
+                        <div class="item-left">
+                          <a>
+                            <i name="finish" class="fa fa-circle-o item-icon fa-lg"></i>
+                          </a>
+                          <span>健身房续费 #健康</span>
+                        </div>
+                        <div class="item-right">
+                          <span class="text-sm-center">2019年5月1日</span>
+                        </div>
+                      </li>
+                      <li class="mission-item item-placeholder"></li> -->
+          </ul>
+          <div id="mission-form" class="hide">
+            <div class="input-group">
+              <input name="content" type="text" placeholder="例如：明天下午6点买礼物 p2 #杂物">
+              <div class="input-group-append">
+                <input name="date" type="text" />
+              </div>
             </div>
+            <div id="mission-buttons" class="flex flex-justify-between flex-center">
+              <div>
+                <button name="submit" class="btn-dark">添加任务</button>
+                <button name="hide-form" class="btn-link">取消</button>
+              </div>
+              <div class="flex flex-justify-between flex-center w-25">
+                <i class="fa fa-credit-card" title="项目"></i>
+                <i class="fa fa-clock-o" title="提醒"></i>
+                <i class="fa fa-flag" title="优先级"></i>
+                <i class="fa fa-ellipsis-h" title="更多选项"></i>
+              </div>
+            </div>
+          </div>
+          <div id="add-mission" class="flex flex-justify-between flex-center">
             <div class="item-left">
-              <a>
-                <i name="finish" class="fa fa-circle-o item-icon fa-lg"></i>
-              </a>
-              <span>健身房续费 #健康</span>
+              <button name="open-form" class="btn-link text-lg-center">
+                <i class="fa fa-plus item-icon"></i>
+                <a href="javascript:void(0);">添加任务</a>
+              </button>
             </div>
             <div class="item-right">
-              <span class="text-sm-center">2019年5月1日</span>
+              <i class="fa fa-history" title="显示已存档的任务"></i>
             </div>
-          </li>
-          <li class="mission-item item-placeholder"></li> -->
-        </ul>
-        <div id="mission-form" class="hide">
-          <div class="input-group">
-            <input name="content" type="text" placeholder="例如：明天下午6点买礼物 p2 #杂物">
-            <div class="input-group-append">
-              <input name="date" type="text" />
-            </div>
-          </div>
-          <div id="mission-buttons" class="flex flex-justify-between flex-center">
-            <div>
-              <button name="submit" class="btn-dark">添加任务</button>
-              <button name="hide-form" class="btn-link">取消</button>
-            </div>
-            <div class="flex flex-justify-between flex-center w-25">
-              <i class="fa fa-credit-card" title="项目"></i>
-              <i class="fa fa-clock-o" title="提醒"></i>
-              <i class="fa fa-flag" title="优先级"></i>
-              <i class="fa fa-ellipsis-h" title="更多选项"></i>
-            </div>
-          </div>
-        </div>
-        <div id="add-mission" class="flex flex-justify-between flex-center">
-          <div class="item-left">
-            <button name="open-form" class="btn-link text-lg-center">
-              <i class="fa fa-plus item-icon"></i>
-              <a href="javascript:void(0);">添加任务</a>
-            </button>
-          </div>
-          <div class="item-right">
-            <i class="fa fa-history" title="显示已存档的任务"></i>
           </div>
         </div>
       </div>
@@ -180,8 +185,7 @@
   </div> -->
 
   <a href="./componentRegister.html" style="display: none;"></a>
-  <button id="today">today</button>
-  <button id="next-week">next week</button>
+
 
   <script src="./docs/index.js"></script>
 </body>
