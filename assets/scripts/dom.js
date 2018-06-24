@@ -153,6 +153,11 @@ class Dom {
     return this;
   }
 
+  selfDestruct() {
+    this.dom.parentElement.removeChild(this.dom);
+    return this;
+  }
+
   remove(query) {
     // 删除元素 如果参数是Selector，则对所有匹配元素操作
     const elements = isEffectiveString(query)

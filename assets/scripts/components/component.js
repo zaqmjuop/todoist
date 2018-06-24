@@ -18,6 +18,12 @@
 
 import Utils from '../utils';
 
+let counter = 100001;
+const takeId = () => {
+  counter += 1;
+  return counter;
+};
+
 const ajax = {
   get: (url, callback) => {
     // ajax get
@@ -58,6 +64,7 @@ class Component {
     const result = Object.assign(this, param);
     this.selector = document.querySelector(this.query) || document.querySelector(`*[query=${this.query}]`);
     if (!Utils.isElement(this.selector)) { throw new TypeError(`选择器 ${param.query} 未找到匹配项`); }
+    result.setComponentId();
     if (result.selectors && (typeof result.selectors === 'object')) {
       // 接受{}类型的属性param.selectors 遍历param.selectors的键，取每个键的值作为querySelector参数，
       // 然后找到对应的HTMLElement集合并设置在this.elements属性中
@@ -103,6 +110,93 @@ class Component {
     return result;
   }
 
+  setComponentId() {
+    // 设置 data-component-id 属性
+    this.dataId = String(takeId());
+    this.template.setAttribute('data-c-id', `c${this.dataId}`);
+    this.style.setAttribute('data-c-id', `c${this.dataId}`);
+    const recursive = (element) => {
+      if (!(element instanceof HTMLElement) || (element.childElementCount < 1)) { return false; }
+      element.children.forEach((child) => {
+        child.setAttribute('data-c-id', `c${this.dataId}`);
+        recursive(child);
+      });
+      return element;
+    };
+    recursive(this.template);
+    return this;
+  }
+
+  replaceGeneralScopedStyles(stylesContent) {
+    // stylesContent是常规style 如 "div{} li{}"
+    // 返回 "div[data-c-id=c${this.dataId}]{} li[data-c-id=c${this.dataId}]{}"
+    const regGeneralStyleCompleteStructure = /[#\u002e\u002aA-Za-z][^{}]*{([^{}]*{[^{}]*})*[^{}]*}/g;
+    const styles = stylesContent.match(regGeneralStyleCompleteStructure);
+    styles.forEach((styleContent, styleIndex) => {
+      const rep = this.replaceGeneralScopedStyle(styleContent);
+      styles[styleIndex] = rep;
+    });
+    const result = styles.join(' ');
+    return result;
+  }
+
+  replaceGeneralScopedStyle(style) {
+    // 是单个结构完整的style 如： .klass: hover ul > li[name = x]: before{}
+    // 返回 ...:hover ul[data-c-id=c${this.dataId}]> li[name = x][data-c-id=c${this.dataId}]: before{}
+    const selectorsContents = style.replace(/\s*{.*$/, '').replace(/^\s*/, '').split(',');
+    selectorsContents.forEach((singleSelectorsContent, selectorIndex) => {
+      // singleSelectorsContent是单个结构完整的选择器 如： .klass:hover ul>li[name=x]:before
+      const regSelector = /(\u002a|[#\u002eA-Za-z][^\s+~:>{]*)([\s+~>{]|:\S+)*/g; // 如  [".klass:hover", "ul>", "li[name=x]:before"]
+      const repConent = singleSelectorsContent.replace(regSelector, (match, p1, p2) => {
+        // 替换为 .klass[data-c-id=c${this.dataId}]:hover ul[data-c-id=c${this.dataId}]
+        const rep = `${p1}[data-c-id=c${this.dataId}]${p2 || ''}`;
+        return rep;
+      });
+      // 替换.klass:hover ul>li[name=x]:before 到.klass[data-c-id=c${this.dataId}]。。。
+      selectorsContents[selectorIndex] = repConent;
+    });
+    const repselectorsContents = selectorsContents.join(',');
+    const result = style.replace(/^[^{}]*{/, () => {
+      const rep = `${repselectorsContents} {`;
+      return rep;
+    });
+    return result;
+  }
+
+  handleScopedStyle() {
+    // 处理scoped style 把每个选择器后都加上[data-c-id=c${this.dataId}]
+    // unicode *#. \u002a\u0023\u002e
+    const isScoped = this.style.getAttribute('scoped') || (this.style.getAttribute('scoped') === '');
+    if (!isScoped) {
+      return false;
+    }
+    const content = this.style.innerHTML;
+    // 去掉换行
+    const compressed = content.replace(/\n/g, '').replace(/\s+/g, ' ');
+    const regStyleCompleteStructure = /(@keyframes|@media|[#\u002e\u002aA-Za-z])[^{}]*{([^{}]*{[^{}]*})*[^{}]*}/g;
+    const styles = compressed.match(regStyleCompleteStructure);
+    styles.forEach((singleStyle, styleIndex) => {
+      let repConent;
+      // singleStyle是单条结构完整的style 如: selector {}
+      if (singleStyle.match('@keyframes')) {
+        // css 动画 如：@keyframes myfirst{ from { background: red; }to { background: yellow; }}
+        repConent = singleStyle;
+      } else if (singleStyle.match('@media')) {
+        // 媒体查询 如：@media screen and (max-width: 300px) { body {background-color:lightblue; }}
+        const styleContents = singleStyle.replace(/^[^@]*@media[^{]*{/, '').replace(/}[^}]*$/, '');
+        // styleContents是style主体 body {background-color:lightblue; }
+        repConent = this.replaceGeneralScopedStyles(styleContents);
+      } else {
+        // 常规单条style 如#id{} 或.class{} 或div{} 或div::before{} 或div:hover::before{}
+        repConent = this.replaceGeneralScopedStyle(singleStyle);
+      }
+      styles[styleIndex] = repConent;
+    });
+    const resultStyleHTML = styles.join(' ');
+    this.style.innerHTML = resultStyleHTML;
+    return this;
+  }
+
   implant() {
     // 根据this.query嵌入页面
     const isScoped = this.style.getAttribute('scoped') || (this.style.getAttribute('scoped') === '');
@@ -112,17 +206,15 @@ class Component {
     parent.replaceChild(this.template, this.selector);
     if (this.style) {
       if (isScoped) {
-        // 插入scoped style
-        parent.insertBefore(this.style, parent.childNodes[0]);
+        // 处理scoped style
+        this.handleScopedStyle();
+      }
+      // 插入 style
+      const existStyle = document.querySelector(`style[data-c-id=c${this.dataId}]`);
+      if (existStyle) {
+        document.querySelector('head').replaceChild(this.style, existStyle);
       } else {
-        // 插入global style
-        this.style.setAttribute('component', this.query);
-        const existStyle = document.querySelector(`style[component=${this.query}]`);
-        if (existStyle) {
-          document.querySelector('head').replaceChild(this.style, existStyle);
-        } else {
-          document.querySelector('head').appendChild(this.style);
-        }
+        document.querySelector('head').appendChild(this.style);
       }
     }
     return this;

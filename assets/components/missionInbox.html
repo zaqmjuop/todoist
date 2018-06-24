@@ -67,6 +67,10 @@
     .body .show-form:hover {
       text-decoration: underline;
     }
+
+    .done:hover::before {
+      content: "\f05d";
+    }
   </style>
 </head>
 
@@ -89,7 +93,7 @@
           <div class="item-main">
             <div>
               <span>
-                <i name="finish" class="fa fa-circle-o item-icon fa-lg"></i>
+                <i class="done fa fa-circle-o item-icon fa-lg"></i>
               </span>
               <span class="item-content">
                 内容

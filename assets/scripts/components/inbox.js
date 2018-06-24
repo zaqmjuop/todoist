@@ -44,6 +44,28 @@ const missionInboxParam = {
       Dom.of(this.elements.form).attr('data-item-id', '');
       return this;
     },
+    updateMission() {
+      // 更新一条任务
+      const itemId = Dom.of(this.elements.form).attr('data-item-id');
+      if (!itemId) { return false; }
+      const item = Dom.of(`#${itemId}`);
+      if (!item) { throw new ReferenceError(`找不到#${itemId}元素`); }
+      const content = this.elements.contentInput.value;
+      const date = this.elements.dateInput.value;
+      const id = Number(itemId.match(/^item-(\d+)$/)[1]);
+      const data = { id, content, date };
+      missions.ready()
+        .then(() => missions.save(data))
+        .then(() => {
+          Dom.of(item).child('.item-content').attr('text', content);
+          Dom.of(item).child('.item-date').attr('text', date);
+          Dom.of(item).removeClass('hide');
+          this.elements.contentInput.attr('value', '');
+          this.elements.dateInput.attr('value', '');
+          Dom.of(this.elements.form).addClass('hide');
+        });
+      return this;
+    },
   },
   created() {
     datepicker(this.elements.dateInput);
@@ -64,7 +86,7 @@ const missionInboxParam = {
       if (!itemId) {
         this.methods.createMission();
       } else {
-        // this.methods.updateMission();
+        this.methods.updateMission();
       }
     });
   },

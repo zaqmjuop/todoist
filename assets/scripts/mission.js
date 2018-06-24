@@ -61,6 +61,7 @@ class Mission {
         this.updateMission();
       }
     });
+    // todo
     const formInputs = $(this.formElement).children('input');
     formInputs.forEach((input) => {
       $(input).on('keypress', (event) => {

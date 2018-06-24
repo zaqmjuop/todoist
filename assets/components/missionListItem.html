@@ -2,19 +2,49 @@
 <html lang="en">
 
 <head>
-  <style>
+  <style scoped>
+    li {
+      width: 100%;
+      position: relative;
+      padding: 10px 2em;
+    }
+
+    .before,
+    .after {
+      display: none;
+      position: absolute;
+      top: 10px;
+    }
+
+
+    li:hover .before,
+    li:hover .after {
+      display: inline-block;
+    }
+
+    .before {
+      left: 0;
+    }
+
+    .after {
+      right: 0;
+    }
+
+    .done:hover::before {
+      content: "\f05d";
+    }
   </style>
 </head>
 
 <body>
   <li>
-    <span>
+    <span class="drag-icon before">
       <i class="fa fa-arrows"></i>
     </span>
     <div class="item-main">
       <div>
         <span>
-          <i name="finish" class="fa fa-circle-o item-icon fa-lg"></i>
+          <i class="fa fa-circle-o item-icon fa-lg done" ></i>
         </span>
         <span class="item-content">
           内容
@@ -24,7 +54,7 @@
         日期2018
       </div>
     </div>
-    <span>
+    <span class="after">
       <i class="fa fa-ellipsis-h"></i>
     </span>
   </li>
