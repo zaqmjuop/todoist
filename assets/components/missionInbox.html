@@ -13,6 +13,18 @@
       list-style: none;
     }
 
+    button {
+      outline: none;
+      border-radius: 5px;
+      padding: 7px 12px;
+      border: 1px solid #fff;
+      font-weight: 700;
+    }
+
+    button:hover {
+      cursor: pointer;
+    }
+
     .mission-content {
       margin: 1em 0;
     }
@@ -26,8 +38,6 @@
     }
 
     .body>ul>li {
-      display: flex;
-      justify-content: space-between;
       width: 100%;
     }
 
@@ -86,27 +96,6 @@
     </div>
     <div class="body">
       <ul>
-        <li>
-          <span>
-            <i class="fa fa-arrows"></i>
-          </span>
-          <div class="item-main">
-            <div>
-              <span>
-                <i class="done fa fa-circle-o item-icon fa-lg"></i>
-              </span>
-              <span class="item-content">
-                内容
-              </span>
-            </div>
-            <div class="item-date">
-              日期2018
-            </div>
-          </div>
-          <span>
-            <i class="fa fa-ellipsis-h"></i>
-          </span>
-        </li>
         <li class="form hide">
           <span></span>
           <div class="item-main">
@@ -146,6 +135,7 @@
           </div>
           <span></span>
         </li>
+        <mission-form></mission-form>
       </ul>
     </div>
   </div>

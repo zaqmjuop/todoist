@@ -43,6 +43,7 @@ class Mission {
     if (this.init === 1) return false;
     const openForm = $(this.adderElement).child('*[name=open-form]');
     $(openForm).on('click', () => {
+      // 弹出表单 done
       const adderParent = $(this.adderElement).parent();
       const missionItems = this.listElement.querySelectorAll('.mission-item');
       missionItems.forEach(item => $(item).removeClass('hide'));
@@ -54,16 +55,20 @@ class Mission {
     });
     const submit = $(this.formElement).child('button[name=submit]');
     $(submit).on('click', () => {
+      // 创建一条信息
       const itemId = $(this.formElement).attr('data-item-id');
       if (!itemId) {
+        // done
         this.createMission();
       } else {
+        // todo
         this.updateMission();
       }
     });
-    // todo
+
     const formInputs = $(this.formElement).children('input');
     formInputs.forEach((input) => {
+      // 表单回车
       $(input).on('keypress', (event) => {
         if (Utils.isKeyEnter(event)) {
           submit.click();
@@ -72,6 +77,7 @@ class Mission {
     });
     const hideForm = $(this.formElement).child('*[name=hide-form]');
     $(hideForm).on('click', () => {
+      // 隐藏表单
       $(this.formElement).addClass('hide');
       const handleId = $(this.formElement).attr('data-item-id');
       if (handleId) {
@@ -81,19 +87,21 @@ class Mission {
     });
     const finishItemButtons = $(this.listElement).children('*[name=finish]');
     finishItemButtons.forEach((button) => {
+      // misssion item done
       $(button).on('click', () => {
         const item = $(button).parents('.mission-item')[0];
         $(item).remove();
       });
     });
+    // todo
     this.initDocument();
-    this.initWindow();
     this.initContentHeader();
     this.init = 1;
     return this;
   }
 
   initDocument() {
+    // 全部都是drag todo
     if (document.supportMission) return false;
     document.ondragover = (event) => {
       event.preventDefault();
@@ -154,19 +162,8 @@ class Mission {
     return this;
   }
 
-  initWindow() {
-    if (window.supportMission) return false;
-    window.onresize = () => {
-      this.readjustLeftMenuHeight();
-    };
-    window.addEventListener('load', () => {
-      this.readjustLeftMenuHeight();
-    });
-    window.supportMission = 1;
-    return this;
-  }
-
   initContentHeader() {
+    // todo
     const sortIcon = this.contentHeader.querySelector('*[name=sort]');
     const sortMenu = sortIcon.nextElementSibling;
     const sortCurtain = sortMenu.querySelector('.curtain');
@@ -183,11 +180,6 @@ class Mission {
     }
   }
 
-  readjustLeftMenuHeight() {
-    this.leftMenu.style.height = `${window.innerHeight - 100}px`;
-    return this;
-  }
-
   static isElementComplete() {
     const element = document.querySelector('#mission');
     const listElement = document.querySelector('#mission-list');
@@ -200,7 +192,7 @@ class Mission {
     if (!Utils.isElement(missionItem) || !missionItem.classList.contains('mission-item')) throw new TypeError('不是任务列表的子元素');
     const parent = $(missionItem).parent();
     const nextItem = missionItem.nextSibling;
-    const form = $('#mission-form')[0];
+    const form = $('#mission-form').dom;
     const content = $(missionItem).child('*[name=content]').innerText;
     const date = $(missionItem).child('*[name=date]').innerText;
     const missionItems = parent.querySelectorAll('.mission-item');
@@ -240,7 +232,7 @@ class Mission {
     link.on('click', () => {
       missions.ready()
         .then(() => missions.delete(id))
-        .then(() => item.remove());
+        .then(() => item.selfDestruct());
     });
     item.on('dragstart', (event) => {
       const parent = item.parent();

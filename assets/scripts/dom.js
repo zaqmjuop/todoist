@@ -14,6 +14,7 @@ const collectClasses = (classes) => {
   return classes.replace(/\s+/g, ' ').split(' ');
 };
 
+
 let isGlobalInited = 0;
 
 class Dom {
@@ -154,6 +155,7 @@ class Dom {
   }
 
   selfDestruct() {
+    // 删除自己
     this.dom.parentElement.removeChild(this.dom);
     return this;
   }
@@ -336,6 +338,7 @@ class Dom {
     if (isGlobalInited) { return false; }
     isGlobalInited += 1;
     HTMLCollection.prototype.forEach = Array.prototype.forEach;
+
     return isGlobalInited;
   }
 }

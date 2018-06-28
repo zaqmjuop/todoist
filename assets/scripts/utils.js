@@ -9,9 +9,22 @@ const isFunction = (param) => {
   return res;
 };
 
+const isEmptyString = (content) => {
+  // 是否是空Falsely或空字符串
+  const isFalsely =
+    (content === null) ||
+    (content === undefined) ||
+    (content === false) ||
+    (content === []) ||
+    (content === {});
+  const isEmpty = !String(content).match(/\S/);
+  return isFalsely || isEmpty;
+};
+
 export default {
   isElement,
   isKeyEnter,
   isString,
   isFunction,
+  isEmptyString,
 };

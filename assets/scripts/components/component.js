@@ -62,9 +62,10 @@ class Component {
     if (!Utils.isString(param.query)) { throw new TypeError('param.query应该是字符串类型querySelector参数'); }
     if (!Utils.isElement(param.template)) { throw new TypeError('param.template应该是一个HtmlElement'); }
     const result = Object.assign(this, param);
-    this.selector = document.querySelector(this.query) || document.querySelector(`*[query=${this.query}]`);
+    this.selector = this.selector || document.querySelector(this.query) || document.querySelector(`*[query=${this.query}]`);
     if (!Utils.isElement(this.selector)) { throw new TypeError(`选择器 ${param.query} 未找到匹配项`); }
-    result.setComponentId();
+
+    // 填充param.selectors 填充this.elements
     if (result.selectors && (typeof result.selectors === 'object')) {
       // 接受{}类型的属性param.selectors 遍历param.selectors的键，取每个键的值作为querySelector参数，
       // 然后找到对应的HTMLElement集合并设置在this.elements属性中
@@ -85,6 +86,53 @@ class Component {
         result.elements = elements;
       }
     }
+
+    // childBridge
+    if (result.childBridge && (result.childBridge instanceof Function)) {
+      result.childBridge = result.childBridge();
+    }
+
+    // 确保param.data符合设定
+    if (!(result.data instanceof Function)) throw new TypeError('data应该是Function类型');
+    const data = result.data();
+    result.data = Object.assign({}, data);
+    if ((data instanceof Array) || (typeof data !== 'object')) {
+      throw new TypeError('data应该返回一个Object');
+    } else {
+      const keys = Object.keys(result.data);
+      const isHasFunc = keys.some((key) => {
+        const isFunc = result.data[key] instanceof Function;
+        return isFunc;
+      });
+      if (isHasFunc) { throw new TypeError('data返回的Object中不能含有Function'); }
+    }
+    // watch data
+    // const insideData = Object.assign({}, data);
+    if (result.watch instanceof Function) {
+      const watchs = result.watch();
+      if ((watchs instanceof Object) && (!(watchs instanceof Array))) {
+        const watchKeys = Object.keys(watchs);
+        const dataKeys = Object.keys(data);
+        const keys = watchKeys.filter(key => dataKeys.includes(key));
+        keys.forEach((key) => {
+          Object.defineProperty(result.data, key, {
+            enumerable: true,
+            get: () => data[key],
+            set: (val) => {
+              data[key] = val;
+              watchs[key]();
+            },
+          });
+        });
+      }
+    }
+
+    // 设置this.componentId属性
+    result.setComponentId();
+
+    // 子组件
+    result.components = [];
+
     if (result.methods && (typeof result.methods === 'object')) {
       // 绑定param.methods下的function的this指向
       const methodNames = Object.keys(result.methods);
@@ -95,6 +143,7 @@ class Component {
         }
       });
     }
+
     try {
       // 生命周期
       if (Utils.isFunction(result.created)) {
@@ -112,13 +161,13 @@ class Component {
 
   setComponentId() {
     // 设置 data-component-id 属性
-    this.dataId = String(takeId());
-    this.template.setAttribute('data-c-id', `c${this.dataId}`);
-    this.style.setAttribute('data-c-id', `c${this.dataId}`);
+    this.componentId = String(takeId());
+    this.template.setAttribute('data-c-id', `c${this.componentId}`);
+    this.style.setAttribute('data-c-id', `c${this.componentId}`);
     const recursive = (element) => {
       if (!(element instanceof HTMLElement) || (element.childElementCount < 1)) { return false; }
       element.children.forEach((child) => {
-        child.setAttribute('data-c-id', `c${this.dataId}`);
+        child.setAttribute('data-c-id', `c${this.componentId}`);
         recursive(child);
       });
       return element;
@@ -129,7 +178,7 @@ class Component {
 
   replaceGeneralScopedStyles(stylesContent) {
     // stylesContent是常规style 如 "div{} li{}"
-    // 返回 "div[data-c-id=c${this.dataId}]{} li[data-c-id=c${this.dataId}]{}"
+    // 返回 "div[data-c-id=c${this.componentId}]{} li[data-c-id=c${this.componentId}]{}"
     const regGeneralStyleCompleteStructure = /[#\u002e\u002aA-Za-z][^{}]*{([^{}]*{[^{}]*})*[^{}]*}/g;
     const styles = stylesContent.match(regGeneralStyleCompleteStructure);
     styles.forEach((styleContent, styleIndex) => {
@@ -142,17 +191,23 @@ class Component {
 
   replaceGeneralScopedStyle(style) {
     // 是单个结构完整的style 如： .klass: hover ul > li[name = x]: before{}
-    // 返回 ...:hover ul[data-c-id=c${this.dataId}]> li[name = x][data-c-id=c${this.dataId}]: before{}
+    // 返回 ...:hover ul[data-c-id=c${this.componentId}]> li
     const selectorsContents = style.replace(/\s*{.*$/, '').replace(/^\s*/, '').split(',');
     selectorsContents.forEach((singleSelectorsContent, selectorIndex) => {
       // singleSelectorsContent是单个结构完整的选择器 如： .klass:hover ul>li[name=x]:before
-      const regSelector = /(\u002a|[#\u002eA-Za-z][^\s+~:>{]*)([\s+~>{]|:\S+)*/g; // 如  [".klass:hover", "ul>", "li[name=x]:before"]
-      const repConent = singleSelectorsContent.replace(regSelector, (match, p1, p2) => {
-        // 替换为 .klass[data-c-id=c${this.dataId}]:hover ul[data-c-id=c${this.dataId}]
-        const rep = `${p1}[data-c-id=c${this.dataId}]${p2 || ''}`;
-        return rep;
+      const regSingleSelector = /[#\u002a\u002eA-Za-z][^\s+~>{]*/g; // 如  [".klass:hover", "ul>", "li[name=x]:before"]
+      const repConent = singleSelectorsContent.replace(regSingleSelector, (selector) => {
+        // selector是单个选择器如 .klass:hover 或 ul 或 li[name=x]:before
+        const regNoPseudo = /([#\u002a\u002eA-Za-z][^:]*)/;
+        const repSingleSelector = selector.replace(regNoPseudo, (selectorNoPseudo) => {
+          // repSingleSelector是将选择器主体末尾，伪选择器前加上[data-c-id=c${this.componentId}]
+          // 如从 li[name=x]:before => li[name=x][data-c-id=c${this.componentId}]:before
+          const repNoPseudo = `${selectorNoPseudo}[data-c-id=c${this.componentId}]`;
+          return repNoPseudo;
+        });
+        return repSingleSelector;
       });
-      // 替换.klass:hover ul>li[name=x]:before 到.klass[data-c-id=c${this.dataId}]。。。
+      // 替换.klass:hover ul>li[name=x]:before 到.klass[data-c-id=c${this.componentId}]。。。
       selectorsContents[selectorIndex] = repConent;
     });
     const repselectorsContents = selectorsContents.join(',');
@@ -164,7 +219,7 @@ class Component {
   }
 
   handleScopedStyle() {
-    // 处理scoped style 把每个选择器后都加上[data-c-id=c${this.dataId}]
+    // 处理scoped style 把每个选择器后都加上[data-c-id=c${this.componentId}]
     // unicode *#. \u002a\u0023\u002e
     const isScoped = this.style.getAttribute('scoped') || (this.style.getAttribute('scoped') === '');
     if (!isScoped) {
@@ -210,7 +265,7 @@ class Component {
         this.handleScopedStyle();
       }
       // 插入 style
-      const existStyle = document.querySelector(`style[data-c-id=c${this.dataId}]`);
+      const existStyle = document.querySelector(`style[data-c-id=c${this.componentId}]`);
       if (existStyle) {
         document.querySelector('head').replaceChild(this.style, existStyle);
       } else {
@@ -246,6 +301,22 @@ class Component {
     const promise = Component.pjaxFormatHtml(param.url).then((format) => {
       const parameter = Object.assign(param, format);
       const cpt = Component.of(parameter);
+      return cpt;
+    });
+    return promise;
+  }
+
+  appendComponent(param) {
+    const parameter = Object.assign({}, param);
+    // 通过参数param.url标示为html地址， 通过pjax获取html并创建Component实例对象
+    if (!Utils.isString(param.url)) { throw new TypeError('param.url应该是字符串类型html文件地址'); }
+    const promise = Component.pjaxFormatHtml(param.url).then((format) => {
+      parameter.template = format.template;
+      parameter.style = format.style;
+      parameter.selector = this.template.querySelector(parameter.query);
+      const cpt = Component.of(parameter);
+      // 将子组件保存在this.components中
+      this.components.push(cpt);
       return cpt;
     });
     return promise;

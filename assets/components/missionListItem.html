@@ -4,15 +4,17 @@
 <head>
   <style scoped>
     li {
-      width: 100%;
+      width: calc(100% - 3em);
       position: relative;
-      padding: 10px 2em;
+      padding: 10px 0;
+      margin: 0 auto;
     }
 
-    .before,
-    .after {
+    li .before,
+    li .after {
       display: none;
       position: absolute;
+      width: 1.5em;
       top: 10px;
     }
 
@@ -23,15 +25,22 @@
     }
 
     .before {
-      left: 0;
+      left: -1.5em;
+      padding-right: 0.5em;
     }
 
     .after {
-      right: 0;
+      right: -1.5em;
+      padding-left: 0.5em;
     }
 
     .done:hover::before {
       content: "\f05d";
+    }
+
+    .item-main{
+      display: flex;
+      justify-content: space-between;
     }
   </style>
 </head>
@@ -42,12 +51,13 @@
       <i class="fa fa-arrows"></i>
     </span>
     <div class="item-main">
+      <span id="counter">未填充</span>
       <div>
         <span>
-          <i class="fa fa-circle-o item-icon fa-lg done" ></i>
+          <i class="fa fa-circle-o item-icon fa-lg done"></i>
         </span>
         <span class="item-content">
-          内容
+          内容          
         </span>
       </div>
       <div class="item-date">
