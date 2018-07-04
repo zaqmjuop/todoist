@@ -4,16 +4,20 @@ import missionInboxParam from './inbox';
 const missionTodayParam = {
   query: 'mission-content',
   url: './assets/components/mission-today.html',
+  data() {
+    return {};
+  },
   created: () => {
-    console.log('created', missionTodayParam.template);
   },
 };
 
 const missionNextWeekParam = {
   query: 'mission-content',
   url: './assets/components/mission-next-week.html',
+  data() {
+    return {};
+  },
   created: () => {
-    console.log('created', missionNextWeekParam.template);
   },
 };
 
@@ -31,7 +35,9 @@ const main = () => {
     inboxButton.onclick = () => {
       Component.pjaxCreate(missionInboxParam);
     };
-    inboxButton.click();
+    setTimeout(() => {
+      inboxButton.click();
+    }, 100);
   });
 };
 

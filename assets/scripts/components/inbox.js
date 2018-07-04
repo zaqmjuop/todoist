@@ -1,10 +1,8 @@
 import Dom from '../dom';
-import datepicker from '../lib/datepicker';
 import missions from '../indexeddb/missions';
 import Component from './component';
 import missionListItemParam from './missionListItem';
-import Utils from '../utils';
-import missionForm from './missionForm';
+import missionForm from '../components/missionForm';
 
 const missionInboxParam = {
   query: 'mission-content',
@@ -16,103 +14,117 @@ const missionInboxParam = {
     };
   },
   selectors: {
-    form: '.form',
     showForm: '.show-form',
-    contentInput: 'input[name=content]',
-    dateInput: 'input[name=date]',
-    cancelForm: '.cancel-form',
-    submit: '.submit',
     list: '.body ul',
+    createMission: '.create-mission',
   },
   methods: {
-    createMission() {
-      // 创建一条任务
-      const content = Dom.of(this.elements.contentInput).attr('value');
-      const date = Dom.of(this.elements.dateInput).attr('value');
-      if (Utils.isEmptyString(content)) { return false; }
-      this.data.counter += 1;
-      const model = { content, date, order: this.data.counter };
-      missions.ready()
-        .then(() => missions.create(model))
-        .then((id) => {
+    loadDB() {
+      missions.ready().then(() => {
+        const promiseAll = missions.getAll();
+        return promiseAll;
+      }).then((datas) => {
+        const sortByDate = datas.sort((a, b) => {
+          const dateA = new Date(a.date);
+          const dateB = new Date(b.date);
+          return dateA.getTime() > dateB.getTime();
+        });
+        sortByDate.forEach((data) => {
           // 添加 li item
           const listItem = Dom.of('<mission-list-item>').dom;
-          Dom.of(this.elements.list).append(listItem);
-          missionListItemParam.present = Object.assign(model, { id });
-          Component.pjaxCreate(missionListItemParam);
-          Dom.of(this.elements.contentInput).attr('value', '');
-          Dom.of(this.elements.dateInput).attr('value', '');
+          Dom.of(listItem).insertBefore(this.elements.createMission);
+          const present = Object.assign(data, { formId: this.data.formId });
+          const liParam = Object.assign({ present }, missionListItemParam);
+          Component.pjaxCreate(liParam);
         });
-      Dom.of(this.elements.form).attr('data-item-id', '');
-      return this;
+      });
     },
-    updateMission() {
-      // 更新一条任务
-      const itemId = Dom.of(this.elements.form).attr('data-item-id');
-      if (!itemId) { return false; }
-      const item = Dom.of(`#${itemId}`);
-      if (!item) { throw new ReferenceError(`找不到#${itemId}元素`); }
-      const content = this.elements.contentInput.value;
-      const date = this.elements.dateInput.value;
-      const id = Number(itemId.match(/^item-(\d+)$/)[1]);
-      const data = { id, content, date };
-      missions.ready()
-        .then(() => missions.save(data))
-        .then(() => {
-          Dom.of(item).child('.item-content').attr('text', content);
-          Dom.of(item).child('.item-date').attr('text', date);
-          Dom.of(item).removeClass('hide');
-          this.elements.contentInput.attr('value', '');
-          this.elements.dateInput.attr('value', '');
-          Dom.of(this.elements.form).addClass('hide');
+    initForm() {
+      // 添加form
+      const position = Dom.of('<mission-form>').dom;
+      Dom.of(position).insertBefore(this.elements.createMission);
+      Component.pjaxCreate(missionForm).then((formCpt) => {
+        formCpt.methods.hide();
+        this.data.formId = formCpt.componentId;
+        return formCpt;
+      }).then((formCpt) => {
+        // 显示新建表单
+        Dom.of(this.elements.showForm).on('click', () => {
+          // 若存在data-cid属性 先还原
+          const beforeCid = Dom.of(formCpt.template).attr('data-cid');
+          if (beforeCid) {
+            const beforeComponent = Component.find(beforeCid);
+            if (beforeComponent) {
+              formCpt.replaceSelf(beforeComponent);
+            }
+          }
+          // 还原属性
+          Dom.of(position).insertBefore(this.elements.createMission);
+          formCpt.present = {};
+          formCpt.replaceElement(position);
+          formCpt.methods.show();
         });
+        return formCpt;
+      }).then((formCpt) => {
+        // 表单新建
+        formCpt.addEventListener('create', (e) => {
+          if (!e.detail.content) { return false; }
+          missions.ready().then(() => {
+            const create = missions.set(e.detail);
+            return create;
+          }).then((result) => {
+            // 添加 li item
+            const listItem = Dom.of('<mission-list-item>').dom;
+            Dom.of(listItem).insertBefore(this.elements.createMission);
+            const present = {
+              formId: this.data.formId,
+              content: e.detail.content,
+              date: e.detail.date,
+              id: result,
+            };
+            const liParam = Object.assign({ present }, missionListItemParam);
+            const li = Component.pjaxCreate(liParam);
+            return li;
+          }).then((li) => {
+            formCpt.refresh();
+            formCpt.methods.hide();
+            li.template.focus();
+          });
+          return formCpt;
+        });
+        // 更新表单
+        formCpt.addEventListener('update', (e) => {
+          if (!e.detail.content) { return false; }
+          const updateData = {
+            content: e.detail.content,
+            date: e.detail.date,
+            id: e.detail.id,
+          };
+          missions.ready().then(() => {
+            const save = missions.set(updateData);
+            return save;
+          }).then(() => {
+            // 更新后将form替换为li
+            const li = Component.find(e.detail.cid);
+            li.present.content = updateData.content;
+            li.present.date = updateData.date;
+            li.present.id = updateData.id;
+            formCpt.replaceSelf(li);
+          });
+          return formCpt;
+        });
+      });
+    },
+    init() {
+      if (this.data.inited) { return false; }
+      this.data.inited = 1;
+      this.methods.initForm();
       return this;
     },
   },
   created() {
-    // this.appendComponent(missionForm);
-    datepicker(this.elements.dateInput);
-    Dom.of(this.elements.showForm).on('click', (event) => {
-      // 展开form
-      Dom.of(this.elements.form).attr('data-item-id', '').removeClass('hide');
-      this.elements.contentInput.focus();
-      event.stopPropagation();
-    });
-    Dom.of(this.elements.cancelForm).on('click', (event) => {
-      // 隐藏form
-      Dom.of(this.elements.form).addClass('hide');
-      this.elements.contentInput.blur();
-      event.stopPropagation();
-    });
-    Dom.of(this.elements.submit).on('click', (event) => {
-      // 提交表单
-      const itemId = Dom.of(this.elements.form).attr('data-item-id');
-      if (!itemId) {
-        this.methods.createMission();
-      } else {
-        // todo
-        this.methods.updateMission();
-      }
-      event.stopPropagation();
-    });
-    missions.ready().then(() => {
-      const promiseAll = missions.getAll();
-      return promiseAll;
-    }).then((datas) => {
-      const sortByDate = datas.sort((a, b) => {
-        const dateA = new Date(a.date);
-        const dateB = new Date(b.date);
-        return dateA.getTime() > dateB.getTime();
-      });
-      sortByDate.forEach((data) => {
-        // 添加 li item
-        const listItem = Dom.of('<mission-list-item>').dom;
-        Dom.of(this.elements.list).append(listItem);
-        missionListItemParam.childBridge = () => data;
-        missionListItemParam.present = data;
-        this.appendComponent(missionListItemParam);
-      });
-    });
+    this.methods.loadDB();
+    this.methods.init();
   },
 };
 

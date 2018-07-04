@@ -29,7 +29,10 @@ class Store {
   }
 
   closeDB() {
-    return this.database && (this.database instanceof IDBDatabase) && this.database.close();
+    if (this.database && this.database.isOpen) {
+      this.database.close();
+      this.database.isOpen = false;
+    }
   }
 
   openDB(version) {
@@ -42,7 +45,9 @@ class Store {
     }
     const openVersion = (version && Number.isSafeInteger(version) && (version > this.version))
       ? version : this.version;
-    this.closeDB();
+    if (this.database) {
+      this.closeDB();
+    }
     const promise = new Promise((resolve, reject) => {
       // const request = indexedDB.open(this.databaseName, openVersion);
       const request = (version && Number.isSafeInteger(version) && (version > this.version))

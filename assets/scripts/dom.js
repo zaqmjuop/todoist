@@ -72,28 +72,36 @@ class Dom {
     // 查看或修改元素的属性
     // 如果参数key是text或html 则修改innerText或innerHTML
     if (!isEffectiveString(key)) { throw new TypeError(`参数key不能为 ${key}`); }
-    let result;
-    if (key.toLocaleLowerCase().match(/^text$/)) {
-      // this.attr(text[,innerText])
-      result = this.text(value);
-    } else if (key.toLocaleLowerCase().match(/^html$/)) {
-      // this.attr(html[,innerHTML])
-      result = this.html(value);
-    } else if ((this.dom.tagName === 'INPUT') && (key === 'value')) {
-      // this.attr(value[, val])
-      if (value !== undefined) {
+    let result = this;
+    if (arguments.length > 1) {
+      // 有value参数
+      if (key.toLocaleLowerCase().match(/^text$/)) {
+        // this.attr(text[,innerText])
+        this.dom.innerText = String(value);
+      } else if (key.toLocaleLowerCase().match(/^html$/)) {
+        // this.attr(html[,innerHTML])
+        this.dom.innerHTML = String(value);
+      } else if ((this.dom.tagName === 'INPUT') && (key === 'value')) {
+        // this.attr(value[, val])
         this.dom.value = String(value);
-        result = this;
       } else {
-        result = this.dom.value;
+        this.dom.setAttribute(key, value);
       }
-    } else if (value !== undefined) {
-      // 默认情况设置属性
-      this.dom.setAttribute(key, value);
-      result = this;
-    } else {
-      // 默认情况查看属性
-      result = this.dom.getAttribute(key);
+    }
+    if (arguments.length <= 1) {
+      // 没有value参数 默认情况查看属性
+      if (key.toLocaleLowerCase().match(/^text$/)) {
+        // this.attr(text[,innerText])
+        result = this.dom.innerText;
+      } else if (key.toLocaleLowerCase().match(/^html$/)) {
+        // this.attr(html[,innerHTML])
+        result = this.dom.innerHTML;
+      } else if ((this.dom.tagName === 'INPUT') && (key === 'value')) {
+        // this.attr(value[, val])
+        result = this.dom.value;
+      } else {
+        result = this.dom.getAttribute(key);
+      }
     }
     return result;
   }
@@ -154,9 +162,53 @@ class Dom {
     return this;
   }
 
+  replace(element) {
+    // 将自身替换为另一个element
+    if (!Dom.isElement(element)) {
+      throw new TypeError(`${element}不是HTMLElement`);
+    }
+    const parent = this.dom.parentElement;
+    if (parent) {
+      parent.replaceChild(element, this.dom);
+    }
+    return element;
+  }
+
+  insertBefore(element) {
+    // 插入到另一个HTMLElement之前
+    if (!Dom.isElement(element)) {
+      throw new TypeError(`${element}不是HTMLElement`);
+    }
+    const parent = element.parentElement;
+    if (parent) {
+      parent.insertBefore(this.dom, element);
+    }
+    return element;
+  }
+
+  insertAfter(element) {
+    // 插入到另一个HTMLElement之后
+    if (!Dom.isElement(element)) {
+      throw new TypeError(`${element}不是HTMLElement`);
+    }
+    const parent = element.parentElement;
+    if (parent) {
+      const after = element.nextElementSibling;
+      if (after) {
+        parent.insertBefore(this.dom, after);
+      } else {
+        parent.appendChild(this.dom);
+      }
+    }
+    return element;
+  }
+
   selfDestruct() {
     // 删除自己
-    this.dom.parentElement.removeChild(this.dom);
+    const parent = this.dom.parentElement;
+    if (parent) {
+      parent.removeChild(this.dom);
+    }
     return this;
   }
 

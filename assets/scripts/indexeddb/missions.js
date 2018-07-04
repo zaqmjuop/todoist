@@ -6,11 +6,18 @@ missions.create = item => missions.set(item);
 
 missions.save = item => missions.set(item);
 
-missions.init = () => {
-  if (missions.init === 1) { return this; }
-  missions.init = 1;
-  return missions.ready().then(() => missions.addColumns(['date', 'content', 'order']));
+let inited = 0;
+
+const init = () => {
+  if (inited) { return missions; }
+  inited = 1;
+  const promise = missions.ready().then(() => {
+    const addColumns = missions.addColumns(['date', 'content', 'order']);
+    return addColumns;
+  });
+  return promise;
 };
-missions.init();
+
+init();
 
 export default missions;

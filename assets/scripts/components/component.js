@@ -1,3 +1,6 @@
+import Dom from '../dom';
+import Utils from '../utils';
+
 // 创建component的两种方式
 // 参数
 // const param = {
@@ -16,7 +19,8 @@
 // 方式二 直接异步
 // Component.pjaxCreate(param);
 
-import Utils from '../utils';
+// 保存所有创建的组件
+const components = [];
 
 let counter = 100001;
 const takeId = () => {
@@ -55,15 +59,23 @@ const pjax = {
 class Component {
   // script来自js文件  template和style 来自html文件
   constructor(param) {
-    // param.query是document.querySelector参数
+    // param.query是Dom.of参数
     // param.template是HtmlElement
     // param.style是<style>
     if (typeof param !== 'object') { throw new TypeError('param应该是一个object'); }
-    if (!Utils.isString(param.query)) { throw new TypeError('param.query应该是字符串类型querySelector参数'); }
     if (!Utils.isElement(param.template)) { throw new TypeError('param.template应该是一个HtmlElement'); }
     const result = Object.assign(this, param);
-    this.selector = this.selector || document.querySelector(this.query) || document.querySelector(`*[query=${this.query}]`);
-    if (!Utils.isElement(this.selector)) { throw new TypeError(`选择器 ${param.query} 未找到匹配项`); }
+
+    // 在页面插入的位置
+    if (Utils.isString(this.query)) {
+      Dom.of(this.template).attr('data-c-query', this.query);
+    }
+    const position = Dom.of(result.query).dom || Dom.of(`*[data-c-query=${result.query}]`).dom;
+    if (!position) {
+      throw new TypeError(`选择器 ${result.query} 未找到匹配项`);
+    } else {
+      result.query = position;
+    }
 
     // 填充param.selectors 填充this.elements
     if (result.selectors && (typeof result.selectors === 'object')) {
@@ -87,13 +99,8 @@ class Component {
       }
     }
 
-    // childBridge
-    if (result.childBridge && (result.childBridge instanceof Function)) {
-      result.childBridge = result.childBridge();
-    }
-
     // 确保param.data符合设定
-    if (!(result.data instanceof Function)) throw new TypeError('data应该是Function类型');
+    if (!(result.data instanceof Function)) throw new TypeError('缺少data属性或data不是Function类型');
     const data = result.data();
     result.data = Object.assign({}, data);
     if ((data instanceof Array) || (typeof data !== 'object')) {
@@ -133,30 +140,64 @@ class Component {
     // 子组件
     result.components = [];
 
-    if (result.methods && (typeof result.methods === 'object')) {
-      // 绑定param.methods下的function的this指向
-      const methodNames = Object.keys(result.methods);
-      methodNames.forEach((methodName) => {
-        const method = result.methods[methodName];
-        if (method && (typeof method === 'function')) {
-          result.methods[methodName] = method.bind(result);
-        }
-      });
-    }
+    // 绑定param.methods下的function的this指向
+    const methods = Object.assign({}, result.methods);
+    const methodNames = Object.keys(methods);
+    methodNames.forEach((methodName) => {
+      const method = methods[methodName];
+      if (method && (typeof method === 'function')) {
+        methods[methodName] = method.bind(result);
+      }
+    });
+    result.methods = methods;
 
-    try {
-      // 生命周期
-      if (Utils.isFunction(result.created)) {
-        result.created();
-      }
-      result.implant();
-      if (Utils.isFunction(result.implanted)) {
-        result.implanted();
-      }
-    } catch (error) {
-      console.error(error);
-    }
+    this.lifeCycle();
+
+    components.push(result);
     return result;
+  }
+  lifeCycle() {
+    // 生命周期
+    if (Utils.isFunction(this.created)) {
+      this.created();
+    }
+    this.implant();
+    if (Utils.isFunction(this.implanted)) {
+      this.implanted();
+    }
+  }
+
+  refresh(present) {
+    if (present) {
+      this.present = present;
+    }
+    if (Utils.isFunction(this.created)) {
+      this.created();
+    }
+    if (Utils.isFunction(this.implanted)) {
+      this.implanted();
+    }
+  }
+
+  static find(componentId) {
+    // window.Component.find查找组件
+    const findId = Number(componentId);
+    const filter = components.filter((component) => {
+      const id = Number(component.componentId);
+      return id === findId;
+    });
+    return filter[0];
+  }
+
+  addEventListener(typeArg, callback) {
+    // 添加事件
+    this.template.addEventListener(typeArg, callback);
+  }
+
+  dispatchEvent(typeArg, detail) {
+    // 派发事件
+    const event = new CustomEvent(typeArg, { detail });
+    this.template.dispatchEvent(event);
   }
 
   setComponentId() {
@@ -255,10 +296,9 @@ class Component {
   implant() {
     // 根据this.query嵌入页面
     const isScoped = this.style.getAttribute('scoped') || (this.style.getAttribute('scoped') === '');
-    const parent = this.selector.parentElement;
+    const parent = Dom.of(this.query).parent();
     // 插入template
-    this.template.setAttribute('query', this.query);
-    parent.replaceChild(this.template, this.selector);
+    parent.replaceChild(this.template, this.query);
     if (this.style) {
       if (isScoped) {
         // 处理scoped style
@@ -273,6 +313,15 @@ class Component {
       }
     }
     return this;
+  }
+
+  replaceElement(element) {
+    // 替换到指定元素的位置
+    if (!Dom.isElement(element)) {
+      throw new TypeError(`${element}不是HTMLElement`);
+    }
+    Dom.of(element).replace(this.template);
+    this.refresh();
   }
 
   static pjaxFormatHtml(url) {
@@ -310,10 +359,10 @@ class Component {
     const parameter = Object.assign({}, param);
     // 通过参数param.url标示为html地址， 通过pjax获取html并创建Component实例对象
     if (!Utils.isString(param.url)) { throw new TypeError('param.url应该是字符串类型html文件地址'); }
-    const promise = Component.pjaxFormatHtml(param.url).then((format) => {
-      parameter.template = format.template;
-      parameter.style = format.style;
-      parameter.selector = this.template.querySelector(parameter.query);
+    const promise = Component.pjaxFormatHtml(param.url).then(({ template, style }) => {
+      parameter.template = template;
+      parameter.style = style;
+      parameter.query = this.template.querySelector(parameter.query);
       const cpt = Component.of(parameter);
       // 将子组件保存在this.components中
       this.components.push(cpt);
@@ -321,7 +370,29 @@ class Component {
     });
     return promise;
   }
+
+  replaceSelf(param) {
+    // 将自己替换为另一个组件
+    let promise;
+    if (param instanceof Component) {
+      promise = new Promise((resolve) => {
+        Dom.of(this.template).replace(param.template);
+        param.refresh();
+        resolve(param);
+      });
+    } else {
+      if (!Utils.isString(param.url)) { throw new TypeError('param.url应该是字符串类型html文件地址'); }
+      promise = Component.pjaxFormatHtml(param.url).then(({ template, style }) => {
+        const parameter = Object.assign(param, { template, style });
+        parameter.query = this.template;
+        const cpt = Component.of(parameter);
+        return cpt;
+      });
+    }
+    return promise;
+  }
 }
 
+window.Component = Component;
 
 export default Component;

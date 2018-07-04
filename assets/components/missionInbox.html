@@ -96,33 +96,8 @@
     </div>
     <div class="body">
       <ul>
-        <li class="form hide">
-          <span></span>
-          <div class="item-main">
-            <div class="w-100">
-              <div class="input-group">
-                <input name="content" type="text" placeholder="例如：明天下午6点买礼物 p2 #杂物">
-                <div class="input-group-append">
-                  <input name="date" type="text" placeholder="日期" />
-                </div>
-              </div>
-              <div class="submits flex flex-justify-between flex-center">
-                <div>
-                  <button class="btn-dark submit">添加任务</button>
-                  <button class="cancel-form btn-link">取消</button>
-                </div>
-                <!-- <div>
-                  <i class="fa fa-credit-card" title="项目"></i>
-                  <i class="fa fa-clock-o" title="提醒"></i>
-                  <i class="fa fa-flag" title="优先级"></i>
-                  <i class="fa fa-ellipsis-h" title="更多选项"></i>
-                </div> -->
-              </div>
-            </div>
-          </div>
-          <span></span>
-        </li>
-        <li>
+        <mission-form></mission-form>
+        <li class="create-mission">
           <span></span>
           <div class="item-main flex flex-justify-between">
             <span class="show-form">
@@ -134,8 +109,7 @@
             </span>
           </div>
           <span></span>
-        </li>
-        <mission-form></mission-form>
+        </li>        
       </ul>
     </div>
   </div>

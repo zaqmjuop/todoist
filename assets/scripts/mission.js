@@ -296,26 +296,27 @@ class Mission {
   }
 
   updateMission() {
-    const itemId = $(this.formElement).attr('data-item-id');
+    const itemId = Dom.of(this.formElement).attr('data-item-id');
     if (!itemId) return false;
-    const item = $(`#${itemId}`)[0];
+    const item = Dom.of(`#${itemId}`).dom;
     if (!item) throw new ReferenceError(`找不到#${itemId}元素`);
-    const contentInput = $(this.formElement).child('input[name=content]');
-    const dateInput = $(this.formElement).child('input[name=date]');
+    const contentInput = Dom.of(this.formElement).child('input[name=content]');
+    const dateInput = Dom.of(this.formElement).child('input[name=date]');
     const content = contentInput.value;
     const date = dateInput.value;
     const id = Number(itemId.match(/^item-(\d+)$/)[1]);
     const data = { id, content, date };
-    missions.ready()
-      .then(() => missions.save(data))
-      .then(() => {
-        $(item).child('*[name=content]').innerText = content;
-        $(item).child('*[name=date]').innerText = date;
-        $(item).removeClass('hide');
-        contentInput.value = '';
-        dateInput.value = '';
-        $(this.formElement).addClass('hide');
-      });
+    missions.ready().then(() => {
+      const promise = missions.save(data);
+      return promise;
+    }).then(() => {
+      Dom.of(item).child('*[name=content]').innerText = content;
+      Dom.of(item).child('*[name=date]').innerText = date;
+      Dom.of(item).removeClass('hide');
+      contentInput.value = '';
+      dateInput.value = '';
+      Dom.of(this.formElement).addClass('hide');
+    });
     return this;
   }
 
