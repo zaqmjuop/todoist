@@ -22,6 +22,9 @@ const param = {
   selectors: {
     example: '.example',
   },
+  // present不会变化 仅当此组件作为子组件时传送数据用
+  present: {
+  },
   // methods是方法的集合
   methods: {
     init() {
@@ -34,6 +37,15 @@ const param = {
       // Component.find(this.id)可以获取当前组件
       const result = Component.find(this.id);
       return result;
+    },
+    event() {
+      // 当需要向外部传递数据时
+      // 在外部引用这个组件并监听事件 然后在此组件内派发事件
+      // 仅做传递数据用
+      // 监听事件 数据保存在event.detail中
+      // this.addEventListener('customEventName', e => e.detail）
+      // 触发事件
+      // dispatchEvent('customEventName', detail)
     },
   },
   // created在实例化之后，插入到页面之前执行
