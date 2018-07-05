@@ -1,24 +1,6 @@
 import Dom from '../dom';
 import Utils from '../utils';
 
-// 创建component的两种方式
-// 参数
-// const param = {
-//   query: 'component2',
-//   url: './assets/components/c2.html',
-//   created: () => {
-//     console.log('created', param.template);
-//   },
-// };
-// 方式一 先pjax在同步
-// Component.pjaxFormatHtml(param.url).then((format) => {
-//   const parameter = Object.assign(param, format);
-//   const cpt = Component.of(parameter);
-//   return cpt;
-// });
-// 方式二 直接异步
-// Component.pjaxCreate(param);
-
 // 保存所有创建的组件
 const components = [];
 

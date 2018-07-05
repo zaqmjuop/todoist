@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <style scoped>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    button {
+      outline: none;
+      border-radius: 5px;
+      padding: 7px 12px;
+      border: 1px solid #fff;
+      font-weight: 700;
+    }
+
+    button:hover {
+      cursor: pointer;
+    }
+
+    .mission-content {
+      margin: 1em 0;
+    }
+
+    .header>ul>li {
+      display: inline;
+    }
+
+    .body .hide {
+      display: none;
+    }
+
+    .body>ul>li {
+      width: 100%;
+    }
+
+    .body>ul {
+      padding: 0;
+      margin-bottom: 1em;
+    }
+
+    .body>ul>li>.item-main {
+      width: 90%;
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #eee;
+    }
+
+    .body>ul>li>* {
+      padding: 10px 0px;
+    }
+
+    .body>ul>li>.item-main .item-date {
+      display: flex;
+      align-items: center;
+      font-size: 80%;
+    }
+
+    .body .form .submits {
+      margin-top: 0.5em;
+    }
+
+    .w-100 {
+      width: 100%;
+    }
+
+    .body .show-form {
+      cursor: pointer;
+    }
+
+    .body .show-form:hover {
+      text-decoration: underline;
+    }
+
+    .done:hover::before {
+      content: "\f05d";
+    }
+
+  </style>
+</head>
+
+<body>
+  <div class="mission-content">
+    <div class="header flex flex-justify-between" part="header">
+      <h4>今天</h4>
+      <ul>
+        <li>
+          <i class="fa fa-signal"></i>
+        </li>
+      </ul>
+    </div>
+    <div class="body">
+      <mission-card-expired></mission-card-expired>
+      <ul>
+        <mission-form></mission-form>
+        <li class="create-mission">
+          <span></span>
+          <div class="item-main flex flex-justify-between">
+            <span class="show-form">
+              <i class="fa fa-plus"></i>
+              <span>添加任务</span>
+            </span>
+            <span>
+              <i class="fa fa-history"></i>
+            </span>
+          </div>
+          <span></span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</body>
+
+</html>

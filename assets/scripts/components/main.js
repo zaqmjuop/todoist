@@ -1,19 +1,11 @@
 import Component from './component';
 import missionInboxParam from './inbox';
+import missionTodayParam from './missionToday';
 
-const missionTodayParam = {
-  query: 'mission-content',
-  url: './assets/components/mission-today.html',
-  data() {
-    return {};
-  },
-  created: () => {
-  },
-};
 
 const missionNextWeekParam = {
   query: 'mission-content',
-  url: './assets/components/mission-next-week.html',
+  url: './assets/components/missionNextWeek.html',
   data() {
     return {};
   },
