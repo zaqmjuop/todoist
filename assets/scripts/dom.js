@@ -339,6 +339,8 @@ class Dom {
         parentsCollect = tree;
       } else if (query instanceof Dom) {
         parentsCollect = [query.dom];
+      } else if (query instanceof HTMLElement) {
+        parentsCollect = [query];
       } else {
         throw new TypeError(`query不能是${query}`);
       }
@@ -381,9 +383,34 @@ class Dom {
   }
 
   static hasParent(element, query) {
-    // 查看是否存在query匹配的父元素 query可以是querySelector或Dom实例对象
-    if ((!isEffectiveString(query)) && !(query instanceof Dom)) { throw new TypeError(`query不能是${query}`); }
-    return !!Dom.getParent(element, query);
+    // 查看是否存在query匹配的父元素 query可以是querySelector或Dom实例对象或HTMLElement
+    if (!Dom.isElement(element)) { throw new TypeError(`element不能是${element}`); }
+    if (arguments.length < 2) { throw new Error('缺少参数'); }
+    let result;
+    let pattern;
+    const parents = Dom.getParentsTree(element);
+    if (isEffectiveString(query)) {
+      const container = document.createElement('div');
+      const map = parents.map((parent) => {
+        const clone = parent.cloneNode();
+        container.appendChild(clone);
+        return clone;
+      });
+      const findClone = container.querySelector(query);
+      if (findClone) {
+        const findIndex = map.indexOf(findClone);
+        result = parents[findIndex];
+      }
+    }
+    if (!isEffectiveString(query)) {
+      if (query instanceof HTMLElement) {
+        pattern = query;
+      } else if (query instanceof Dom) {
+        pattern = query.dom;
+      }
+      result = parents.find(parent => parent.isSameNode(pattern));
+    }
+    return result;
   }
 
   static globalInit() {
