@@ -1,17 +1,7 @@
 import Component from './component';
 import missionInboxParam from './inbox';
 import missionTodayParam from './missionToday';
-
-
-const missionNextWeekParam = {
-  query: 'mission-content',
-  url: './assets/components/missionNextWeek.html',
-  data() {
-    return {};
-  },
-  created: () => {
-  },
-};
+import missionNextWeekParam from './missionNextWeek';
 
 const main = () => {
   document.addEventListener('DOMContentLoaded', () => {
@@ -28,7 +18,7 @@ const main = () => {
       Component.pjaxCreate(missionInboxParam);
     };
     setTimeout(() => {
-      inboxButton.click();
+      nextWeekButton.click();
     }, 100);
   });
 };

@@ -1,41 +1,24 @@
 import Dom from '../dom';
 import Utils from '../utils';
+import promiseAjax from '../ajax';
+
+class ComponentCollection extends Array {
+  findById(query) {
+    const format = String(query).match(/\d+/)[0];
+    if (!format) { return undefined; }
+    const id = Number(format);
+    const result = this.find(item => item.componentId && (item.componentId === id));
+    return result;
+  }
+}
 
 // 保存所有创建的组件
-const components = [];
+const components = new ComponentCollection();
 
 let counter = 100001;
 const takeId = () => {
   counter += 1;
   return counter;
-};
-
-const ajax = {
-  get: (url, callback) => {
-    // ajax get
-    if (typeof url !== 'string') { throw new TypeError('路径错误'); }
-    if (!(callback instanceof Function)) { throw new TypeError('回调函数错误'); }
-    const xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new window.ActiveXObject('Microsoft.XMLHTTP');
-    xmlhttp.open('GET', url, true);
-    xmlhttp.send();
-    xmlhttp.onreadystatechange = (res) => {
-      if (xmlhttp.readyState !== 4 || xmlhttp.status !== 200) { return false; }
-      return callback(res);
-    };
-  },
-};
-
-const pjax = {
-  get: (url) => {
-    // promise ajax get
-    if (!Utils.isString(url)) { throw new TypeError('参数url是路径 字符串类型'); }
-    const promise = new Promise((resolve) => {
-      ajax.get(url, (result) => {
-        resolve(result.target.response);
-      });
-    });
-    return promise;
-  },
 };
 
 class Component {
@@ -81,6 +64,9 @@ class Component {
       }
     }
 
+    // present
+    result.present = result.present || {};
+
     // 确保param.data符合设定
     if (!(result.data instanceof Function)) throw new TypeError('缺少data属性或data不是Function类型');
     const data = result.data();
@@ -119,9 +105,6 @@ class Component {
     // 设置this.componentId属性
     result.setComponentId();
 
-    // 子组件
-    result.components = [];
-
     // 绑定param.methods下的function的this指向
     const methods = Object.assign({}, result.methods);
     const methodNames = Object.keys(methods);
@@ -132,11 +115,39 @@ class Component {
       }
     });
     result.methods = methods;
-
-    this.lifeCycle();
-
+    // 子组件
+    result.components = new ComponentCollection();
     components.push(result);
+    // this.lifeCycle();
+    this.formatChildren().then(() => {
+      const lifeCycle = this.lifeCycle();
+      return lifeCycle;
+    });
     return result;
+  }
+  formatChildren() {
+    if (!this.children) { return new Promise(resolve => resolve(false)); }
+    const elementsNames = Object.keys(this.elements);
+    let promise = new Promise(resolve => resolve(1));
+    const childrenNames = Object.keys(this.children);
+    childrenNames.forEach((childName) => {
+      const child = this.children[childName];
+      promise = promise.then(() => {
+        // todo 插入child
+        // child = param || cpmponent
+        const cpt = (child instanceof Component) ? child : this.appendComponent(child);
+        return cpt;
+      }).then((cpt) => {
+        if (this.children[childName] !== cpt) {
+          this.children[childName] = cpt;
+        }
+        const eleName = elementsNames.find(name => this.elements[name] === cpt.query);
+        if (eleName) {
+          this.elements[eleName] = cpt.template;
+        }
+      });
+    });
+    return promise;
   }
   lifeCycle() {
     // 生命周期
@@ -245,14 +256,13 @@ class Component {
     // 处理scoped style 把每个选择器后都加上[data-c-id=c${this.componentId}]
     // unicode *#. \u002a\u0023\u002e
     const isScoped = this.style.getAttribute('scoped') || (this.style.getAttribute('scoped') === '');
-    if (!isScoped) {
-      return false;
-    }
+    if (!isScoped) { return false; }
     const content = this.style.innerHTML;
     // 去掉换行
     const compressed = content.replace(/\n/g, '').replace(/\s+/g, ' ');
     const regStyleCompleteStructure = /(@keyframes|@media|[#\u002e\u002aA-Za-z])[^{}]*{([^{}]*{[^{}]*})*[^{}]*}/g;
     const styles = compressed.match(regStyleCompleteStructure);
+    if (!styles) { return false; }
     styles.forEach((singleStyle, styleIndex) => {
       let repConent;
       // singleStyle是单条结构完整的style 如: selector {}
@@ -279,8 +289,28 @@ class Component {
     // 根据this.query嵌入页面
     const isScoped = this.style.getAttribute('scoped') || (this.style.getAttribute('scoped') === '');
     const parent = Dom.of(this.query).parent();
-    // 插入template
+    // 插入template 若是子组件，检查父组件的selectors
     parent.replaceChild(this.template, this.query);
+    const parentCId = Dom.of(this.query).attr('data-c-id');
+    if (parentCId) {
+      const numParentCId = parentCId.match(/\d+/)[0];
+      const parentComponent = Component.find(numParentCId);
+      if (parentComponent.selectors) {
+        const parentComponentSelectors = Object.keys(parentComponent.selectors);
+        const parentComponentSelectorQuery = parentComponentSelectors.find((selector) => {
+          if (!parentComponent.elements[selector].isSameNode) {
+            console.log(parentComponent.selectors)
+          }
+          const isQuery = parentComponent.elements[selector].isSameNode(this.query);
+          return isQuery;
+        });
+        if (parentComponentSelectorQuery) {
+          console.log(parentComponent, parentComponentSelectorQuery, { template: this.template })
+          parentComponent.elements[parentComponentSelectorQuery] = this.template;
+        }
+      }
+    }
+    // 处理style
     if (this.style) {
       if (isScoped) {
         // 处理scoped style
@@ -307,8 +337,8 @@ class Component {
   }
 
   static pjaxFormatHtml(url) {
-    // pjax请求html文件 返回一个对象{template, style} template是该html文件的<body>下第一个子元素 style是第一个<style>
-    const promise = pjax.get(url).then((result) => {
+    // promiseAjax请求html文件 返回一个对象{template, style} template是该html文件的<body>下第一个子元素 style是第一个<style>
+    const promise = promiseAjax.get(url).then((result) => {
       const html = document.createElement('html');
       html.innerHTML = result;
       const styles = html.querySelectorAll('style');
@@ -327,7 +357,7 @@ class Component {
   }
 
   static pjaxCreate(param) {
-    // 通过参数param.url标示为html地址， 通过pjax获取html并创建Component实例对象
+    // 通过参数param.url标示为html地址， 通过promiseAjax获取html并创建Component实例对象
     if (!Utils.isString(param.url)) { throw new TypeError('param.url应该是字符串类型html文件地址'); }
     const promise = Component.pjaxFormatHtml(param.url).then((format) => {
       const parameter = Object.assign(param, format);
@@ -339,7 +369,7 @@ class Component {
 
   appendComponent(param) {
     const parameter = Object.assign({}, param);
-    // 通过参数param.url标示为html地址， 通过pjax获取html并创建Component实例对象
+    // 通过参数param.url标示为html地址， 通过promiseAjax获取html并创建Component实例对象
     if (!Utils.isString(param.url)) { throw new TypeError('param.url应该是字符串类型html文件地址'); }
     const promise = Component.pjaxFormatHtml(param.url).then(({ template, style }) => {
       parameter.template = template;
