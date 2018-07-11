@@ -49,9 +49,16 @@ const param = {
     },
     hide() {
       Dom.of(this.template).addClass('hide');
+      return this;
     },
     show() {
       Dom.of(this.template).removeClass('hide');
+      return this;
+    },
+    selectDate(date) {
+      if (!(date instanceof Date)) {
+        throw new TypeError(`${date} 不是Date的实例对象`);
+      }
     },
   },
   created() {

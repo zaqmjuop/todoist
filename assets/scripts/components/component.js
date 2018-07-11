@@ -127,6 +127,7 @@ class Component {
   }
   formatChildren() {
     if (!this.children) { return new Promise(resolve => resolve(false)); }
+    this.children = Object.assign({}, this.children);
     const elementsNames = Object.keys(this.elements);
     let promise = new Promise(resolve => resolve(1));
     const childrenNames = Object.keys(this.children);
@@ -289,27 +290,7 @@ class Component {
     // 根据this.query嵌入页面
     const isScoped = this.style.getAttribute('scoped') || (this.style.getAttribute('scoped') === '');
     const parent = Dom.of(this.query).parent();
-    // 插入template 若是子组件，检查父组件的selectors
     parent.replaceChild(this.template, this.query);
-    const parentCId = Dom.of(this.query).attr('data-c-id');
-    if (parentCId) {
-      const numParentCId = parentCId.match(/\d+/)[0];
-      const parentComponent = Component.find(numParentCId);
-      if (parentComponent.selectors) {
-        const parentComponentSelectors = Object.keys(parentComponent.selectors);
-        const parentComponentSelectorQuery = parentComponentSelectors.find((selector) => {
-          if (!parentComponent.elements[selector].isSameNode) {
-            console.log(parentComponent.selectors)
-          }
-          const isQuery = parentComponent.elements[selector].isSameNode(this.query);
-          return isQuery;
-        });
-        if (parentComponentSelectorQuery) {
-          console.log(parentComponent, parentComponentSelectorQuery, { template: this.template })
-          parentComponent.elements[parentComponentSelectorQuery] = this.template;
-        }
-      }
-    }
     // 处理style
     if (this.style) {
       if (isScoped) {
@@ -364,6 +345,87 @@ class Component {
       const cpt = Component.of(parameter);
       return cpt;
     });
+    return promise;
+  }
+
+  insertComponent(param, refElement, relative) {
+    // 添加子组件
+    // refElement是参照物元素
+    // relative是一个整数表示插入位置
+    // relative若为1表示插入后是refElement的后一个元素 若为-1表示是refElement的前一个元素 若为0表示替换掉refElement
+    if (!Dom.of(refElement).hasParent(this.template)) {
+      throw new Error(refElement, '不是', this, '的子元素');
+    }
+    const relNum = Number(relative);
+    if (!Number.isSafeInteger(relNum)) {
+      throw new Error(`${relative}不是有效数字`);
+    }
+    const parent = refElement.parentElement;
+    const refIndex = Array.from(parent.children).indexOf(refElement);
+    // 插入的位置
+    const query = Dom.of('<div>').dom;
+    Dom.of(query).attr('data-c-id', `c${this.componentId}`);
+    if (relNum === 0) {
+      Dom.of(refElement).replace(query);
+    } else if (relNum > 0) {
+      const leftAdjacentIndex = -1 + refIndex + relNum;
+      const leftAdjacent = parent.children[leftAdjacentIndex] || refElement;
+      Dom.of(query).insertAfter(leftAdjacent);
+    } else {
+      const rightAdjacentIndex = 1 + refIndex + relNum;
+      const rightAdjacent = parent.children[rightAdjacentIndex] || refElement;
+      Dom.of(query).insertBefore(rightAdjacent);
+    }
+    let promise;
+    if (param instanceof Component) {
+      promise = new Promise((resolve) => {
+        param.query = query;
+        this.components.push(param);
+        resolve(param);
+      });
+    } else {
+      const parameter = Object.assign({}, param);
+      promise = Component.pjaxFormatHtml(param.url).then(({ template, style }) => {
+        parameter.template = template;
+        parameter.style = style;
+        parameter.query = query;
+        const cpt = Component.of(parameter);
+        // 将子组件保存在this.components中
+        this.components.push(cpt);
+        return cpt;
+      });
+    }
+    return promise;
+  }
+
+  appendChildComponent(param, element) {
+    // 在子元素下添加子组件
+    if (!element.isSameNode(this.template) && !Dom.of(element).hasParent(this.template)) {
+      throw new Error(`${element}不属于此组件`);
+    }
+    // 插入的位置
+    const placeholder = Dom.of('<placeholder>');
+    Dom.of(placeholder).attr('data-c-id', `c${this.componentId}`);
+    Dom.of(element).append(placeholder);
+    let promise;
+    if (param instanceof Component) {
+      promise = new Promise((resolve) => {
+        param.query = placeholder;
+        this.components.push(param);
+        resolve(param);
+      });
+    } else {
+      const parameter = Object.assign({}, param);
+      promise = Component.pjaxFormatHtml(param.url).then(({ template, style }) => {
+        parameter.template = template;
+        parameter.style = style;
+        parameter.query = placeholder;
+        const cpt = Component.of(parameter);
+        // 将子组件保存在this.components中
+        this.components.push(cpt);
+        return cpt;
+      });
+    }
     return promise;
   }
 
