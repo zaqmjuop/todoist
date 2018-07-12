@@ -56,7 +56,7 @@ const param = {
       }).then((items) => {
         items.map((item) => {
           // 添加 li item
-          const present = Object.assign(item, { cid: this.componentId });
+          const present = Object.assign(item, { cid: this.componentId, formId: this.data.formId });
           const itemParam = Object.assign({ present }, missionListItem);
           this.insertComponent(itemParam, this.elements.form, -1);
           return this;
@@ -82,6 +82,7 @@ const param = {
     },
     initForm() {
       const form = this.children.missionForm;
+      this.data.formId = form.componentId;
       if (this.data.date) {
         const fillFormDate = formatDate(this.data.date);
         form.present.date = fillFormDate;
@@ -107,6 +108,29 @@ const param = {
           this.children.missionForm.methods.hide();
         });
         return this;
+      });
+      // 更新
+      form.addEventListener('update', (e) => {
+        
+        if (!e.detail.content) { return false; }
+        const updateData = {
+          content: e.detail.content,
+          date: e.detail.date,
+          id: e.detail.id,
+        };
+        missions.ready().then(() => {
+          const save = missions.set(updateData);
+          return save;
+        }).then(() => {
+          // 更新后将form替换为li
+          const li = Component.find(e.detail.cid);
+          console.log(li)
+          li.present.content = updateData.content;
+          li.present.date = updateData.date;
+          li.present.id = updateData.id;
+          form.replaceSelf(li);
+        });
+        return form;
       });
     },
   },
