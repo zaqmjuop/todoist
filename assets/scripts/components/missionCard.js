@@ -34,6 +34,7 @@ const param = {
     dayMark: '.day-mark',
     dateMark: '.date-mark',
     showForm: '.show-form',
+    createMission: '.create-mission',
   },
   children: {
     missionForm,
@@ -80,6 +81,15 @@ const param = {
       }
       return this;
     },
+    appendItem(detail) {
+      // 添加li item
+      const present = detail || {};
+      present.cid = this.componentId;
+      present.formId = this.data.formId;
+      const itemParam = Object.assign({ present }, missionListItem);
+      const insert = this.insertComponent(itemParam, this.elements.form, -1);
+      return insert;
+    },
     initForm() {
       const form = this.children.missionForm;
       this.data.formId = form.componentId;
@@ -90,7 +100,9 @@ const param = {
       }
       // 显示表单
       Dom.of(this.elements.showForm).on('click', () => {
+        form.present = {};
         form.methods.show().methods.fill();
+        Dom.of(form.template).insertBefore(this.elements.createMission);
       });
       // 创建
       form.addEventListener('create', (e) => {
@@ -100,7 +112,11 @@ const param = {
           return create;
         }).then((id) => {
           // 添加 li item
-          const present = Object.assign({ id, cid: this.componentId }, e.detail);
+          const present = Object.assign({
+            id,
+            cid: this.componentId,
+            formId: this.data.formId,
+          }, e.detail);
           const itemParam = Object.assign({ present }, missionListItem);
           const insert = this.insertComponent(itemParam, this.elements.form, -1);
           return insert;
@@ -111,7 +127,6 @@ const param = {
       });
       // 更新
       form.addEventListener('update', (e) => {
-        
         if (!e.detail.content) { return false; }
         const updateData = {
           content: e.detail.content,
@@ -124,7 +139,6 @@ const param = {
         }).then(() => {
           // 更新后将form替换为li
           const li = Component.find(e.detail.cid);
-          console.log(li)
           li.present.content = updateData.content;
           li.present.date = updateData.date;
           li.present.id = updateData.id;

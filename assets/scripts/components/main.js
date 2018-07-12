@@ -18,7 +18,7 @@ const main = () => {
       Component.pjaxCreate(missionInboxParam);
     };
     setTimeout(() => {
-      nextWeekButton.click();
+      todayButton.click();
     }, 100);
   });
 };

@@ -465,6 +465,11 @@ class Component {
     }
     return promise;
   }
+
+  // 显示全部实例化的组件
+  static all() {
+    return components;
+  }
 }
 
 window.Component = Component;

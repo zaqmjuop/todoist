@@ -1,5 +1,4 @@
 import missionCard from './missionCard';
-import Component from './component';
 
 const now = new Date();
 

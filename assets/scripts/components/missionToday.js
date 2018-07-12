@@ -1,6 +1,5 @@
 import missionCardExpired from './missionCardExpired';
 import missionCard from './missionCard';
-import Component from './component';
 
 const param = {
   query: 'mission-content',
@@ -12,13 +11,26 @@ const param = {
     init() {
       if (this.data.inited) { return false; }
       this.data.inited = 1;
-      Component.pjaxCreate(missionCardExpired);
-      Component.pjaxCreate(missionCard);
       return this;
+    },
+    loadChildren() {
+      // 添加子组件
+      const promise = new Promise(resolve => resolve(1)).then(() => {
+        const result = this.appendChildComponent(missionCardExpired, this.template);
+        return result;
+      }).then(() => {
+        const today = new Date();
+        const present = { present: { date: today } };
+        const todayParam = Object.assign(present, missionCard);
+        const result = this.appendChildComponent(todayParam, this.template);
+        return result;
+      });
+      return promise;
     },
   },
   created() {
     this.methods.init();
+    this.methods.loadChildren();
   },
 };
 export default param;
