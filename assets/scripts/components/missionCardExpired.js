@@ -1,4 +1,5 @@
 import missionListItemParam from './missionListItem';
+import missionForm from './missionForm';
 import missions from '../indexeddb/missions';
 import Component from './component';
 import Dom from '../dom';
@@ -14,18 +15,62 @@ const param = {
 
     };
   },
+  children: {
+    missionForm,
+  },
   selectors: {
     cardBody: '.card-body',
+    dayMark: '.day-mark',
+    form: 'mission-form',
   },
   methods: {
     init() {
       if (this.data.inited) { return false; }
       this.data.inited = 1;
+      Dom.of(this.elements.dayMark).text('过期');
+      this.methods.initForm();
       this.methods.loadDB();
       return this;
     },
+    initForm() {
+      const form = this.children.missionForm;
+      this.data.formId = form.componentId;
+      form.methods.hide();
+      // 更新
+      form.addEventListener('update', (e) => {
+        if (!e.detail.content) { return false; }
+        const updateData = {
+          content: e.detail.content,
+          date: e.detail.date,
+          id: e.detail.id,
+        };
+        missions.ready().then(() => {
+          const save = missions.set(updateData);
+          return save;
+        }).then(() => {
+          // 更新后将form替换为li
+          const li = Component.find(e.detail.cid);
+          li.present.content = updateData.content;
+          li.present.date = updateData.date;
+          li.present.id = updateData.id;
+          form.replaceSelf(li);
+          form.present = {};
+        });
+        return form;
+      });
+    },
+    appendItem(detail) {
+      // 添加li item
+      const present = detail || {};
+      present.cid = this.componentId;
+      present.formId = this.data.formId;
+      const itemParam = Object.assign({ present }, missionListItemParam);
+      const append = this.insertComponent(itemParam, this.elements.form, -1);
+      return append;
+    },
     loadDB() {
       // 筛选过期任务
+      let promise = new Promise(resolve => resolve(1));
       missions.ready().then(() => {
         const promiseAll = missions.getAll();
         return promiseAll;
@@ -41,15 +86,17 @@ const param = {
           const dateB = new Date(b.date);
           return dateA.getTime() > dateB.getTime();
         });
-        sortByDate.forEach((data) => {
-          // 添加 li item
-          const listItem = Dom.of('<mission-list-item>').dom;
-          Dom.of(this.elements.cardBody).append(listItem);
-          const present = Object.assign(data, { formId: this.data.formId });
-          const liParam = Object.assign({ present }, missionListItemParam);
-          Component.pjaxCreate(liParam);
+        return sortByDate;
+      }).then((details) => {
+        details.forEach((detail) => {
+          promise = promise.then(() => {
+            const present = Object.assign(detail, { formId: this.data.formId });
+            const append = this.methods.appendItem(present);
+            return append;
+          });
         });
       });
+      return promise;
     },
   },
   created() {

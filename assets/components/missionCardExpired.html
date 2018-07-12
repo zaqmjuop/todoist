@@ -14,7 +14,8 @@
     .bold {
       font-weight: 500;
     }
-    ul{
+
+    ul {
       list-style: none;
       padding: 0;
     }
@@ -23,10 +24,12 @@
 
 <body>
   <div class="card">
-    <div class="card-header text-red bold">
-      过期
+    <div class="card-header ">
+      <span class="day-mark text-red bold"></span>
+      <span class="date-mark"></span>
     </div>
     <ul class="card-body">
+      <mission-form></mission-form>
     </ul>
   </div>
 </body>

@@ -128,7 +128,8 @@ const param = {
           const insert = this.insertComponent(itemParam, this.elements.form, -1);
           return insert;
         }).then(() => {
-          this.children.missionForm.methods.hide();
+          form.present = {};
+          form.methods.hide();
         });
         return this;
       });
@@ -150,6 +151,7 @@ const param = {
           li.present.date = updateData.date;
           li.present.id = updateData.id;
           form.replaceSelf(li);
+          form.present = {};
         });
         return form;
       });
