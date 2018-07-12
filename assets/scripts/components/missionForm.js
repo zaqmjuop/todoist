@@ -36,16 +36,16 @@ const param = {
     },
     fill() {
       this.present = this.present || {};
-      const content = this.present.content || '';
-      const date = this.present.date || '';
-      const id = this.present.id || '';
-      const cid = this.present.cid || '';
-      const submitText = (cid) ? '更新任务' : '新建任务';
-      Dom.of(this.elements.contentInput).attr('value', content);
-      Dom.of(this.elements.dateInput).attr('value', date);
-      Dom.of(this.template).attr('data-item-id', id);
-      Dom.of(this.template).attr('data-cid', cid);
-      Dom.of(this.elements.submit).attr('text', submitText);
+      this.data.content = this.present.content || '';
+      this.data.date = this.present.date || '';
+      this.data.id = this.present.id || '';
+      this.data.cid = this.present.cid || '';
+      this.data.submitText = (this.data.cid) ? '更新任务' : '新建任务';
+      Dom.of(this.elements.contentInput).attr('value', this.data.content);
+      Dom.of(this.elements.dateInput).attr('value', this.data.date);
+      Dom.of(this.template).attr('data-item-id', this.data.id);
+      Dom.of(this.template).attr('data-cid', this.data.cid);
+      Dom.of(this.elements.submit).attr('text', this.data.submitText);
     },
     hide() {
       Dom.of(this.template).addClass('hide');

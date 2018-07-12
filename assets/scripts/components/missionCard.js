@@ -100,6 +100,13 @@ const param = {
       }
       // 显示表单
       Dom.of(this.elements.showForm).on('click', () => {
+        const pastCid = form.data.cid;
+        if (pastCid) {
+          const pastItem = Component.find(pastCid);
+          if (pastItem) {
+            form.replaceSelf(pastItem);
+          }
+        }
         form.present = {};
         form.methods.show().methods.fill();
         Dom.of(form.template).insertBefore(this.elements.createMission);
