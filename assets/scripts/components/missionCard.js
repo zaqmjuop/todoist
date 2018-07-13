@@ -52,8 +52,8 @@ const param = {
     loadDB() {
       if (!this.data.date) { return false; }
       const promise = missions.ready().then(() => {
-        const search = missions.findItems({ date: formatDate(this.data.date) });
-        return search;
+        const items = missions.findItems({ date: formatDate(this.data.date) });
+        return items;
       }).then((items) => {
         items.map((item) => {
           // 添加 li item

@@ -43,6 +43,7 @@ class Component {
     }
 
     // 填充param.selectors 填充this.elements
+    result.elements = {};
     if (result.selectors && (typeof result.selectors === 'object')) {
       // 接受{}类型的属性param.selectors 遍历param.selectors的键，取每个键的值作为querySelector参数，
       // 然后找到对应的HTMLElement集合并设置在this.elements属性中
@@ -289,8 +290,7 @@ class Component {
   implant() {
     // 根据this.query嵌入页面
     const isScoped = this.style.getAttribute('scoped') || (this.style.getAttribute('scoped') === '');
-    const parent = Dom.of(this.query).parent();
-    parent.replaceChild(this.template, this.query);
+    Dom.of(this.query).replace(this.template);
     // 处理style
     if (this.style) {
       if (isScoped) {
@@ -475,3 +475,5 @@ class Component {
 window.Component = Component;
 
 export default Component;
+
+// todo router 把没用的组件占用内存释放
