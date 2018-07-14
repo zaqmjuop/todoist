@@ -65,7 +65,8 @@ const param = {
     this.methods.show();
     if (!this.data.inited) {
       this.data.inited = 1;
-      datepicker(this.elements.dateInput);
+      const picker = datepicker(this.elements.dateInput);
+      Dom.of(picker.body).attr('data-c-id', `c${this.componentId}`);
       Dom.of(this.elements.submit).on('click', () => {
         // 提交
         this.methods.formSubmit();

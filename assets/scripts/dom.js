@@ -205,15 +205,18 @@ class Dom {
 
   selfDestruct() {
     // 删除自己
+    if (!this.dom) { return false; }
     const parent = this.dom.parentElement;
-    if (parent) {
-      parent.removeChild(this.dom);
-    }
+    if (!parent) { return false; }
+    parent.removeChild(this.dom);
     return this;
   }
 
   remove(query) {
     // 删除元素 如果参数是Selector，则对所有匹配元素操作
+    if (arguments.length === 0) {
+      return this.selfDestruct();
+    }
     const elements = isEffectiveString(query)
       ? this.dom.querySelectorAll(query)
       : [Dom.degenerate(query)];

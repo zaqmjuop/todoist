@@ -184,6 +184,37 @@ class Component {
     return filter[0];
   }
 
+  static destroy(query) {
+    // 删除组件
+    // query 是Component实例对象或componentId
+    let cpt;
+    if (query instanceof Component) {
+      cpt = query;
+    } else {
+      cpt = Component.find(query);
+    }
+    if (cpt) {
+      for (let index = 0; index < 3; index += 1) {
+        const element = Dom.of(`*[data-c-id=c${cpt.componentId}]`);
+        element.remove();
+      }
+    }
+    // todo 子组件template不用删除
+    if (cpt.children) {
+      const names = Object.keys(cpt.children);
+      names.forEach((name) => {
+        const child = cpt.children[name];
+        Component.destroy(child);
+      });
+    }
+    if (cpt.components) {
+      cpt.components.forEach((component) => {
+        Component.destroy(component);
+      });
+    }
+    return cpt;
+  }
+
   addEventListener(typeArg, callback) {
     // 添加事件
     this.template.addEventListener(typeArg, callback);
@@ -451,12 +482,14 @@ class Component {
     if (param instanceof Component) {
       promise = new Promise((resolve) => {
         Dom.of(this.template).replace(param.template);
+        Dom.of(this.style).replace(param.style);
         param.refresh();
         resolve(param);
       });
     } else {
       if (!Utils.isString(param.url)) { throw new TypeError('param.url应该是字符串类型html文件地址'); }
       promise = Component.pjaxFormatHtml(param.url).then(({ template, style }) => {
+        Dom.of(this.style).remove();
         const parameter = Object.assign(param, { template, style });
         parameter.query = this.template;
         const cpt = Component.of(parameter);

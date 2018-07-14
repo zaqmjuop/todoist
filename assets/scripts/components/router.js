@@ -2,6 +2,7 @@ import missionInboxParam from './inbox';
 import missionTodayParam from './missionToday';
 import missionNextWeekParam from './missionNextWeek';
 import Dom from '../dom';
+import Component from './component';
 
 const router = {
   query: 'router',
@@ -9,8 +10,8 @@ const router = {
   data() {
     return {
       counter: 1,
-      href: window.location.href,
       current: this,
+      inited: 0,
     };
   },
   route: {
@@ -19,6 +20,12 @@ const router = {
     nextWeek: missionNextWeekParam,
   },
   methods: {
+    init() {
+      if (this.data.inited) { return false; }
+      this.data.href = window.location.href;
+      this.data.inited = 1;
+      return this;
+    },
     // 不刷新页面改变path
     render(path, state) {
       const hash = String(path);
@@ -31,6 +38,7 @@ const router = {
       param.present = Object.assign(present, detail);
       param.query = this.data.current.template;
       const promise = this.data.current.replaceSelf(param).then((cpt) => {
+        Component.destroy(this.data.current);
         this.data.current = cpt;
         const url = `${this.data.href}#${path}`;
         window.history.pushState(detail, 0, url);
