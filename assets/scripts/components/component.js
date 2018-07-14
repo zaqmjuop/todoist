@@ -13,7 +13,7 @@ class ComponentCollection extends Array {
 }
 
 // 保存所有创建的组件
-const components = new ComponentCollection();
+// const components = new ComponentCollection();
 
 let counter = 100001;
 const takeId = () => {
@@ -116,15 +116,23 @@ class Component {
       }
     });
     result.methods = methods;
-    // 子组件
+
     result.components = new ComponentCollection();
-    components.push(result);
     // this.lifeCycle();
     this.formatChildren().then(() => {
       const lifeCycle = this.lifeCycle();
       return lifeCycle;
     });
+    Component.instances.push(result);
     return result;
+  }
+  ready() {
+    if (this.components instanceof Array) {
+      // 子组件
+      
+      // todo 改为异步先加载子组件再插入到document
+    }
+    return this;
   }
   formatChildren() {
     if (!this.children) { return new Promise(resolve => resolve(false)); }
@@ -504,6 +512,8 @@ class Component {
     return components;
   }
 }
+
+Component.instances = new ComponentCollection();
 
 window.Component = Component;
 

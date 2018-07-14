@@ -52,17 +52,9 @@ const router = {
       this.data.current = this.template;
       return this;
     },
-    viewa() {
-      this.methods.render('missionInboxParam');
-    },
-    viewb() {
-      this.methods.render('missionTodayParam');
-    },
-    viewc() {
-      this.methods.render('missionNextWeekParam');
-    },
   },
   created() {
+    this.methods.init();
   },
 };
 

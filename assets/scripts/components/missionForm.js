@@ -60,13 +60,16 @@ const param = {
         throw new TypeError(`${date} 不是Date的实例对象`);
       }
     },
-  },
-  created() {
-    this.methods.show();
-    if (!this.data.inited) {
-      this.data.inited = 1;
+    init() {
+      if (this.data.inited) { return false; }
       const picker = datepicker(this.elements.dateInput);
       Dom.of(picker.body).attr('data-c-id', `c${this.componentId}`);
+      this.methods.bindEvents();
+      this.data.inited = 1;
+      return this;
+    },
+    bindEvents() {
+      if (this.data.inited) { return false; }
       Dom.of(this.elements.submit).on('click', () => {
         // 提交
         this.methods.formSubmit();
@@ -85,8 +88,14 @@ const param = {
         }
         this.elements.contentInput.blur();
       });
-    }
+      return this;
+    },
+  },
+  created() {
+    this.methods.init();
+    this.methods.show();
     // 填充
+    console.log(this.present, this.data)
     this.methods.fill();
   },
 };
