@@ -20,10 +20,9 @@ const main = () => {
       nextWeekButton.onclick = () => {
         router.methods.render('nextWeek');
       };
-    });
-    setTimeout(() => {
+    }).then(() => {
       todayButton.click();
-    }, 100);
+    });
   });
   loaded = 1;
   return loaded;
