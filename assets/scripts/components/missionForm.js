@@ -95,7 +95,6 @@ const param = {
     this.methods.init();
     this.methods.show();
     // 填充
-    console.log(this.present, this.data)
     this.methods.fill();
   },
 };
