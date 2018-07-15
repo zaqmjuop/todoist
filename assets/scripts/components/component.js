@@ -2,18 +2,8 @@ import Dom from '../dom';
 import Utils from '../utils';
 import promiseAjax from '../ajax';
 
-class ComponentCollection extends Array {
-  findById(query) {
-    const format = String(query).match(/\d+/)[0];
-    if (!format) { return undefined; }
-    const id = Number(format);
-    const result = this.find(item => item.componentId && (item.componentId === id));
-    return result;
-  }
-}
-
 // 保存所有创建的组件
-// const components = new ComponentCollection();
+const components = [];
 
 let counter = 100001;
 const takeId = () => {
@@ -117,19 +107,25 @@ class Component {
     });
     result.methods = methods;
 
-    result.components = new ComponentCollection();
+    // result.components = new ComponentCollection();
+
+    if (!(result.components instanceof Array)) {
+      result.components = [];
+    }
+
+
     // this.lifeCycle();
     this.formatChildren().then(() => {
       const lifeCycle = this.lifeCycle();
       return lifeCycle;
     });
-    Component.instances.push(result);
+    components.push(result);
     return result;
   }
   ready() {
     if (this.components instanceof Array) {
       // 子组件
-      
+
       // todo 改为异步先加载子组件再插入到document
     }
     return this;
@@ -190,6 +186,60 @@ class Component {
       return id === findId;
     });
     return filter[0];
+  }
+
+  findBy({ name, componentId }) {
+    // 查找第一个匹配的子组件
+    let result;
+    for (let index = 0; index < this.components.length; index += 1) {
+      const cpt = this.components[index];
+      let isMatch = true;
+      if (name && cpt.name !== name) { isMatch = false; }
+      if (componentId && cpt.componentId !== componentId) { isMatch = false; }
+      if (isMatch) {
+        result = cpt;
+        break;
+      }
+    }
+    return result;
+  }
+
+  static findBy({ name, componentId }) {
+    // 查找第一个匹配的组件
+    let result;
+    for (let index = 0; index < components.length; index += 1) {
+      const cpt = components[index];
+      let isMatch = true;
+      if (name && cpt.name !== name) { isMatch = false; }
+      if (componentId && cpt.componentId !== componentId) { isMatch = false; }
+      if (isMatch) {
+        result = cpt;
+        break;
+      }
+    }
+    return result;
+  }
+
+  where({ name, componentId }) {
+    // 查找所有匹配的子组件
+    const filter = this.components.filter((cpt) => {
+      let isMatch = true;
+      if (name && cpt.name !== name) { isMatch = false; }
+      if (componentId && cpt.componentId !== componentId) { isMatch = false; }
+      return isMatch;
+    });
+    return filter;
+  }
+
+  static where({ name, componentId }) {
+    // 查找所有匹配的组件
+    const filter = components.filter((cpt) => {
+      let isMatch = true;
+      if (name && cpt.name !== name) { isMatch = false; }
+      if (componentId && cpt.componentId !== componentId) { isMatch = false; }
+      return isMatch;
+    });
+    return filter;
   }
 
   static destroy(query) {
@@ -513,7 +563,6 @@ class Component {
   }
 }
 
-Component.instances = new ComponentCollection();
 
 window.Component = Component;
 
