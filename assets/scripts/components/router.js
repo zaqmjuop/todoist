@@ -4,8 +4,6 @@ import missionNextWeekParam from './missionNextWeek';
 import Dom from '../dom';
 import Component from './component';
 
-const href = window.location.href;
-
 const router = {
   query: 'router',
   url: './assets/components/router.html',
@@ -14,7 +12,6 @@ const router = {
       counter: 1,
       current: this,
       inited: 0,
-      href,
     };
   },
   route: {
@@ -25,6 +22,7 @@ const router = {
   methods: {
     init() {
       if (this.data.inited) { return false; }
+      this.data.href = window.location.href;
       this.data.inited = 1;
       return this;
     },
@@ -42,7 +40,7 @@ const router = {
       const promise = this.data.current.replaceSelf(param).then((cpt) => {
         Component.destroy(this.data.current);
         this.data.current = cpt;
-        const url = `${this.data.href}#/${path}`;
+        const url = `${this.data.href}#${path}`;
         window.history.pushState(detail, 0, url);
       });
       return promise;
