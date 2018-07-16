@@ -5,6 +5,7 @@ import Component from './component';
 const param = {
   query: 'mission-form',
   url: './assets/components/missionForm.html',
+  name: 'missionForm',
   data() {
     return {
       inited: 0,
@@ -95,7 +96,6 @@ const param = {
     this.methods.init();
     this.methods.show();
     // 填充
-    console.log(this.present, this.data)
     this.methods.fill();
   },
 };

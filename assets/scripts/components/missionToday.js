@@ -4,6 +4,7 @@ import missionCard from './missionCard';
 const param = {
   query: 'mission-content',
   url: './assets/components/missionToday.html',
+  name: 'missionToday',
   data() {
     return {};
   },

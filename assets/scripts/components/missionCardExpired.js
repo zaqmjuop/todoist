@@ -10,6 +10,7 @@ const now = new Date();
 const param = {
   query: 'mission-card-expired',
   url: './assets/components/missionCardExpired.html',
+  name: 'missionCardExpired',
   data() {
     return {
 

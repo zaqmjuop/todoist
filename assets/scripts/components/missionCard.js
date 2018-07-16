@@ -25,6 +25,7 @@ const differDay = (datea, dateb) => {
 const param = {
   query: 'mission-card',
   url: './assets/components/missionCard.html',
+  name: 'missionCard',
   data() {
     return {};
   },

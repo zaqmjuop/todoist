@@ -5,6 +5,7 @@ import Component from './component';
 const param = {
   query: 'mission-list-item',
   url: './assets/components/missionListItem.html',
+  name: 'missionListItem',
   selectors: {
     content: '.item-content',
     date: '.item-date',

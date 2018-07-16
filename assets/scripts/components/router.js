@@ -7,6 +7,7 @@ import Component from './component';
 const router = {
   query: 'router',
   url: './assets/components/router.html',
+  name: 'router',
   data() {
     return {
       counter: 1,

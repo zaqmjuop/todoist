@@ -96,6 +96,12 @@ class Component {
       }
     }
 
+    // 索引和标识
+    if (!result.name) {
+      const name = result.url.match(/([^/]+)\.html/)[1];
+      result.name = name;
+    }
+
     // 设置this.componentId属性
     result.setComponentId();
 

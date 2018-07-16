@@ -7,6 +7,7 @@ import missionForm from '../components/missionForm';
 const missionInboxParam = {
   query: 'mission-content',
   url: './assets/components/missionInbox.html',
+  name: 'missionInbox',
   data() {
     return {
       counter: 0,

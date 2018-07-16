@@ -5,6 +5,7 @@ const now = new Date();
 const param = {
   query: 'mission-content',
   url: './assets/components/missionNextWeek.html',
+  name: 'missionNextWeek',
   data() {
     return {};
   },
