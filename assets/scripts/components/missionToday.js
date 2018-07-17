@@ -1,6 +1,7 @@
 import missionCardExpired from './missionCardExpired';
 import missionCard from './missionCard';
 
+
 const param = {
   query: 'mission-content',
   url: './assets/components/missionToday.html',
@@ -17,7 +18,8 @@ const param = {
     loadChildren() {
       // 添加子组件
       const promise = new Promise(resolve => resolve(1)).then(() => {
-        const result = this.appendChildComponent(missionCardExpired, this.template);
+        const expired = Object.assign({}, missionCardExpired);
+        const result = this.appendChildComponent(expired, this.template);
         return result;
       }).then(() => {
         const today = new Date();

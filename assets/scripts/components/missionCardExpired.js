@@ -6,6 +6,8 @@ import Dom from '../dom';
 
 const now = new Date();
 
+const fakeForm = Object.assign({}, missionForm);
+fakeForm.query = 'fake-form';
 
 const param = {
   query: 'mission-card-expired',
@@ -16,6 +18,9 @@ const param = {
 
     };
   },
+  components: [
+    fakeForm,
+  ],
   children: {
     missionForm,
   },
@@ -104,5 +109,6 @@ const param = {
     this.methods.init();
   },
 };
+
 
 export default param;

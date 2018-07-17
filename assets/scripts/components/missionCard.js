@@ -45,8 +45,8 @@ const param = {
       if (this.data.inited) { return false; }
       this.data.now = now;
       this.methods.fill();
-      this.methods.initForm();
       this.methods.loadDB();
+      this.methods.initForm();
       this.data.inited = 1;
       return this;
     },
@@ -109,7 +109,7 @@ const param = {
           }
         }
         form.present = {};
-        form.methods.show().methods.fill();
+        form.methods.show().methods.selectDate(this.data.date);
         Dom.of(form.template).insertBefore(this.elements.createMission);
       });
       // 创建

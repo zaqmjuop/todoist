@@ -116,28 +116,39 @@ class Component {
     });
     result.methods = methods;
 
-    if (!(result.components instanceof Array)) { result.components = []; }
-    // this.lifeCycle();
-    this.formatChildren().then(() => {
-      const lifeCycle = this.lifeCycle();
-      return lifeCycle;
-    });
+    this.formatChildren()
+      .then(() => this.lifeCycle());
+
     components.push(result);
     return result;
   }
-  ready() {
-    if (this.components instanceof Array) {
-      // 子组件
-
-      // todo 改为异步先加载子组件再插入到document
-    }
-    return this;
-  }
   formatChildren() {
-    if (!this.children) { return new Promise(resolve => resolve(false)); }
+    let promise = new Promise(resolve => resolve(1));
+    const cpts = (this.components instanceof Array) ? [...this.components] : [];
+    this.components = cpts;
+    if (this.components && this.components instanceof Array && this.components.length > 0) {
+      this.components.forEach((item, index) => {
+        if (!(item instanceof Component)) {
+          const parameter = Object.assign({}, item);
+          promise = promise.then(() => {
+            const ajax = Component.pjaxFormatHtml(parameter.url);
+            return ajax;
+          }).then(({ template, style }) => {
+            parameter.template = template;
+            parameter.style = style;
+            parameter.query = this.template.querySelector(parameter.query);
+            const cpt = Component.of(parameter);
+            this.components[index] = cpt;
+            return cpt;
+          });
+        }
+      });
+    }
+    // format this.children
+    if (!this.children) { return promise; }
     this.children = Object.assign({}, this.children);
     const elementsNames = Object.keys(this.elements);
-    let promise = new Promise(resolve => resolve(1));
+
     const childrenNames = Object.keys(this.children);
     childrenNames.forEach((childName) => {
       const child = this.children[childName];
@@ -156,6 +167,7 @@ class Component {
         }
       });
     });
+
     return promise;
   }
   lifeCycle() {
