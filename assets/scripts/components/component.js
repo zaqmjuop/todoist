@@ -213,8 +213,8 @@ class Component {
     const cpts = (arguments.length > 1) ? cpt.components : components;
     for (let index = 0; index < cpts.length; index += 1) {
       const item = cpts[index];
-      const matchName = query.name && query.name === item.name;
-      const matchCId = query.componentId && query.componentId === item.componentId;
+      const matchName = !(query.name) || query.name === item.name;
+      const matchCId = !(query.componentId) || query.componentId === item.componentId;
       const isMatch = matchName && matchCId;
       if (isMatch) {
         result = item;
@@ -238,8 +238,8 @@ class Component {
     if (arguments.length > 1 && !(cpt instanceof Component)) { throw new TypeError(`不是有效组件${JSON.stringify(cpt)}`); }
     const cpts = (arguments.length > 1) ? cpt.components : components;
     const filter = cpts.filter((item) => {
-      const matchName = query.name && query.name === item.name;
-      const matchCId = query.componentId && query.componentId === item.componentId;
+      const matchName = !(query.name) || query.name === item.name;
+      const matchCId = !(query.componentId) || query.componentId === item.componentId;
       const isMatch = matchName && matchCId;
       return isMatch;
     });

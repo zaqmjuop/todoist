@@ -6,9 +6,6 @@ import Dom from '../dom';
 
 const now = new Date();
 
-const fakeForm = Object.assign({}, missionForm);
-fakeForm.query = 'fake-form';
-
 const param = {
   query: 'mission-card-expired',
   url: './assets/components/missionCardExpired.html',
@@ -19,9 +16,10 @@ const param = {
     };
   },
   components: [
+    missionForm,
   ],
   children: {
-    missionForm,
+
   },
   selectors: {
     cardBody: '.card-body',
@@ -38,7 +36,9 @@ const param = {
       return this;
     },
     initForm() {
-      const form = this.children.missionForm;
+      // const form = this.children.missionForm;
+      const form = this.findBy({ name: missionForm.name });
+      console.log(this, form)
       this.data.formId = form.componentId;
       form.methods.hide();
       // 更新
