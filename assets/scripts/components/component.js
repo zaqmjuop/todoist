@@ -203,6 +203,54 @@ class Component {
     return filter[0];
   }
 
+  static findBy(query, cpt) {
+    // 查找单个组件
+    // query是对象类型表示查找选项，可选componentId和name,例如{componentId: 123, name: 'name'}
+    // cpt 是组件实例化的对象，如果存在该参数，则从cpt.components查找，否则从Component.components查找
+    if (!query.name && !query.componentId) { throw new Error(`查询参数无效${JSON.stringify(query)}`); }
+    if (arguments.length > 1 && !(cpt instanceof Component)) { throw new TypeError(`不是有效组件${JSON.stringify(cpt)}`); }
+    let result = null;
+    const cpts = (arguments.length > 1) ? cpt.components : components;
+    for (let index = 0; index < cpts.length; index += 1) {
+      const item = cpts[index];
+      const matchName = query.name && query.name === item.name;
+      const matchCId = query.componentId && query.componentId === item.componentId;
+      const isMatch = matchName && matchCId;
+      if (isMatch) {
+        result = item;
+        break;
+      }
+    }
+    return result;
+  }
+
+  findBy(query) {
+    // 查找单个组件
+    // query是对象类型表示查找选项，可选componentId和name,例如{componentId: 123, name: 'name'}
+    return Component.findBy(query, this);
+  }
+
+  static where(query, cpt) {
+    // 查找多个组件
+    // query是对象类型表示查找选项，可选componentId和name,例如{componentId: 123, name: 'name'}
+    // cpt 是组件实例化的对象，如果存在该参数，则从cpt.components查找，否则从Component.components查找
+    if (!query.name && !query.componentId) { throw new Error(`查询参数无效${JSON.stringify(query)}`); }
+    if (arguments.length > 1 && !(cpt instanceof Component)) { throw new TypeError(`不是有效组件${JSON.stringify(cpt)}`); }
+    const cpts = (arguments.length > 1) ? cpt.components : components;
+    const filter = cpts.filter((item) => {
+      const matchName = query.name && query.name === item.name;
+      const matchCId = query.componentId && query.componentId === item.componentId;
+      const isMatch = matchName && matchCId;
+      return isMatch;
+    });
+    return filter;
+  }
+
+  where(query) {
+    // 查找多个组件
+    // query是对象类型表示查找选项，可选componentId和name,例如{componentId: 123, name: 'name'}
+    return Component.where(query, this);
+  }
   static destroy(query) {
     // 删除组件
     // query 是Component实例对象或componentId
@@ -524,8 +572,9 @@ class Component {
   }
 }
 
-
+Component.components = components;
 window.Component = Component;
+
 
 export default Component;
 

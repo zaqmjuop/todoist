@@ -19,7 +19,6 @@ const param = {
     };
   },
   components: [
-    fakeForm,
   ],
   children: {
     missionForm,
