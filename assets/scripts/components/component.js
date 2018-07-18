@@ -2,9 +2,6 @@ import Dom from '../dom';
 import Utils from '../utils';
 import promiseAjax from '../ajax';
 
-class ComponentCollection extends Array {
-}
-
 // 保存所有创建的组件
 const components = [];
 
@@ -48,6 +45,7 @@ class Component {
         if (selector && Utils.isString(selector)) {
           const element = result.template.querySelector(selector);
           if (Utils.isElement(element)) {
+            Dom.of(element).attr('data-c-selector', name);
             elements[name] = element;
           }
         }
@@ -134,10 +132,16 @@ class Component {
             const ajax = Component.pjaxFormatHtml(parameter.url);
             return ajax;
           }).then(({ template, style }) => {
+            const query = this.template.querySelector(parameter.query);
+            if (!Dom.isElement(query)) { throw new Error(`子组件插入位置未找到${parameter.query}`); }
+            parameter.query = query;
             parameter.template = template;
             parameter.style = style;
-            parameter.query = this.template.querySelector(parameter.query);
             const cpt = Component.of(parameter);
+            const selector = Dom.of(query).attr('data-c-selector');
+            if (selector) {
+              this.elements[selector] = cpt.template;
+            }
             this.components[index] = cpt;
             return cpt;
           });

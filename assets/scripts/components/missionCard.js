@@ -126,7 +126,7 @@ const param = {
             formId: this.data.formId,
           }, e.detail);
           const itemParam = Object.assign({ present }, missionListItem);
-          const insert = this.insertComponent(itemParam, this.elements.form, -1);
+          const insert = this.insertComponent(itemParam, this.elements.form, -1);//
           return insert;
         }).then(() => {
           form.present = {};
