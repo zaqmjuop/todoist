@@ -144,30 +144,6 @@ class Component {
         }
       });
     }
-    // format this.children
-    if (!this.children) { return promise; }
-    this.children = Object.assign({}, this.children);
-    const elementsNames = Object.keys(this.elements);
-
-    const childrenNames = Object.keys(this.children);
-    childrenNames.forEach((childName) => {
-      const child = this.children[childName];
-      promise = promise.then(() => {
-        // todo 插入child
-        // child = param || cpmponent
-        const cpt = (child instanceof Component) ? child : this.appendComponent(child);
-        return cpt;
-      }).then((cpt) => {
-        if (this.children[childName] !== cpt) {
-          this.children[childName] = cpt;
-        }
-        const eleName = elementsNames.find(name => this.elements[name] === cpt.query);
-        if (eleName) {
-          this.elements[eleName] = cpt.template;
-        }
-      });
-    });
-
     return promise;
   }
   lifeCycle() {

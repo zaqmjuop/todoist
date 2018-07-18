@@ -37,9 +37,9 @@ const param = {
     showForm: '.show-form',
     createMission: '.create-mission',
   },
-  children: {
+  components: [
     missionForm,
-  },
+  ],
   methods: {
     init() {
       if (this.data.inited) { return false; }
@@ -92,7 +92,7 @@ const param = {
       return insert;
     },
     initForm() {
-      const form = this.children.missionForm;
+      const form = this.findBy({ name: missionForm.name });
       this.data.formId = form.componentId;
       if (this.data.date) {
         const fillFormDate = formatDate(this.data.date);

@@ -18,9 +18,6 @@ const param = {
   components: [
     missionForm,
   ],
-  children: {
-
-  },
   selectors: {
     cardBody: '.card-body',
     dayMark: '.day-mark',
@@ -36,9 +33,7 @@ const param = {
       return this;
     },
     initForm() {
-      // const form = this.children.missionForm;
       const form = this.findBy({ name: missionForm.name });
-      console.log(this, form)
       this.data.formId = form.componentId;
       form.methods.hide();
       // 更新
