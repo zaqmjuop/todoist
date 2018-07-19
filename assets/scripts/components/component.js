@@ -550,6 +550,81 @@ class Component {
   static all() {
     return components;
   }
+
+  appendChild(want, exist, position) {
+    // 添加子元素 want是要添加的子组件 exist是已存在子元素 position是成为exist的第几个子元素,若不存在则为最后一个元素
+    let promise = new Promise(resolve => resolve(want));
+    const existIndex = this.components.indexOf(exist);
+    if (!existIndex && existIndex !== 0) {
+      throw new TypeError(`不是子组件${JSON.stringify(exist)}`);
+    }
+    if (arguments.length > 2 && !Number.isSafeInteger(position)) {
+      throw new TypeError(`不是整数${position}`);
+    }
+    if (!(want instanceof Component)) {
+      const param = want;
+      promise = Component.pjaxFormatHtml(param.url).then(({ template, style }) => {
+        param.template = template;
+        param.query = template;
+        param.style = style;
+        // 把template插入到position的位置
+        Dom.of(this.template).appendAccurate(template, exist.template, position);
+        const cpt = Component.of(param);
+        // 将子组件保存在this.components中
+        this.components.push(cpt);
+        return cpt;
+      });
+    } else {
+      promise = promise.then(() => {
+        Dom.of(this.template).appendAccurate(want.template, exist.template, position);
+        this.components.push(want);
+        return want;
+      });
+    }
+    return promise;
+  }
+  replaceChild(want, exist) {
+    // 替换子元素 want是要添加的子组件 exist是已存在子元素
+    let promise = new Promise(resolve => resolve(want));
+    const existIndex = this.components.indexOf(exist);
+    if (!existIndex && existIndex !== 0) {
+      throw new TypeError(`不是子组件${JSON.stringify(exist)}`);
+    }
+    if (!(want instanceof Component)) {
+      const param = want;
+      promise = Component.pjaxFormatHtml(param.url).then(({ template, style }) => {
+        param.template = template;
+        param.query = template;
+        param.style = style;
+        // 把template替换到exist.template位置
+        Dom.of(template).replace(exist.template);
+        const cpt = Component.of(param);
+        // 将子组件保存在this.components中
+        this.components.splice(existIndex, 1, cpt);
+        return cpt;
+      });
+    } else {
+      promise = promise.then(() => {
+        Dom.of(want.template).replace(exist.template);
+        this.components.splice(existIndex, 1, want);
+        return want;
+      });
+    }
+    return promise;
+  }
+  removeChild(exist) {
+    // 移除子组件
+    const existIndex = this.components.indexOf(exist);
+    if (!existIndex && existIndex !== 0) {
+      throw new TypeError(`不是子组件${JSON.stringify(exist)}`);
+    }
+    const promise = new Promise((resolve) => {
+      Dom.of(this.template).remove(exist.template);
+      this.components.splice(existIndex, 1);
+      resolve(exist);
+    });
+    return promise;
+  }
 }
 
 Component.components = components;
@@ -559,3 +634,11 @@ window.Component = Component;
 export default Component;
 
 // todo router 把没用的组件占用内存释放
+// todo 操作子组件 应保证操作前已经实例化
+// 返回promise
+// 添加子元素 appendChild(exist ,new, position) 是要添加的子组件 exist是已存在子元素 new是要添加的子组件，position是成为exist的第几个子元素
+// 替换子元素replaceChild(exist, new) new是新组件exist是已存在的组件
+// 删除子组件 removeChild(exist) exist 是要删除的子组件
+// exist不接受param new接受param
+
+// 此组件替换另一个组件 replace(otherCpt)

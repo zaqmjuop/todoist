@@ -162,6 +162,24 @@ class Dom {
     return this;
   }
 
+  appendAccurate(query, position) {
+    // 添加一个子元素到指定位置 例如this.appendAccurate('<div>', 2),即插入一个<div>成为第二个子元素
+    if (arguments.length > 1 && !Number.isSafeInteger(position)) {
+      throw new TypeError(`${position}不是整数`);
+    }
+    const want = Dom.of(query);
+    if (arguments.length < 2 ||
+      this.dom.childElementCount === 0 ||
+      position > this.dom.childElementCount
+    ) {
+      this.dom.appendChild(want.dom);
+    } else {
+      const after = this.dom.children[position];
+      want.insertBefore(after);
+    }
+    return this;
+  }
+
   replace(element) {
     // 将自身替换为另一个element
     if (!Dom.isElement(element)) {
