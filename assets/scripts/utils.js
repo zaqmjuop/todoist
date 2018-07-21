@@ -9,6 +9,8 @@ const isFunction = (param) => {
   return res;
 };
 
+const newPromise = () => new Promise(resolve => resolve(1));
+
 const isEmptyString = (content) => {
   // 是否是空Falsely或空字符串
   const isFalsely =
@@ -27,4 +29,5 @@ export default {
   isString,
   isFunction,
   isEmptyString,
+  newPromise,
 };
