@@ -1,6 +1,7 @@
 import missionCardExpired from './missionCardExpired';
 import missionCard from './missionCard';
 
+const card = Object.assign({ present: { date: new Date() } }, missionCard);
 
 const param = {
   query: 'mission-content',
@@ -9,6 +10,7 @@ const param = {
   data() {
     return {};
   },
+  // components: [missionCardExpired],
   methods: {
     init() {
       if (this.data.inited) { return false; }
@@ -17,17 +19,18 @@ const param = {
     },
     loadChildren() {
       // 添加子组件
-      const promise = new Promise(resolve => resolve(1)).then(() => {
-        const expired = Object.assign({}, missionCardExpired);
-        const result = this.appendChildComponent(expired, this.template);
-        return result;
-      }).then(() => {
-        const today = new Date();
-        const present = { present: { date: today } };
-        const todayParam = Object.assign(present, missionCard);
-        const result = this.appendChildComponent(todayParam, this.template);
-        return result;
-      });
+      const promise = new Promise(resolve => resolve(1))
+        .then(() => {
+          const result = this.appendChild(missionCardExpired, this.template, -1);
+          return result;
+        })
+        .then(() => {
+          const today = new Date();
+          const present = { present: { date: today } };
+          const todayParam = Object.assign(present, missionCard);
+          const result = this.appendChild(todayParam, this.template, -1);
+          return result;
+        });
       return promise;
     },
   },

@@ -3,7 +3,7 @@ import Utils from '../utils';
 import promiseAjax from '../ajax';
 
 // 保存所有创建的组件
-const components = [];
+const components = new Set();
 
 let counter = 100001;
 const takeId = () => {
@@ -55,6 +55,44 @@ class Component {
         result.elements = elements;
       }
     }
+
+    // parent
+    let parent = result.parent;
+    Object.defineProperty(result, 'parent', {
+      enumerable: true,
+      configurable: true,
+      get: () => {
+        return parent;
+      },
+      set: (cpt) => {
+        if (cpt === parent) { return parent; }
+        if (cpt !== undefined && cpt !== null && !Component.isComponent(cpt)) {
+          throw new TypeError(`父组件不可以为${cpt}`);
+        }
+        if (Component.isComponent(parent)) {
+          parent.components.delete(result);
+        }
+        if (cpt) {
+          parent = cpt;
+          parent.components.add(result);
+        } else {
+          parent = null;
+        }
+        return parent;
+      },
+    });
+    result.parent = parent;
+
+    // 子组件components
+    let componentsSet;
+    if (!result.components) {
+      componentsSet = new Set();
+    } else if ((result.components instanceof Array) || (result.components instanceof Set)) {
+      componentsSet = new Set([...result.components]);
+    } else {
+      throw new TypeError(`${param.components}不能作为子组件集`);
+    }
+    result.components = componentsSet;
 
     // present
     result.present = result.present || {};
@@ -117,37 +155,35 @@ class Component {
     this.formatChildren()
       .then(() => this.lifeCycle());
 
-    components.push(result);
+    components.add(result);
     return result;
   }
   formatChildren() {
+    // 处理子组件components中不是组件实例化对象的对象
     let promise = new Promise(resolve => resolve(1));
-    const cpts = (this.components instanceof Array) ? [...this.components] : [];
-    this.components = cpts;
-    if (this.components && this.components instanceof Array && this.components.length > 0) {
-      this.components.forEach((item, index) => {
-        if (!(item instanceof Component)) {
-          const parameter = Object.assign({}, item);
-          promise = promise.then(() => {
-            const ajax = Component.pjaxFormatHtml(parameter.url);
-            return ajax;
-          }).then(({ template, style }) => {
-            const query = this.template.querySelector(parameter.query);
-            if (!Dom.isElement(query)) { throw new Error(`子组件插入位置未找到${parameter.query}`); }
-            parameter.query = query;
-            parameter.template = template;
-            parameter.style = style;
-            const cpt = Component.of(parameter);
-            const selector = Dom.of(query).attr('data-c-selector');
-            if (selector) {
-              this.elements[selector] = cpt.template;
-            }
-            this.components[index] = cpt;
-            return cpt;
-          });
+    const params = Array.from(this.components).filter(item => !(item instanceof Component));
+    params.forEach((item) => {
+      const param = Object.assign({}, item);
+      promise = promise.then(() => {
+        const ajax = Component.pjaxFormatHtml(param.url);
+        return ajax;
+      }).then(({ template, style }) => {
+        const query = this.template.querySelector(param.query);
+        if (!Dom.isElement(query)) { throw new Error(`子组件插入位置未找到${item.query}`); }
+        param.query = query;
+        param.template = template;
+        param.style = style;
+        param.parent = this;
+        const cpt = Component.of(param);
+        const selector = Dom.of(query).attr('data-c-selector');
+        if (selector) {
+          this.elements[selector] = cpt.template;
         }
+        this.components.delete(item);
+        this.components.add(cpt);
+        return cpt;
       });
-    }
+    });
     return promise;
   }
   lifeCycle() {
@@ -173,16 +209,6 @@ class Component {
     }
   }
 
-  static find(componentId) {
-    // window.Component.find查找组件
-    const findId = Number(componentId);
-    const filter = components.filter((component) => {
-      const id = Number(component.componentId);
-      return id === findId;
-    });
-    return filter[0];
-  }
-
   static findBy(query, cpt) {
     // 查找单个组件
     // query是对象类型表示查找选项，可选componentId和name,例如{componentId: 123, name: 'name'}
@@ -190,7 +216,8 @@ class Component {
     if (!query.name && !query.componentId) { throw new Error(`查询参数无效${JSON.stringify(query)}`); }
     if (arguments.length > 1 && !(cpt instanceof Component)) { throw new TypeError(`不是有效组件${JSON.stringify(cpt)}`); }
     let result = null;
-    const cpts = (arguments.length > 1) ? cpt.components : components;
+    const set = (arguments.length > 1) ? cpt.components : components;
+    const cpts = Array.from(set);
     for (let index = 0; index < cpts.length; index += 1) {
       const item = cpts[index];
       const matchName = !(query.name) || query.name === item.name;
@@ -216,7 +243,8 @@ class Component {
     // cpt 是组件实例化的对象，如果存在该参数，则从cpt.components查找，否则从Component.components查找
     if (!query.name && !query.componentId) { throw new Error(`查询参数无效${JSON.stringify(query)}`); }
     if (arguments.length > 1 && !(cpt instanceof Component)) { throw new TypeError(`不是有效组件${JSON.stringify(cpt)}`); }
-    const cpts = (arguments.length > 1) ? cpt.components : components;
+    const set = (arguments.length > 1) ? cpt.components : components;
+    const cpts = Array.from(set);
     const filter = cpts.filter((item) => {
       const matchName = !(query.name) || query.name === item.name;
       const matchCId = !(query.componentId) || query.componentId === item.componentId;
@@ -230,36 +258,6 @@ class Component {
     // 查找多个组件
     // query是对象类型表示查找选项，可选componentId和name,例如{componentId: 123, name: 'name'}
     return Component.where(query, this);
-  }
-  static destroy(query) {
-    // 删除组件
-    // query 是Component实例对象或componentId
-    let cpt;
-    if (query instanceof Component) {
-      cpt = query;
-    } else {
-      cpt = Component.find(query);
-    }
-    if (cpt) {
-      for (let index = 0; index < 3; index += 1) {
-        const element = Dom.of(`*[data-c-id=c${cpt.componentId}]`);
-        element.remove();
-      }
-    }
-    // todo 子组件template不用删除
-    if (cpt.children) {
-      const names = Object.keys(cpt.children);
-      names.forEach((name) => {
-        const child = cpt.children[name];
-        Component.destroy(child);
-      });
-    }
-    if (cpt.components) {
-      cpt.components.forEach((component) => {
-        Component.destroy(component);
-      });
-    }
-    return cpt;
   }
 
   addEventListener(typeArg, callback) {
@@ -386,17 +384,11 @@ class Component {
     return this;
   }
 
-  replaceElement(element) {
-    // 替换到指定元素的位置
-    if (!Dom.isElement(element)) {
-      throw new TypeError(`${element}不是HTMLElement`);
-    }
-    Dom.of(element).replace(this.template);
-    this.refresh();
-  }
-
   static pjaxFormatHtml(url) {
     // promiseAjax请求html文件 返回一个对象{template, style} template是该html文件的<body>下第一个子元素 style是第一个<style>
+    if (!url || (typeof url !== 'string')) {
+      throw new TypeError(`${url}不是有效的html文件地址`);
+    }
     const promise = promiseAjax.get(url).then((result) => {
       const html = document.createElement('html');
       html.innerHTML = result;
@@ -426,202 +418,132 @@ class Component {
     return promise;
   }
 
-  insertComponent(param, refElement, relative) {
-    // 添加子组件
-    // refElement是参照物元素
-    // relative是一个整数表示插入位置
-    // relative若为1表示插入后是refElement的后一个元素 若为-1表示是refElement的前一个元素 若为0表示替换掉refElement
-    if (!Dom.of(refElement).hasParent(this.template)) {
-      throw new Error(refElement, '不是', this, '的子元素');
-    }
-    const relNum = Number(relative);
-    if (!Number.isSafeInteger(relNum)) {
-      throw new Error(`${relative}不是有效数字`);
-    }
-    const parent = refElement.parentElement;
-    const refIndex = Array.from(parent.children).indexOf(refElement);
-    // 插入的位置
-    const query = Dom.of('<div>').dom;
-    Dom.of(query).attr('data-c-id', `c${this.componentId}`);
-    if (relNum === 0) {
-      Dom.of(refElement).replace(query);
-    } else if (relNum > 0) {
-      const leftAdjacentIndex = -1 + refIndex + relNum;
-      const leftAdjacent = parent.children[leftAdjacentIndex] || refElement;
-      Dom.of(query).insertAfter(leftAdjacent);
-    } else {
-      const rightAdjacentIndex = 1 + refIndex + relNum;
-      const rightAdjacent = parent.children[rightAdjacentIndex] || refElement;
-      Dom.of(query).insertBefore(rightAdjacent);
-    }
-    let promise;
-    if (param instanceof Component) {
-      promise = new Promise((resolve) => {
-        param.query = query;
-        this.components.push(param);
-        resolve(param);
-      });
-    } else {
-      const parameter = Object.assign({}, param);
-      promise = Component.pjaxFormatHtml(param.url).then(({ template, style }) => {
-        parameter.template = template;
-        parameter.style = style;
-        parameter.query = query;
-        const cpt = Component.of(parameter);
-        // 将子组件保存在this.components中
-        this.components.push(cpt);
-        return cpt;
-      });
-    }
-    return promise;
-  }
-
-  appendChildComponent(param, element) {
-    // 在子元素下添加子组件
-    if (!element.isSameNode(this.template) && !Dom.of(element).hasParent(this.template)) {
-      throw new Error(`${element}不属于此组件`);
-    }
-    // 插入的位置
-    const placeholder = Dom.of('<placeholder>');
-    Dom.of(placeholder).attr('data-c-id', `c${this.componentId}`);
-    Dom.of(element).append(placeholder);
-    let promise;
-    if (param instanceof Component) {
-      promise = new Promise((resolve) => {
-        param.query = placeholder;
-        this.components.push(param);
-        resolve(param);
-      });
-    } else {
-      const parameter = Object.assign({}, param);
-      promise = Component.pjaxFormatHtml(param.url).then(({ template, style }) => {
-        parameter.template = template;
-        parameter.style = style;
-        parameter.query = placeholder;
-        const cpt = Component.of(parameter);
-        // 将子组件保存在this.components中
-        this.components.push(cpt);
-        return cpt;
-      });
-    }
-    return promise;
-  }
-
-  appendComponent(param) {
-    const parameter = Object.assign({}, param);
-    // 通过参数param.url标示为html地址， 通过promiseAjax获取html并创建Component实例对象
-    if (!Utils.isString(param.url)) { throw new TypeError('param.url应该是字符串类型html文件地址'); }
-    const promise = Component.pjaxFormatHtml(param.url).then(({ template, style }) => {
-      parameter.template = template;
-      parameter.style = style;
-      parameter.query = this.template.querySelector(parameter.query);
-      const cpt = Component.of(parameter);
-      // 将子组件保存在this.components中
-      this.components.push(cpt);
-      return cpt;
-    });
-    return promise;
-  }
-
-  replaceSelf(param) {
-    // 将自己替换为另一个组件
-    let promise;
-    if (param instanceof Component) {
-      promise = new Promise((resolve) => {
-        Dom.of(this.template).replace(param.template);
-        Dom.of(this.style).replace(param.style);
-        param.refresh();
-        resolve(param);
-      });
-    } else {
-      if (!Utils.isString(param.url)) { throw new TypeError('param.url应该是字符串类型html文件地址'); }
-      promise = Component.pjaxFormatHtml(param.url).then(({ template, style }) => {
-        Dom.of(this.style).remove();
-        const parameter = Object.assign(param, { template, style });
-        parameter.query = this.template;
-        const cpt = Component.of(parameter);
-        return cpt;
-      });
-    }
-    return promise;
-  }
-
   // 显示全部实例化的组件
   static all() {
     return components;
   }
 
-  appendChild(want, exist, position) {
-    // 添加子元素 want是要添加的子组件 exist是已存在子元素 position是成为exist的第几个子元素,若不存在则为最后一个元素
-    let promise = new Promise(resolve => resolve(want));
-    const existIndex = this.components.indexOf(exist);
-    if (!existIndex && existIndex !== 0) {
-      throw new TypeError(`不是子组件${JSON.stringify(exist)}`);
-    }
-    if (arguments.length > 2 && !Number.isSafeInteger(position)) {
-      throw new TypeError(`不是整数${position}`);
-    }
-    if (!(want instanceof Component)) {
-      const param = want;
-      promise = Component.pjaxFormatHtml(param.url).then(({ template, style }) => {
-        param.template = template;
-        param.query = template;
-        param.style = style;
-        // 把template插入到position的位置
-        Dom.of(this.template).appendAccurate(template, exist.template, position);
-        const cpt = Component.of(param);
-        // 将子组件保存在this.components中
-        this.components.push(cpt);
-        return cpt;
-      });
-    } else {
-      promise = promise.then(() => {
-        Dom.of(this.template).appendAccurate(want.template, exist.template, position);
-        this.components.push(want);
-        return want;
-      });
-    }
-    return promise;
+  static isComponent(component) {
+    // 判断是否是一个组件实例化对象
+    return component && (component instanceof Component);
+  }
+
+  appendChild(want, element, position) {
+    // 添加一个子组件
+    // want是组件参数或组件实例化对象
+    // element应是this.template或其子HTMLElement元素
+    // position是位置 -1表示成为最后一个子元素，0表示成为第一个子元素，1表示成为第二个子元素
+    // 当position<0或大于指定元素的子元素数时，插入为最后一个元素
+    // 返回值promise resolve(want)
+    return Component.appendComponent(want, this, element, position);
   }
   replaceChild(want, exist) {
-    // 替换子元素 want是要添加的子组件 exist是已存在子元素
-    let promise = new Promise(resolve => resolve(want));
-    const existIndex = this.components.indexOf(exist);
-    if (!existIndex && existIndex !== 0) {
-      throw new TypeError(`不是子组件${JSON.stringify(exist)}`);
-    }
-    if (!(want instanceof Component)) {
-      const param = want;
-      promise = Component.pjaxFormatHtml(param.url).then(({ template, style }) => {
-        param.template = template;
-        param.query = template;
-        param.style = style;
-        // 把template替换到exist.template位置
-        Dom.of(template).replace(exist.template);
-        const cpt = Component.of(param);
-        // 将子组件保存在this.components中
-        this.components.splice(existIndex, 1, cpt);
-        return cpt;
-      });
-    } else {
-      promise = promise.then(() => {
-        Dom.of(want.template).replace(exist.template);
-        this.components.splice(existIndex, 1, want);
-        return want;
-      });
-    }
+    // 替换子元素
+    // want是组件参数或组件实例化对象
+    // exist是已存在子元素
+    // 返回值promise resolve(want)
+    const promise = Component.replaceComponent(want, exist).then((cpt) => {
+      cpt.parent = this;
+      return cpt;
+    });
     return promise;
   }
   removeChild(exist) {
     // 移除子组件
-    const existIndex = this.components.indexOf(exist);
-    if (!existIndex && existIndex !== 0) {
+    // 返回值promise resolve(exist)
+    if (!this.components.has(exist)) {
       throw new TypeError(`不是子组件${JSON.stringify(exist)}`);
     }
+    return Component.removeComponent(exist);
+  }
+
+  replace(want) {
+    // 将自己替换为另一个组件参数或实例化的组件
+    // 返回值promise resolve(want)
+    return Component.replaceComponent(want, this);
+  }
+
+  static appendComponent(want, exist, element, position) {
+    // 添加一个组件
+    // want是组件参数或组件实例化对象
+    // exist是父组件
+    // element应是exist上的一个HTMLElement元素
+    // position是位置 -1表示成为最后一个子元素，0表示成为第一个子元素，1表示成为第二个子元素
+    // 当position<0或大于指定元素的子元素数时，插入为最后一个元素
+    // 返回值promise resolve(want)
+    if (!Component.isComponent(exist)) {
+      throw new TypeError(`${exist}不是组件`);
+    }
+    const validElement = Dom.isElement(element) &&
+      (exist.template.isSameNode(element) || Dom.of(element).hasParent(exist.template));
+    if (!validElement) {
+      throw new TypeError(`${element}不是组件id:${exist.componentId}的子元素`);
+    }
+    if (!Number.isSafeInteger(position)) {
+      throw new TypeError(`不是整数${position}`);
+    }
+    let promise = new Promise(resolve => resolve(want));
+    if (!(want instanceof Component)) {
+      const param = Object.assign(want);
+      promise = Component.pjaxFormatHtml(param.url).then(({ template, style }) => {
+        param.query = template;
+        param.template = template;
+        param.style = style;
+        const cpt = Component.of(param);
+        return cpt;
+      });
+    }
+    promise = promise.then((cpt) => {
+      // 把template插入到position的位置
+      Dom.of(element).appendAccurate(cpt.template, position);
+      cpt.parent = exist;
+      return cpt;
+    });
+    return promise;
+  }
+
+  static replaceComponent(want, exist) {
+    // 将一个组件实例化对象替换为另一个组件参数或实例化的组件
+    // 返回值promise resolve(want)
+    if (!Component.isComponent(exist)) { throw new TypeError(`${exist}不是组件实例化对象`); }
+    let promise = new Promise(resolve => resolve(1));
+    if (Component.isComponent(want)) {
+      promise = promise.then(() => {
+        Dom.of(exist.template).replace(want.template);
+        Dom.of(exist.style).replace(want.style);
+        return want;
+      });
+    } else {
+      if (!Utils.isString(want.url)) { throw new TypeError('param.url应该是字符串类型html文件地址'); }
+      want.query = exist.template;
+      promise = Component.pjaxFormatHtml(want.url).then(({ template, style }) => {
+        want.template = template;
+        want.style = style;
+        const cpt = Component.of(want);
+        return cpt;
+      });
+    }
+    promise = promise.then((cpt) => {
+      cpt.parent = exist.parent;
+      Component.removeComponent(exist);
+      return cpt;
+    });
+    return promise;
+  }
+
+  static removeComponent(component) {
+    // 移除一个组件
+    // component是组件实例化对象
+    // 返回值promise resolve(component)
+    if (!Component.isComponent(component)) {
+      throw new TypeError(`${component}不是一个组件`);
+    }
     const promise = new Promise((resolve) => {
-      Dom.of(this.template).remove(exist.template);
-      this.components.splice(existIndex, 1);
-      resolve(exist);
+      Dom.of(component.style).remove();
+      Dom.of(component.template).remove();
+      component.parent = null;
+      // components.delete(component);
+      resolve(component);
     });
     return promise;
   }
@@ -634,11 +556,11 @@ window.Component = Component;
 export default Component;
 
 // todo router 把没用的组件占用内存释放
-// todo 操作子组件 应保证操作前已经实例化
-// 返回promise
-// 添加子元素 appendChild(exist ,new, position) 是要添加的子组件 exist是已存在子元素 new是要添加的子组件，position是成为exist的第几个子元素
-// 替换子元素replaceChild(exist, new) new是新组件exist是已存在的组件
-// 删除子组件 removeChild(exist) exist 是要删除的子组件
-// exist不接受param new接受param
+// todo 逐渐替换pjaxCreate 实例对象所有方法改为返回promise
+// 改为new Component(param) 立即返回一个Component实例对象，该实例对象有state属性标识是否加载完，若没有则先加载
 
-// 此组件替换另一个组件 replace(otherCpt)
+// todo param有parent属性处理了 是否可以在参数指定parent属性？
+// todo Component.replace(param, exist)
+// 重构组件操作方法 全部实例对象方法改为返回promise
+// todo 提取handleScopedStyle为私有方法
+// todo 改为有new进行实例化 立即返回实例化对象，该实例化有state属性判断状态，获取html改为在实例化方法内

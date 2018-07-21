@@ -21,7 +21,7 @@ class Dom {
   constructor(query) {
     // 允许的参数类型 1.Dom实例对象 2.HTMLElement 3.创建元素所需tagName 4.querySelector
     // 查找只用querySelector匹配符合条件的第一个元素 查找集合用Dom.all(query)
-    if (!query) { throw new TypeError('参数无效'); }
+    if (!query) { throw new TypeError(`new Dom参数不能为${query}`); }
     if (query instanceof Dom) {
       // 参数是Dom的实例对象
       this.dom = query.dom;
@@ -163,15 +163,15 @@ class Dom {
   }
 
   appendAccurate(query, position) {
-    // 添加一个子元素到指定位置 例如this.appendAccurate('<div>', 2),即插入一个<div>成为第二个子元素
-    if (arguments.length > 1 && !Number.isSafeInteger(position)) {
+    // 添加一个子元素到指定位置
+    // query是子元素查询参数
+    // position是位置 -1表示成为最后一个子元素，0表示成为第一个子元素，1表示成为第二个子元素
+    // 当position<0或大于指定元素的子元素数时，插入为最后一个元素
+    if (!Number.isSafeInteger(position)) {
       throw new TypeError(`${position}不是整数`);
     }
     const want = Dom.of(query);
-    if (arguments.length < 2 ||
-      this.dom.childElementCount === 0 ||
-      position > this.dom.childElementCount
-    ) {
+    if (position < 0 || position > this.dom.childElementCount || this.dom.childElementCount === 0) {
       this.dom.appendChild(want.dom);
     } else {
       const after = this.dom.children[position];
@@ -403,6 +403,13 @@ class Dom {
     return result;
   }
 
+  getIndex() {
+    // 获取该元素的位置，获取该元素是父元素的第几个元素 -1代表该元素没有父元素
+    const parent = this.dom.parentElement;
+    const index = (parent) ? Array.from(parent.children).indexOf(this.dom) : -1;
+    return index;
+  }
+
   static hasParent(element, query) {
     // 查看是否存在query匹配的父元素 query可以是querySelector或Dom实例对象或HTMLElement
     if (!Dom.isElement(element)) { throw new TypeError(`element不能是${element}`); }
@@ -428,3 +435,4 @@ class Dom {
 Dom.globalInit();
 
 export default Dom;
+// todo hasChild

@@ -60,7 +60,8 @@ const param = {
           // 添加 li item
           const present = Object.assign(item, { cid: this.componentId, formId: this.data.formId });
           const itemParam = Object.assign({ present }, missionListItem);
-          this.insertComponent(itemParam, this.elements.form, -1);
+          const position = Dom.of(this.elements.form).getIndex();
+          this.appendChild(itemParam, this.elements.form, position);
           return this;
         });
       });
@@ -126,8 +127,9 @@ const param = {
             formId: this.data.formId,
           }, e.detail);
           const itemParam = Object.assign({ present }, missionListItem);
-          const insert = this.insertComponent(itemParam, this.elements.form, -1);//
-          return insert;
+          const position = Dom.of(this.elements.form).getIndex();
+          const append = this.appendChild(itemParam, this.elements.form, position);
+          return append;
         }).then(() => {
           form.present = {};
           form.methods.hide();

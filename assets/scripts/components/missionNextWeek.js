@@ -34,7 +34,7 @@ const param = {
       });
       weekParam.forEach((dayParam) => {
         promise = promise.then(() => {
-          const result = this.appendChildComponent(dayParam, this.template);
+          const result = this.appendChild(dayParam, this.template, -1);
           return result;
         });
       });

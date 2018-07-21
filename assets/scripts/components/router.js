@@ -15,10 +15,15 @@ const router = {
       inited: 0,
     };
   },
+  // components: [
+  //   missionInboxParam,
+  //   missionTodayParam,
+  //   missionNextWeekParam,
+  // ],
   route: {
-    inbox: missionInboxParam,
-    today: missionTodayParam,
-    nextWeek: missionNextWeekParam,
+    missionInboxParam,
+    missionTodayParam,
+    missionNextWeekParam,
   },
   methods: {
     init() {
@@ -29,8 +34,8 @@ const router = {
     },
     // 不刷新页面改变path
     render(path, state) {
-      const hash = String(path);
-      const param = this.route[hash];
+      // const param = this.findBy({ name: String(path) });
+      const param = this.route[String(path)];
       if (!param) {
         throw new Error(`路径${path}对应Component不存在`);
       }
@@ -38,8 +43,8 @@ const router = {
       const present = param.present || {};
       param.present = Object.assign(present, detail);
       param.query = this.data.current.template;
-      const promise = this.data.current.replaceSelf(param).then((cpt) => {
-        Component.destroy(this.data.current);
+
+      const promise = this.data.current.replace(param).then((cpt) => {
         this.data.current = cpt;
         const url = `${this.data.href}#${path}`;
         window.history.pushState(detail, 0, url);

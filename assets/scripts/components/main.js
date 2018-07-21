@@ -16,13 +16,13 @@ const main = () => {
     Component.pjaxCreate(routerParam).then((router) => {
       window.router = router;
       inboxButton.onclick = () => {
-        router.methods.render('inbox');
+        router.methods.render('missionInboxParam');
       };
       todayButton.onclick = () => {
-        router.methods.render('today');
+        router.methods.render('missionTodayParam');
       };
       nextWeekButton.onclick = () => {
-        router.methods.render('nextWeek');
+        router.methods.render('missionNextWeekParam');
       };
     }).then(() => {
       todayButton.click();

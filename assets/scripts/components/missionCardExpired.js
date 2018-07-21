@@ -65,7 +65,17 @@ const param = {
       present.cid = this.componentId;
       present.formId = this.data.formId;
       const itemParam = Object.assign({ present }, missionListItemParam);
-      const append = this.insertComponent(itemParam, this.elements.form, -1);
+      //
+      try {
+        const position = Dom.of(this.elements.form).getIndex();
+        this.appendChild(itemParam, this.elements.form, position);
+      } catch (error) {
+        const position = Dom.of(this.elements.form).getIndex();
+        console.log('error', this.elements.form, error, position)
+      }
+      //
+      const position = Dom.of(this.elements.form).getIndex();
+      const append = this.appendChild(itemParam, this.elements.form, position);
       return append;
     },
     loadDB() {
