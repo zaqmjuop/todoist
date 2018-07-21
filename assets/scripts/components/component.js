@@ -503,27 +503,24 @@ class Component {
   }
 
   static replaceComponent(want, exist) {
+    // bug 交换之后template没有插入到正确位置
     // 将一个组件实例化对象替换为另一个组件参数或实例化的组件
     // 返回值promise resolve(want)
     if (!Component.isComponent(exist)) { throw new TypeError(`${exist}不是组件实例化对象`); }
     let promise = new Promise(resolve => resolve(1));
-    if (Component.isComponent(want)) {
-      promise = promise.then(() => {
-        Dom.of(exist.template).replace(want.template);
-        Dom.of(exist.style).replace(want.style);
-        return want;
-      });
-    } else {
+    if (!(Component.isComponent(want))) {
       if (!Utils.isString(want.url)) { throw new TypeError('param.url应该是字符串类型html文件地址'); }
-      want.query = exist.template;
       promise = Component.pjaxFormatHtml(want.url).then(({ template, style }) => {
         want.template = template;
         want.style = style;
+        want.query = exist.template;
         const cpt = Component.of(want);
         return cpt;
       });
     }
     promise = promise.then((cpt) => {
+      Dom.of(exist.template).replace(cpt.template);
+      Dom.of(exist.style).replace(cpt.style);
       cpt.parent = exist.parent;
       Component.removeComponent(exist);
       return cpt;

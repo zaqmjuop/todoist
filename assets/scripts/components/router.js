@@ -15,11 +15,6 @@ const router = {
       inited: 0,
     };
   },
-  // components: [
-  //   missionInboxParam,
-  //   missionTodayParam,
-  //   missionNextWeekParam,
-  // ],
   route: {
     missionInboxParam,
     missionTodayParam,
@@ -34,20 +29,17 @@ const router = {
     },
     // 不刷新页面改变path
     render(path, state) {
-      // const param = this.findBy({ name: String(path) });
-      const param = this.route[String(path)];
-      if (!param) {
-        throw new Error(`路径${path}对应Component不存在`);
-      }
-      const detail = (state instanceof Object) ? state : {};
-      const present = param.present || {};
-      param.present = Object.assign(present, detail);
-      param.query = this.data.current.template;
-
+      const route = this.route[String(path)];
+      if (!route) { throw new Error(`路径${path}对应Component不存在`); }
+      const param = Object.assign({}, route);
+      const detail = ((state instanceof Object) && !(state instanceof Array)) ? state : {};
+      const present = Object.assign({}, param.present, detail);
+      param.present = present;
       const promise = this.data.current.replace(param).then((cpt) => {
         this.data.current = cpt;
         const url = `${this.data.href}#${path}`;
         window.history.pushState(detail, 0, url);
+        return cpt;
       });
       return promise;
     },
