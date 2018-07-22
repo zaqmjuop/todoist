@@ -80,7 +80,7 @@ const param = {
         event.stopPropagation();
         const beforeCid = Dom.of(this.template).attr('data-cid');
         if (beforeCid) {
-          const beforeComponent = Component.find(beforeCid);
+          const beforeComponent = Component.findBy({ componentId: beforeCid });
           if (beforeComponent) {
             this.replaceSelf(beforeComponent);
           }

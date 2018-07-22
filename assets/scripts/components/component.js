@@ -213,15 +213,19 @@ class Component {
     // 查找单个组件
     // query是对象类型表示查找选项，可选componentId和name,例如{componentId: 123, name: 'name'}
     // cpt 是组件实例化的对象，如果存在该参数，则从cpt.components查找，否则从Component.components查找
-    if (!query.name && !query.componentId) { throw new Error(`查询参数无效${JSON.stringify(query)}`); }
+    const keys = Object.keys(query);
+    const keyName = keys.find(key => (key === 'name'));
+    const keyId = keys.find(key => (key === 'componentId'));
+    if (!keyName && !keyId) { throw new Error(`查询参数无效${JSON.stringify(query)}`); }
     if (arguments.length > 1 && !(cpt instanceof Component)) { throw new TypeError(`不是有效组件${JSON.stringify(cpt)}`); }
+    if (keyId && !Number.isSafeInteger(query.componentId)) { throw new TypeError(`不是有效组件componentId ${query.componentId}`); }
     let result = null;
     const set = (arguments.length > 1) ? cpt.components : components;
     const cpts = Array.from(set);
     for (let index = 0; index < cpts.length; index += 1) {
       const item = cpts[index];
-      const matchName = !(query.name) || query.name === item.name;
-      const matchCId = !(query.componentId) || query.componentId === item.componentId;
+      const matchName = !(keyName) || (query.name === item.name);
+      const matchCId = !(keyId) || (Number(query.componentId) === Number(item.componentId));
       const isMatch = matchName && matchCId;
       if (isMatch) {
         result = item;
@@ -503,11 +507,10 @@ class Component {
   }
 
   static replaceComponent(want, exist) {
-    // bug 交换之后template没有插入到正确位置
     // 将一个组件实例化对象替换为另一个组件参数或实例化的组件
     // 返回值promise resolve(want)
     if (!Component.isComponent(exist)) { throw new TypeError(`${exist}不是组件实例化对象`); }
-    let promise = new Promise(resolve => resolve(1));
+    let promise = new Promise(resolve => resolve(want));
     if (!(Component.isComponent(want))) {
       if (!Utils.isString(want.url)) { throw new TypeError('param.url应该是字符串类型html文件地址'); }
       promise = Component.pjaxFormatHtml(want.url).then(({ template, style }) => {

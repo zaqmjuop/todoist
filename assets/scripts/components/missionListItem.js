@@ -56,16 +56,16 @@ const param = {
           id: this.data.id,
           formId: this.data.formId,
         };
-        const missionForm = Component.find(detail.formId);
+        const missionForm = Component.findBy({ componentId: Number(detail.formId) });
         missionForm.present = detail;
         const beforeCid = Dom.of(missionForm.template).attr('data-cid');
         if (beforeCid) {
-          const beforeComponent = Component.find(beforeCid);
+          const beforeComponent = Component.findBy({ componentId: Number(beforeCid) });
           if (beforeComponent) {
-            missionForm.replaceSelf(beforeComponent);
+            missionForm.replace(beforeComponent);
           }
         }
-        this.replaceSelf(missionForm);
+        this.replace(missionForm).then(() => missionForm.methods.show());
         return this;
       });
     },

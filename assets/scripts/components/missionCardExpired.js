@@ -49,7 +49,8 @@ const param = {
           return save;
         }).then(() => {
           // 更新后将form替换为li
-          const li = Component.find(e.detail.cid);
+          console.log({ componentId: e.detail.cid })
+          const li = this.findBy({ componentId: e.detail.cid });
           li.present.content = updateData.content;
           li.present.date = updateData.date;
           li.present.id = updateData.id;

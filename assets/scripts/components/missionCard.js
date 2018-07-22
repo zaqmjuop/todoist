@@ -36,6 +36,7 @@ const param = {
     dateMark: '.date-mark',
     showForm: '.show-form',
     createMission: '.create-mission',
+    cardBody: '.card-body',
   },
   components: [
     missionForm,
@@ -61,7 +62,7 @@ const param = {
           const present = Object.assign(item, { cid: this.componentId, formId: this.data.formId });
           const itemParam = Object.assign({ present }, missionListItem);
           const position = Dom.of(this.elements.form).getIndex();
-          this.appendChild(itemParam, this.elements.form, position);
+          this.appendChild(itemParam, this.elements.cardBody, position);
           return this;
         });
       });
@@ -128,7 +129,7 @@ const param = {
           }, e.detail);
           const itemParam = Object.assign({ present }, missionListItem);
           const position = Dom.of(this.elements.form).getIndex();
-          const append = this.appendChild(itemParam, this.elements.form, position);
+          const append = this.appendChild(itemParam, this.elements.cardBody, position);
           return append;
         }).then(() => {
           form.present = {};
