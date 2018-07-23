@@ -564,3 +564,5 @@ export default Component;
 // 重构组件操作方法 全部实例对象方法改为返回promise
 // todo 提取handleScopedStyle为私有方法
 // todo 改为有new进行实例化 立即返回实例化对象，该实例化有state属性判断状态，获取html改为在实例化方法内
+// todo custom alert compponent 在新建或更新mission时 content为空时 应该有提示
+// todo 应该有一个向组件传递数据的方法 像HTMLElement.innerHTML一样 监视Component.present和Component.data 通过组件参数watch配置

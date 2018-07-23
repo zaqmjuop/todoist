@@ -37,7 +37,7 @@ const router = {
       param.present = present;
       const promise = this.data.current.replace(param).then((cpt) => {
         this.data.current = cpt;
-        const url = `${this.data.href}#${path}`;
+        const url = `${this.data.href}#${path}/`;
         window.history.pushState(detail, 0, url);
         return cpt;
       });

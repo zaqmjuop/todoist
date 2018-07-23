@@ -105,7 +105,6 @@ const param = {
       } else if (this.data.days === 'expired') {
         this.data.dayMark = '过期';
       }
-      console.log(this.data.dayMark)
       Dom.of(this.elements.dayMark).attr('text', this.data.dayMark);
       Dom.of(this.elements.dateMark).attr('text', this.data.dateMark);
       return this;
@@ -194,7 +193,6 @@ const param = {
   },
   created() {
     this.methods.init();
-    console.log(this.present)
   },
 };
 
