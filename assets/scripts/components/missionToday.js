@@ -1,7 +1,7 @@
-import missionCardExpired from './missionCardExpired';
 import missionCard from './missionCard';
 
 const card = Object.assign({ present: { date: new Date() } }, missionCard);
+const expired = Object.assign({ present: { days: 'expired' } }, missionCard);
 
 const param = {
   query: 'mission-content',
@@ -10,6 +10,6 @@ const param = {
   data() {
     return {};
   },
-  components: [missionCardExpired, card],
+  components: [card, expired],
 };
 export default param;

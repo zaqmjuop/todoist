@@ -65,14 +65,16 @@ const param = {
             missionForm.replace(beforeComponent);
           }
         }
-        this.replace(missionForm).then(() => missionForm.methods.show());
+        this.replace(missionForm)
+          .then(() => missionForm.methods.fill())
+          .then(() => missionForm.methods.show());
         return this;
       });
     },
     fill() {
-      Dom.of(this.elements.content).attr('text', this.data.content);
-      Dom.of(this.elements.date).attr('text', this.data.date);
-      Dom.of(this.template).attr('data-item-id', this.data.id);
+      Dom.of(this.elements.content).attr('text', this.present.content);
+      Dom.of(this.elements.date).attr('text', this.present.date);
+      Dom.of(this.template).attr('data-item-id', this.present.id);
     },
   },
   created() {

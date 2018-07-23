@@ -3,8 +3,8 @@ import Component from './component';
 import Dom from '../dom';
 import missions from '../indexeddb/missions';
 import missionListItem from './missionListItem';
+import utils from '../utils';
 
-const now = new Date();
 const dayMark = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
 const formatDate = (date) => {
   if (!(date instanceof Date)) {
@@ -27,7 +27,11 @@ const param = {
   url: './assets/components/missionCard.html',
   name: 'missionCard',
   data() {
-    return {};
+    return {
+      items: [],
+      dayMark: '',
+      dateMark: '',
+    };
   },
   selectors: {
     form: 'mission-form',
@@ -44,33 +48,50 @@ const param = {
   methods: {
     init() {
       if (this.data.inited) { return false; }
-      this.data.now = now;
-      this.methods.fill();
-      this.methods.loadDB();
-      this.methods.initForm();
+      this.data.now = window.now;
+      this.data.date = this.present.date;
+      this.data.days = this.present.days;
+      const promise = utils.newPromise()
+        .then(() => this.methods.initForm())
+        .then(() => this.methods.fill())
+        .then(() => this.methods.loadDB())
+        .then(() => this.methods.initItems());
       this.data.inited = 1;
-      return this;
+      return promise;
+    },
+    initItems() {
+      let promise = utils.newPromise();
+      // 添加 li item
+      this.data.items.forEach((item) => {
+        promise = promise.then(() => this.methods.appendItem(item));
+      });
+      return promise;
     },
     loadDB() {
-      if (!this.data.date) { return false; }
       const promise = missions.ready().then(() => {
-        const items = missions.findItems({ date: formatDate(this.data.date) });
-        return items;
+        let data = [];
+        if (this.data.date && this.data.date instanceof Date) {
+          data = missions.findItems({ date: formatDate(this.data.date) });
+        } else if (this.data.days === 'all') {
+          data = missions.getAll();
+        } else if (this.data.days === 'expired') {
+          data = missions.getAll().then((items) => {
+            const filter = items.filter((item) => {
+              const date = new Date(item.date);
+              return (date) && (window.now > date) && (window.now.getDate() !== date.getDate());
+            });
+            return filter;
+          });
+        }
+        return data;
       }).then((items) => {
-        items.map((item) => {
-          // 添加 li item
-          const present = Object.assign(item, { cid: this.componentId, formId: this.data.formId });
-          const itemParam = Object.assign({ present }, missionListItem);
-          const position = Dom.of(this.elements.form).getIndex();
-          this.appendChild(itemParam, this.elements.cardBody, position);
-          return this;
-        });
+        this.data.items = [...items];
+        return this.data.items;
       });
       return promise;
     },
     fill() {
-      if (this.present.date) {
-        this.data.date = this.present.date;
+      if (this.data.date) {
         this.data.dayMark = dayMark[this.data.date.getDay()];
         this.data.dateMark = `${this.data.date.getMonth() + 1}月${this.data.date.getDate()}日`;
         this.data.differDay = differDay(this.data.now, this.data.date);
@@ -79,90 +100,101 @@ const param = {
         } else if (this.data.differDay === 1) {
           this.data.dayMark = '明天';
         }
-        Dom.of(this.elements.dayMark).attr('text', this.data.dayMark);
-        Dom.of(this.elements.dateMark).attr('text', this.data.dateMark);
+      } else if (this.data.days === 'all') {
+        this.data.dayMark = '所有';
+      } else if (this.data.days === 'expired') {
+        this.data.dayMark = '过期';
       }
+      console.log(this.data.dayMark)
+      Dom.of(this.elements.dayMark).attr('text', this.data.dayMark);
+      Dom.of(this.elements.dateMark).attr('text', this.data.dateMark);
       return this;
     },
     appendItem(detail) {
       // 添加li item
-      const present = detail || {};
+      const present = Object.assign(detail);
       present.cid = this.componentId;
       present.formId = this.data.formId;
       const itemParam = Object.assign({ present }, missionListItem);
-      const insert = this.insertComponent(itemParam, this.elements.form, -1);
-      return insert;
+      const position = Dom.of(this.elements.form).getIndex();
+      const append = this.appendChild(itemParam, this.elements.cardBody, position);
+      return append;
     },
     initForm() {
       const form = this.findBy({ name: missionForm.name });
+      if (!form) { return false; }
+      this.data.form = form;
       this.data.formId = form.componentId;
-      if (this.data.date) {
-        const fillFormDate = formatDate(this.data.date);
-        form.present.date = fillFormDate;
-        form.methods.hide().methods.fill();
-      }
+      // 默认隐藏表单
+      form.methods.hide().methods.fill();
       // 显示表单
       Dom.of(this.elements.showForm).on('click', () => {
+        // 还原li item
         const pastCid = form.data.cid;
         if (pastCid) {
-          const pastItem = Component.find(pastCid);
-          if (pastItem) {
-            form.replaceSelf(pastItem);
-          }
+          const pastItem = Component.findBy({ componentId: Number(pastCid) });
+          if (pastItem) { form.replace(pastItem); }
         }
-        form.present = {};
-        form.methods.show().methods.selectDate(this.data.date);
-        Dom.of(form.template).insertBefore(this.elements.createMission);
+        form.present = { date: this.data.date };
+        form.methods.fill();
+        const position = Dom.of(this.elements.createMission).getIndex();
+        this.appendChild(form, this.elements.cardBody, position)
+          .then(() => form.methods.show());
+        return form;
       });
-      // 创建
+      // 创建item
       form.addEventListener('create', (e) => {
         if (!e.detail.content) { return false; }
-        missions.ready().then(() => {
-          const create = missions.set(e.detail);
-          return create;
-        }).then((id) => {
-          // 添加 li item
-          const present = Object.assign({
-            id,
-            cid: this.componentId,
-            formId: this.data.formId,
-          }, e.detail);
-          const itemParam = Object.assign({ present }, missionListItem);
-          const position = Dom.of(this.elements.form).getIndex();
-          const append = this.appendChild(itemParam, this.elements.cardBody, position);
-          return append;
-        }).then(() => {
-          form.present = {};
-          form.methods.hide();
-        });
-        return this;
+        const present = {
+          content: e.detail.content,
+          date: e.detail.date,
+        };
+        missions.ready()
+          .then(() => missions.set(e.detail))
+          .then((id) => {
+            // 添加 li item
+            present.id = id;
+            return this.methods.appendItem(present);
+          })
+          .then(() => {
+            form.methods.clear();
+            form.methods.hide();
+          });
+        return present;
       });
-      // 更新
+      // 更新item
       form.addEventListener('update', (e) => {
         if (!e.detail.content) { return false; }
-        const updateData = {
+        const upData = {
           content: e.detail.content,
           date: e.detail.date,
           id: e.detail.id,
         };
-        missions.ready().then(() => {
-          const save = missions.set(updateData);
-          return save;
-        }).then(() => {
-          // 更新后将form替换为li
-          const li = Component.find(e.detail.cid);
-          li.present.content = updateData.content;
-          li.present.date = updateData.date;
-          li.present.id = updateData.id;
-          form.replaceSelf(li);
-          form.present = {};
-        });
-        return form;
+        const present = Object.assign({
+          cid: this.componentId,
+          formId: this.data.formId,
+        }, upData);
+        missions.ready()
+          .then(() => missions.set(upData))
+          .then((id) => {
+            // 更新后将form替换为li
+            const li = Component.findBy({ componentId: Number(e.detail.cid) });
+            present.id = id;
+            li.present = present;
+            li.methods.fill();
+            this.replaceChild(li, this.data.form);
+          }).then(() => {
+            form.methods.clear();
+            form.methods.hide();
+          });
+        return present;
       });
+      return form;
     },
   },
   created() {
     this.methods.init();
+    console.log(this.present)
   },
 };
 

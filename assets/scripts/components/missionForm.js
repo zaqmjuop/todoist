@@ -2,6 +2,7 @@ import Dom from '../dom';
 import datepicker from '../lib/datepicker';
 import Component from './component';
 
+
 const param = {
   query: 'mission-form',
   url: './assets/components/missionForm.html',
@@ -43,10 +44,23 @@ const param = {
       this.data.cid = this.present.cid || '';
       this.data.submitText = (this.data.cid) ? '更新任务' : '新建任务';
       Dom.of(this.elements.contentInput).attr('value', this.data.content);
-      Dom.of(this.elements.dateInput).attr('value', this.data.date);
+      Dom.of(this.elements.dateInput).attr('value', this.methods.formatDate(this.data.date));
       Dom.of(this.template).attr('data-item-id', this.data.id);
       Dom.of(this.template).attr('data-cid', this.data.cid);
       Dom.of(this.elements.submit).attr('text', this.data.submitText);
+    },
+    formatDate(parameter) {
+      // parameter可以是表示时间字符串 如'2018/01/01'或'2018-01-01'或Date
+      // 返回表示时间的字符串格式'2018-01-01'
+      const date = (parameter && parameter instanceof Date)
+        ? parameter
+        : new Date(String(parameter));
+      const result = (date.getTime()) ? date.toLocaleDateString().replace(/\//g, '-') : '';
+      return result;
+    },
+    clear() {
+      this.present = {};
+      this.methods.fill();
     },
     hide() {
       Dom.of(this.template).addClass('hide');
@@ -57,9 +71,9 @@ const param = {
       return this;
     },
     selectDate(date) {
-      if (!(date instanceof Date)) {
-        throw new TypeError(`${date} 不是Date的实例对象`);
-      }
+      const value = this.methods.formatDate(date);
+      Dom.of(this.elements.dateInput).attr('value', value);
+      return value;
     },
     init() {
       if (this.data.inited) { return false; }
