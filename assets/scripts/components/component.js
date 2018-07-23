@@ -525,7 +525,6 @@ class Component {
       Dom.of(exist.template).replace(cpt.template);
       Dom.of(exist.style).replace(cpt.style);
       cpt.parent = exist.parent;
-      Component.removeComponent(exist);
       return cpt;
     });
     return promise;
@@ -535,14 +534,19 @@ class Component {
     // 移除一个组件
     // component是组件实例化对象
     // 返回值promise resolve(component)
-    if (!Component.isComponent(component)) {
-      throw new TypeError(`${component}不是一个组件`);
-    }
+    if (!Component.isComponent(component)) { throw new TypeError(`${component}不是一个组件`); }
+    const destroy = (cpt) => {
+      if (!Component.isComponent(cpt)) { return false; }
+      Dom.of(cpt.style).remove();
+      components.delete(cpt);
+      cpt.components.forEach(item => destroy(item));
+      cpt.components.clear();
+      cpt.parent = null;
+      return cpt;
+    };
     const promise = new Promise((resolve) => {
-      Dom.of(component.style).remove();
+      destroy(component);
       Dom.of(component.template).remove();
-      component.parent = null;
-      // components.delete(component);
       resolve(component);
     });
     return promise;

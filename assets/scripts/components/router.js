@@ -1,7 +1,6 @@
 import missionInboxParam from './inbox';
 import missionTodayParam from './missionToday';
 import missionNextWeekParam from './missionNextWeek';
-import Dom from '../dom';
 import Component from './component';
 
 const router = {
@@ -13,6 +12,8 @@ const router = {
       counter: 1,
       current: this,
       inited: 0,
+      path: '',
+      state: {},
     };
   },
   route: {
@@ -31,24 +32,25 @@ const router = {
     render(path, state) {
       const route = this.route[String(path)];
       if (!route) { throw new Error(`路径${path}对应Component不存在`); }
+      this.data.path = path;
+      this.data.state = Object.assign({}, state);
       const param = Object.assign({}, route);
-      const detail = ((state instanceof Object) && !(state instanceof Array)) ? state : {};
-      const present = Object.assign({}, param.present, detail);
+      const present = Object.assign({}, param.present, this.data.state);
       param.present = present;
-      const promise = this.data.current.replace(param).then((cpt) => {
+      const current = this.data.current;
+      const promise = current.replace(param).then((cpt) => {
+        if (current !== this) { Component.removeComponent(current); }
         this.data.current = cpt;
         const url = `${this.data.href}#${path}/`;
-        window.history.pushState(detail, 0, url);
+        window.history.pushState(this.data.state, 0, url);
         return cpt;
       });
       return promise;
     },
     restore() {
-      const isNeeded = Dom.of(this.data.current.template).hasParent(document.body);
-      if (isNeeded) { return false; }
-      Dom.of(this.data.current.template).replace(this.template);
-      this.data.current = this.template;
-      return this;
+      if (!this.data.path) { return false; }
+      const promise = this.methods.render(this.data.path, this.data.state);
+      return promise;
     },
   },
   created() {
