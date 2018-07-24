@@ -535,6 +535,12 @@ class Component {
     // component是组件实例化对象
     // 返回值promise resolve(component)
     if (!Component.isComponent(component)) { throw new TypeError(`${component}不是一个组件`); }
+    const clearTemplate = (cpt) => {
+      if (!Component.isComponent(cpt)) { return false; }
+      const removed = Dom.of(`*[data-c-id=c${cpt.componentId}]`).remove();
+      if (!removed) { return false; }
+      return clearTemplate(cpt);
+    };
     const destroy = (cpt) => {
       if (!Component.isComponent(cpt)) { return false; }
       Dom.of(cpt.style).remove();
@@ -542,6 +548,8 @@ class Component {
       cpt.components.forEach(item => destroy(item));
       cpt.components.clear();
       cpt.parent = null;
+      clearTemplate(cpt);
+      if (cpt.removed && cpt.removed instanceof Function) { cpt.removed(); }
       return cpt;
     };
     const promise = new Promise((resolve) => {
@@ -570,3 +578,4 @@ export default Component;
 // todo 改为有new进行实例化 立即返回实例化对象，该实例化有state属性判断状态，获取html改为在实例化方法内
 // todo custom alert compponent 在新建或更新mission时 content为空时 应该有提示
 // todo 应该有一个向组件传递数据的方法 像HTMLElement.innerHTML一样 监视Component.present和Component.data 通过组件参数watch配置
+// todo 组件事件监听和派发方法 Component.on(type, callback) Component.sent(type, detail) 实例化后组件内和父组件可以调用

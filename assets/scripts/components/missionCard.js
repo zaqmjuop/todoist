@@ -6,15 +6,18 @@ import missionListItem from './missionListItem';
 import utils from '../utils';
 
 const dayMark = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-const formatDate = (date) => {
-  if (!(date instanceof Date)) {
-    throw new TypeError(`${date}不是Date的实例化对象`);
-  }
-  return date.toLocaleDateString().replace(/\//g, '-');
+const formatDate = (parameter) => {
+  // parameter可以是表示时间字符串 如'2018/01/01'或'2018-01-01'或Date
+  // 返回表示时间的字符串格式'2018-01-01'
+  const date = (parameter && parameter instanceof Date)
+    ? parameter
+    : new Date(String(parameter));
+  const result = (date.getTime()) ? date.toLocaleDateString().replace(/\//g, '-') : '';
+  return result;
 };
 
-// 两个日期相差几日 返回值是一个整数 1代表dateb是datea的后一天 -1代表dateb是datea的前一天 0代表是同一天
 const differDay = (datea, dateb) => {
+  // 两个日期相差几日 返回值是一个整数 1代表dateb是datea的后一天 -1代表dateb是datea的前一天 0代表是同一天
   const dateaStart = new Date(datea.toLocaleDateString());
   const datebStart = new Date(dateb.toLocaleDateString());
   const msecs = datebStart.getTime() - dateaStart.getTime();
@@ -48,12 +51,12 @@ const param = {
   methods: {
     init() {
       if (this.data.inited) { return false; }
-      this.data.now = window.now;
+      this.data.now = new Date();
       this.data.date = this.present.date;
       this.data.days = this.present.days;
       const promise = utils.newPromise()
-        .then(() => this.methods.initForm())
         .then(() => this.methods.fill())
+        .then(() => this.methods.initForm())
         .then(() => this.methods.loadDB())
         .then(() => this.methods.initItems());
       this.data.inited = 1;
@@ -68,37 +71,40 @@ const param = {
       return promise;
     },
     loadDB() {
-      const promise = missions.ready().then(() => {
-        let data = [];
-        if (this.data.date && this.data.date instanceof Date) {
-          data = missions.findItems({ date: formatDate(this.data.date) });
-        } else if (this.data.days === 'all') {
-          data = missions.getAll();
-        } else if (this.data.days === 'expired') {
-          data = missions.getAll().then((items) => {
-            const filter = items.filter((item) => {
-              const date = new Date(item.date);
-              return (date) && (window.now > date) && (window.now.getDate() !== date.getDate());
+      const promise = missions.ready()
+        .then(() => {
+          let result;
+          if (this.data.date && this.data.date instanceof Date) {
+            result = missions.findItems({ date: formatDate(this.data.date) });
+          } else if (this.data.days === 'all') {
+            result = missions.getAll();
+          } else if (this.data.days === 'expired') {
+            result = missions.getAll().then((items) => {
+              const filter = items.filter((item) => {
+                const date = new Date(item.date);
+                return (date) && (window.now > date) && (window.now.getDate() !== date.getDate());
+              });
+              return filter;
             });
-            return filter;
-          });
-        }
-        return data;
-      }).then((items) => {
-        this.data.items = [...items];
-        return this.data.items;
-      });
+          }
+          return result;
+        })
+        .then((items) => {
+          this.data.items = [...items];
+          return this.data.items;
+        });
       return promise;
     },
     fill() {
       if (this.data.date) {
-        this.data.dayMark = dayMark[this.data.date.getDay()];
         this.data.dateMark = `${this.data.date.getMonth() + 1}月${this.data.date.getDate()}日`;
         this.data.differDay = differDay(this.data.now, this.data.date);
         if (this.data.differDay === 0) {
           this.data.dayMark = '今天';
         } else if (this.data.differDay === 1) {
           this.data.dayMark = '明天';
+        } else {
+          this.data.dayMark = dayMark[this.data.date.getDay()];
         }
       } else if (this.data.days === 'all') {
         this.data.dayMark = '所有';
@@ -112,7 +118,6 @@ const param = {
     appendItem(detail) {
       // 添加li item
       const present = Object.assign(detail);
-      present.cid = this.componentId;
       present.formId = this.data.formId;
       const itemParam = Object.assign({ present }, missionListItem);
       const position = Dom.of(this.elements.form).getIndex();
@@ -129,17 +134,15 @@ const param = {
       // 显示表单
       Dom.of(this.elements.showForm).on('click', () => {
         // 还原li item
-        const pastCid = form.data.cid;
-        if (pastCid) {
-          const pastItem = Component.findBy({ componentId: Number(pastCid) });
-          if (pastItem) { form.replace(pastItem); }
-        }
-        form.present = { date: this.data.date };
-        form.methods.fill();
-        const position = Dom.of(this.elements.createMission).getIndex();
-        this.appendChild(form, this.elements.cardBody, position)
-          .then(() => form.methods.show());
-        return form;
+        const promise = form.methods.reduce()
+          .then(() => {
+            const position = Dom.of(this.elements.createMission).getIndex();
+            return this.appendChild(form, this.elements.cardBody, position);
+          }).then(() => {
+            form.present = { date: this.data.date };
+            form.methods.show();
+          });
+        return promise;
       });
       // 创建item
       form.addEventListener('create', (e) => {
@@ -155,10 +158,7 @@ const param = {
             present.id = id;
             return this.methods.appendItem(present);
           })
-          .then(() => {
-            form.methods.clear();
-            form.methods.hide();
-          });
+          .then(() => form.methods.hide());
         return present;
       });
       // 更新item
@@ -183,7 +183,6 @@ const param = {
             li.methods.fill();
             this.replaceChild(li, this.data.form);
           }).then(() => {
-            form.methods.clear();
             form.methods.hide();
           });
         return present;

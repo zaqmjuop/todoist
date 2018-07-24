@@ -4,6 +4,7 @@ import Dom from '../dom';
 
 let loaded = 0;
 const home = window.location.href.match(/^[^#]+/)[0];
+window.Dom = Dom;
 
 const main = () => {
   if (loaded) { return false; }

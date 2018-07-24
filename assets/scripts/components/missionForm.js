@@ -1,6 +1,7 @@
 import Dom from '../dom';
 import datepicker from '../lib/datepicker';
 import Component from './component';
+import utils from '../utils';
 
 
 const param = {
@@ -22,7 +23,7 @@ const param = {
     formSubmit() {
       // 提交表单
       const content = Dom.of(this.elements.contentInput).attr('value');
-      if (!content) { return false; } // 如果没有内容就取消操作
+      if (!content) { window.alert('请输入任务内容'); } // 如果没有内容就取消操作
       const date = Dom.of(this.elements.dateInput).attr('value') || '';
       const id = Dom.of(this.template).attr('data-item-id');
       const cid = Dom.of(this.template).attr('data-cid');
@@ -63,45 +64,50 @@ const param = {
       this.methods.fill();
     },
     hide() {
+      this.methods.clear();
       Dom.of(this.template).addClass('hide');
       return this;
     },
     show() {
+      this.methods.fill();
       Dom.of(this.template).removeClass('hide');
       return this;
     },
-    selectDate(date) {
-      const value = this.methods.formatDate(date);
-      Dom.of(this.elements.dateInput).attr('value', value);
-      return value;
-    },
     init() {
       if (this.data.inited) { return false; }
-      const picker = datepicker(this.elements.dateInput);
-      Dom.of(picker.body).attr('data-c-id', `c${this.componentId}`);
+      this.data.picker = datepicker(this.elements.dateInput);
+      Dom.of(this.data.picker.body).attr('data-c-id', `c${this.componentId}`);
       this.methods.bindEvents();
       this.data.inited = 1;
       return this;
     },
+    reduce() {
+      // 还原missionListItem
+      let promise = utils.newPromise();
+      if (!this.data.cid) { return promise.then(() => false); }
+      const pastItem = Component.findBy({ componentId: Number(this.data.cid) });
+      if (!pastItem) { throw new ReferenceError(`componentId:${this.data.cid}的Item未找到`); }
+      promise = promise
+        .then(() => this.replace(pastItem))
+        .then(() => {
+          this.present = {};
+          this.methods.fill();
+          this.methods.hide();
+          return this;
+        });
+      return promise;
+    },
     bindEvents() {
       if (this.data.inited) { return false; }
-      Dom.of(this.elements.submit).on('click', () => {
+      Dom.of(this.elements.submit).on('click', (event) => {
         // 提交
+        event.stopPropagation();
         this.methods.formSubmit();
       });
       Dom.of(this.elements.cancelForm).on('click', (event) => {
         // 隐藏form 如果template有data-cid属性则应先还原
         event.stopPropagation();
-        const beforeCid = Dom.of(this.template).attr('data-cid');
-        if (beforeCid) {
-          const beforeComponent = Component.findBy({ componentId: beforeCid });
-          if (beforeComponent) {
-            this.replaceSelf(beforeComponent);
-          }
-        } else {
-          this.methods.hide();
-        }
-        this.elements.contentInput.blur();
+        return this.methods.reduce().then(() => this.methods.hide());
       });
       return this;
     },
@@ -109,8 +115,6 @@ const param = {
   created() {
     this.methods.init();
     this.methods.show();
-    // 填充
-    this.methods.fill();
   },
 };
 
