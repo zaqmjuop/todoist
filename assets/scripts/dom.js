@@ -347,7 +347,7 @@ class Dom {
   }
 
   static getParent(element, query) {
-    // 查找单个父元素 element是HTMLElement, query可选 可以是querySelector或Dom实例对象
+    // 查找单个父元素 element是HTMLElement, query可以是querySelector或Dom实例对象
     if (!Dom.isElement(element)) { throw new TypeError(`element不能是${element}`); }
     let result;
     const tree = Dom.getParentsTree(element);
@@ -372,6 +372,34 @@ class Dom {
           }
         });
       });
+    }
+    return result;
+  }
+
+  hasChild(query) {
+    // 查找单个父元素 query可以是querySelector或Dom实例对象
+    return Dom.hasChild(this.dom, query);
+  }
+
+  static hasChild(element, query) {
+    // 查找单个父元素 element是HTMLElement, query可以是querySelector或Dom实例对象
+    if (!Dom.isElement(element)) { throw new TypeError(`element不能是${element}`); }
+    let result;
+    const isElementChild = (e) => {
+      // 递归查找父组件是否包含element
+      if (!Dom.isElement(e)) { return false; }
+      const parent = e.parentElement;
+      if (element.isSameNode(parent)) { return true; }
+      return isElementChild(parent);
+    };
+    if (isEffectiveString(query)) {
+      result = !!element.querySelector(query);
+    } else if (query instanceof HTMLElement) {
+      result = isElementChild(query);
+    } else if (query instanceof Dom) {
+      result = isElementChild(query.dom);
+    } else {
+      throw new TypeError(`query不能是${query}`);
     }
     return result;
   }
@@ -435,4 +463,3 @@ class Dom {
 Dom.globalInit();
 
 export default Dom;
-// todo hasChild
