@@ -468,3 +468,5 @@ class Store {
 }
 
 export default Store;
+// todo 找出加载失败原因并处理
+// todo 简化
