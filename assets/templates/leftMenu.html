@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <style scoped>
+    .template{
+      border: 1px solid #eee;
+      height: 100%;
+    }
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      height: auto;
+    }
+
+    li {
+      padding: 30px 5px;
+      height: 2em;
+      position: relative;
+    }
+
+    li:hover {
+      background-color: #eee;
+      line-height: 1em;
+      
+    }
+
+    li>* {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    a {}
+
+    a:hover {
+      cursor: pointer;
+    }
+
+    .header,
+    .now {
+      width: 100%;
+    }
+
+    .now {
+      padding: 1em;
+      border-bottom: 1px solid #eee;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="template">
+    <div class="header">
+      <div class="now text-lg-center"></div>
+    </div>
+    <ul>
+      <li>
+        <a href="javascript:void(0)">welcome</a>
+      </li>
+      <li>
+        <a href="javascript:void(0)">所有任务</a>
+      </li>
+      <li>
+        <a href="javascript:void(0)">今天</a>
+      </li>
+      <li>
+        <a href="javascript:void(0)">未来7天</a>
+      </li>
+    </ul>
+  </div>
+</body>
+
+</html>

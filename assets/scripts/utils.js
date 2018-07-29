@@ -21,6 +21,12 @@ const formatDate = (parameter) => {
   return result;
 };
 
+const formatTime = (date) => {
+  if (!(date instanceof Date)) { throw new TypeError(`formatTime 参数date不能是${date}`); }
+  const str = date.toTimeString().match(/^\S+/)[0];
+  return str;
+};
+
 const newPromise = () => new Promise(resolve => resolve(1));
 
 const isEmptyString = (content) => {
@@ -43,5 +49,6 @@ export default {
   isEmptyString,
   newPromise,
   formatDate,
+  formatTime,
   now,
 };

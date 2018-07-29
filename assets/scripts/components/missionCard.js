@@ -115,7 +115,8 @@ const param = {
       this.data.form = form;
       this.data.formId = form.componentId;
       // 默认隐藏表单
-      form.methods.hide().methods.fill();
+      form.methods.hide();
+      form.methods.fill();
       // 显示表单
       Dom.of(this.elements.showForm).on('click', () => {
         // 还原li item

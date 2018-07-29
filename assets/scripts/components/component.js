@@ -142,15 +142,25 @@ class Component {
     result.setComponentId();
 
     // 绑定param.methods下的function的this指向
-    const methods = Object.assign({}, result.methods);
-    const methodNames = Object.keys(methods);
-    methodNames.forEach((methodName) => {
-      const method = methods[methodName];
-      if (method && (typeof method === 'function')) {
-        methods[methodName] = method.bind(result);
-      }
-    });
-    result.methods = methods;
+    if (result.methods) {
+      const methods = {};
+      const methodNames = Object.keys(result.methods);
+      methodNames.forEach((methodName) => {
+        const method = result.methods[methodName];
+        if (typeof method === 'function') {
+          const catchMethod = (...args) => {
+            try {
+              method.bind(result, ...args)();
+            } catch (error) {
+              console.error(`组件${result.name}, 方法${methodName}, 参数${args}, ${error}`);
+              method.bind(result, ...args)();
+            }
+          };
+          methods[methodName] = catchMethod;
+        }
+      });
+      result.methods = methods;
+    }
 
     this.formatChildren()
       .then(() => this.lifeCycle());
@@ -401,7 +411,7 @@ class Component {
       if (styles.length > 1) { throw new TypeError('至多可以有一个<style>元素'); }
       if (body.childElementCount !== 1) { throw new TypeError('<body>内应有且只有一个根元素'); }
       const template = body.firstElementChild;
-      const style = styles[0];
+      const style = styles[0] || document.createElement('style');
       return { template, style };
     });
     return promise;

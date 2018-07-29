@@ -10,6 +10,6 @@ const param = {
   data() {
     return {};
   },
-  components: [card, expired],
+  components: [expired, card],
 };
 export default param;

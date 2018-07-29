@@ -1,6 +1,7 @@
 import missionInboxParam from './inbox';
 import missionTodayParam from './missionToday';
 import missionNextWeekParam from './missionNextWeek';
+import welcome from './welcome';
 import Component from './component';
 
 const router = {
@@ -14,22 +15,32 @@ const router = {
       inited: 0,
       path: '',
       state: {},
+      origin: window.location.origin,
+      href: window.location.href,
     };
   },
   route: {
     missionInboxParam,
     missionTodayParam,
     missionNextWeekParam,
+    welcome,
   },
   methods: {
     init() {
       if (this.data.inited) { return false; }
-      this.data.href = window.location.href;
       this.data.inited = 1;
       return this;
     },
     // 不刷新页面改变path
     render(path, state) {
+      console.log('path', path)
+      console.log(1, this)
+      try {
+        this.route[String(path)]
+      } catch (error) {
+        console.log(111)
+      }
+      console.log(2, this, this.route, path)
       const route = this.route[String(path)];
       if (!route) { throw new Error(`路径${path}对应Component不存在`); }
       this.data.path = path;
@@ -41,8 +52,9 @@ const router = {
       const promise = current.replace(param).then((cpt) => {
         if (current !== this) { Component.removeComponent(current); }
         this.data.current = cpt;
-        const url = `${this.data.href}#${path}/`;
+        const url = `${this.data.origin}/#/${path}/`;
         window.history.pushState(this.data.state, 0, url);
+        this.data.href = window.location.href;
         return cpt;
       });
       return promise;
@@ -55,6 +67,8 @@ const router = {
   },
   created() {
     this.methods.init();
+    window.router = this;
+    this.methods.render('welcome');
   },
 };
 
