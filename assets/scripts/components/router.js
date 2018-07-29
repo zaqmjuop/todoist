@@ -5,7 +5,7 @@ import Component from './component';
 
 const router = {
   query: 'router',
-  url: './assets/components/router.html',
+  url: './assets/templates/router.html',
   name: 'router',
   data() {
     return {

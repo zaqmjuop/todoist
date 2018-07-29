@@ -5,7 +5,7 @@ import utils from '../utils';
 
 const param = {
   query: 'mission-list-item',
-  url: './assets/components/missionListItem.html',
+  url: './assets/templates/missionListItem.html',
   name: 'missionListItem',
   selectors: {
     content: '.item-content',

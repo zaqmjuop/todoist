@@ -4,7 +4,7 @@ const card = Object.assign({ present: { days: 'all' } }, missionCard);
 
 const missionInboxParam = {
   query: 'mission-content',
-  url: './assets/components/missionInbox.html',
+  url: './assets/templates/missionInbox.html',
   name: 'missionInbox',
   data() {
     return {};

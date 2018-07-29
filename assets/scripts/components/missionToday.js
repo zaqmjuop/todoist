@@ -5,7 +5,7 @@ const expired = Object.assign({ present: { days: 'expired' } }, missionCard);
 
 const param = {
   query: 'mission-content',
-  url: './assets/components/missionToday.html',
+  url: './assets/templates/missionToday.html',
   name: 'missionToday',
   data() {
     return {};

@@ -5,7 +5,6 @@ import mission from '../model';
 import missionListItem from './missionListItem';
 import utils from '../utils';
 
-const now = new Date();
 const dayMark = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
 
 const differDay = (datea, dateb) => {
@@ -19,7 +18,7 @@ const differDay = (datea, dateb) => {
 
 const param = {
   query: 'mission-card',
-  url: './assets/components/missionCard.html',
+  url: './assets/templates/missionCard.html',
   name: 'missionCard',
   data() {
     return {
@@ -43,7 +42,6 @@ const param = {
   methods: {
     init() {
       if (this.data.inited) { return false; }
-      this.data.now = new Date();
       this.data.date = this.present.date;
       this.data.days = this.present.days;
       const promise = utils.newPromise()
@@ -67,9 +65,14 @@ const param = {
       if (this.data.days === 'all') {
         filter = mission.getAll();
       } else if (this.data.days === 'expired') {
-        filter = mission.filter(item => item.date && (differDay(item.date, now) > 0));
+        filter = mission.filter(item => item.date && (differDay(item.date, utils.now) > 0));
       } else if (this.data.date instanceof Date) {
-        filter = mission.filter(item => (item.date && differDay(item.date, this.present.date) === 0));
+        filter = mission.filter((item) => {
+          const isMatch = item.date instanceof Date
+            && this.present.date instanceof Date
+            && differDay(item.date, this.present.date) === 0;
+          return isMatch;
+        });
       }
       const promise = filter.then((items) => {
         this.data.items = items;
@@ -80,7 +83,7 @@ const param = {
     fill() {
       if (this.data.date) {
         this.data.dateMark = `${this.data.date.getMonth() + 1}月${this.data.date.getDate()}日`;
-        this.data.differDay = differDay(this.data.now, this.data.date);
+        this.data.differDay = differDay(utils.now, this.data.date);
         if (this.data.differDay === 0) {
           this.data.dayMark = '今天';
         } else if (this.data.differDay === 1) {

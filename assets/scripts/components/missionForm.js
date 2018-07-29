@@ -6,7 +6,7 @@ import utils from '../utils';
 
 const param = {
   query: 'mission-form',
-  url: './assets/components/missionForm.html',
+  url: './assets/templates/missionForm.html',
   name: 'missionForm',
   data() {
     return {

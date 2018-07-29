@@ -9,6 +9,8 @@ const isFunction = (param) => {
   return res;
 };
 
+const now = new Date();
+
 const formatDate = (parameter) => {
   // parameter可以是表示时间字符串 如'2018/01/01'或'2018-01-01'或Date
   // 返回表示时间的字符串格式'2018-01-01'
@@ -41,4 +43,5 @@ export default {
   isEmptyString,
   newPromise,
   formatDate,
+  now,
 };

@@ -13,7 +13,7 @@ const param = {
   // url是html模板文件位置 以执行页面为准的相对路径
   // html模板中的<body>下第一个元素将保存在this.template
   // html模板中的<style>将保存在this.style
-  url: './assets/components/example.html',
+  url: './assets/templates/example.html',
   // selectors是选择器，用来选择html模板中的元素
   // this.template是url位置的html模板<body>下第一个元素
   // example: '.example' 将选中html模板中的第一个带有class="example"的元素,
