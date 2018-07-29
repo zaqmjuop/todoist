@@ -9,6 +9,16 @@ const isFunction = (param) => {
   return res;
 };
 
+const formatDate = (parameter) => {
+  // parameter可以是表示时间字符串 如'2018/01/01'或'2018-01-01'或Date
+  // 返回表示时间的字符串格式'2018-01-01'
+  const date = (parameter && parameter instanceof Date)
+    ? parameter
+    : new Date(String(parameter));
+  const result = (date.getTime()) ? date.toLocaleDateString().replace(/\//g, '-') : '';
+  return result;
+};
+
 const newPromise = () => new Promise(resolve => resolve(1));
 
 const isEmptyString = (content) => {
@@ -30,4 +40,5 @@ export default {
   isFunction,
   isEmptyString,
   newPromise,
+  formatDate,
 };

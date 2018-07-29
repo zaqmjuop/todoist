@@ -1,5 +1,5 @@
 import Dom from '../dom';
-import missions from '../indexeddb/missions';
+import mission from '../model';
 import Component from './component';
 import utils from '../utils';
 
@@ -30,11 +30,8 @@ const param = {
     bindEvents() {
       // 删除自己
       Dom.of(this.elements.done).on('click', () => {
-        missions.ready()
-          .then(() => {
-            const id = Number(this.data.id);
-            return missions.delete(id);
-          })
+        const primaryKey = Number(this.data.primaryKey);
+        mission.remove(primaryKey)
           .then(() => Component.removeComponent(this));
       });
       // 更新自己
@@ -68,8 +65,9 @@ const param = {
       this.data.date = this.present.date;
       this.data.id = this.present.id;
       this.data.formId = this.present.formId;
+      const dateStr = utils.formatDate(this.present.date);
       Dom.of(this.elements.content).attr('text', this.present.content);
-      Dom.of(this.elements.date).attr('text', this.present.date);
+      Dom.of(this.elements.date).attr('text', dateStr);
       Dom.of(this.template).attr('data-item-id', this.present.id);
     },
   },

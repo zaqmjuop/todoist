@@ -1,20 +1,12 @@
 import missionForm from './missionForm';
 import Component from './component';
 import Dom from '../dom';
-import missions from '../indexeddb/missions';
+import mission from '../model';
 import missionListItem from './missionListItem';
 import utils from '../utils';
 
+const now = new Date();
 const dayMark = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-const formatDate = (parameter) => {
-  // parameter可以是表示时间字符串 如'2018/01/01'或'2018-01-01'或Date
-  // 返回表示时间的字符串格式'2018-01-01'
-  const date = (parameter && parameter instanceof Date)
-    ? parameter
-    : new Date(String(parameter));
-  const result = (date.getTime()) ? date.toLocaleDateString().replace(/\//g, '-') : '';
-  return result;
-};
 
 const differDay = (datea, dateb) => {
   // 两个日期相差几日 返回值是一个整数 1代表dateb是datea的后一天 -1代表dateb是datea的前一天 0代表是同一天
@@ -71,28 +63,18 @@ const param = {
       return promise;
     },
     loadDB() {
-      const promise = missions.ready()
-        .then(() => {
-          let result;
-          if (this.data.date && this.data.date instanceof Date) {
-            result = missions.findItems({ date: formatDate(this.data.date) });
-          } else if (this.data.days === 'all') {
-            result = missions.getAll();
-          } else if (this.data.days === 'expired') {
-            result = missions.getAll().then((items) => {
-              const filter = items.filter((item) => {
-                const date = new Date(item.date);
-                return (date) && (window.now > date) && (window.now.getDate() !== date.getDate());
-              });
-              return filter;
-            });
-          }
-          return result;
-        })
-        .then((items) => {
-          this.data.items = [...items];
-          return this.data.items;
-        });
+      let filter;
+      if (this.data.days === 'all') {
+        filter = mission.getAll();
+      } else if (this.data.days === 'expired') {
+        filter = mission.filter(item => item.date && (differDay(item.date, now) > 0));
+      } else if (this.data.date instanceof Date) {
+        filter = mission.filter(item => (item.date && differDay(item.date, this.present.date) === 0));
+      }
+      const promise = filter.then((items) => {
+        this.data.items = items;
+        return this.data.items;
+      });
       return promise;
     },
     fill() {
@@ -149,17 +131,16 @@ const param = {
         if (!e.detail.content) { return false; }
         const present = {
           content: e.detail.content,
-          date: e.detail.date,
+          date: new Date(e.detail.date),
         };
-        missions.ready()
-          .then(() => missions.set(e.detail))
-          .then((id) => {
-            // 添加 li item
-            present.id = id;
+        const promise = mission.push(present)
+          .then((primaryKey) => {
+            // 添加li item
+            present.primaryKey = primaryKey;
             return this.methods.appendItem(present);
           })
           .then(() => form.methods.hide());
-        return present;
+        return promise;
       });
       // 更新item
       form.addEventListener('update', (e) => {
@@ -167,24 +148,22 @@ const param = {
         const upData = {
           content: e.detail.content,
           date: e.detail.date,
-          id: e.detail.id,
+          primaryKey: e.detail.primaryKey,
         };
         const present = Object.assign({
           cid: this.componentId,
           formId: this.data.formId,
         }, upData);
-        missions.ready()
-          .then(() => missions.set(upData))
-          .then((id) => {
+        mission.update(upData)
+          .then((primaryKey) => {
             // 更新后将form替换为li
             const li = Component.findBy({ componentId: Number(e.detail.cid) });
-            present.id = id;
+            present.primaryKey = primaryKey;
             li.present = present;
             li.methods.fill();
             this.replaceChild(li, this.data.form);
-          }).then(() => {
-            form.methods.hide();
-          });
+          })
+          .then(() => form.methods.hide());
         return present;
       });
       return form;
