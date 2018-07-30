@@ -4,6 +4,7 @@
 <head>
   <style scoped>
     .template{
+      user-select: none;
       border: 1px solid #eee;
       height: 100%;
     }
@@ -57,16 +58,10 @@
     </div>
     <ul>
       <li>
-        <a href="javascript:void(0)">welcome</a>
+        <a onclick="window.router.methods.render('welcome', {days: 'all'})">所有任务</a>
       </li>
       <li>
-        <a href="javascript:void(0)">所有任务</a>
-      </li>
-      <li>
-        <a href="javascript:void(0)">今天</a>
-      </li>
-      <li>
-        <a href="javascript:void(0)">未来7天</a>
+        <a onclick="window.router.methods.render('welcome', {date: now})">今天</a>
       </li>
     </ul>
   </div>

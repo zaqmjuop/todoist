@@ -33,14 +33,6 @@ const router = {
     },
     // 不刷新页面改变path
     render(path, state) {
-      console.log('path', path)
-      console.log(1, this)
-      try {
-        this.route[String(path)]
-      } catch (error) {
-        console.log(111)
-      }
-      console.log(2, this, this.route, path)
       const route = this.route[String(path)];
       if (!route) { throw new Error(`路径${path}对应Component不存在`); }
       this.data.path = path;
@@ -68,7 +60,7 @@ const router = {
   created() {
     this.methods.init();
     window.router = this;
-    this.methods.render('welcome');
+    this.methods.render('welcome', { days: 'all' });
   },
 };
 

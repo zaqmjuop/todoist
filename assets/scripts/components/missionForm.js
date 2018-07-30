@@ -83,12 +83,10 @@ const param = {
     },
     reduce() {
       // 还原missionListItem
-      let promise = utils.newPromise();
-      if (!this.data.cid) { return promise.then(() => false); }
+      if (!this.data.cid) { return utils.newPromise(); }
       const pastItem = Component.findBy({ componentId: Number(this.data.cid) });
       if (!pastItem) { throw new ReferenceError(`componentId:${this.data.cid}的Item未找到`); }
-      promise = promise
-        .then(() => this.replace(pastItem))
+      const promise = this.replace(pastItem)
         .then(() => {
           this.present = {};
           this.methods.fill();

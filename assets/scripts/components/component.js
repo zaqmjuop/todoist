@@ -148,15 +148,7 @@ class Component {
       methodNames.forEach((methodName) => {
         const method = result.methods[methodName];
         if (typeof method === 'function') {
-          const catchMethod = (...args) => {
-            try {
-              method.bind(result, ...args)();
-            } catch (error) {
-              console.error(`组件${result.name}, 方法${methodName}, 参数${args}, ${error}`);
-              method.bind(result, ...args)();
-            }
-          };
-          methods[methodName] = catchMethod;
+          methods[methodName] = method.bind(result);
         }
       });
       result.methods = methods;
@@ -174,6 +166,22 @@ class Component {
     const params = Array.from(this.components).filter(item => !(item instanceof Component));
     params.forEach((item) => {
       const param = Object.assign({}, item);
+      // 传递present child.passon = [] 若是空数组则parsent全部传递，否则查找键名传递
+      if (param.passon instanceof Array) {
+        let passPresent = {};
+        if (param.passon.length === 0) {
+          passPresent = this.present;
+        } else {
+          const presentKeys = Object.keys(this.present);
+          const passKeys = param.passon.filter(key => ((typeof key === 'string') && presentKeys.includes(key)));
+          passKeys.forEach((key) => {
+            passPresent[key] = this.present[key];
+          });
+        }
+        param.present = passPresent;
+        // console.log('pass', param.present)
+      }
+      // 传递present
       promise = promise.then(() => {
         const ajax = Component.pjaxFormatHtml(param.url);
         return ajax;

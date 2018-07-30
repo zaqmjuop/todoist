@@ -27,6 +27,7 @@ const param = {
       dateMark: '',
     };
   },
+  passon: [],
   selectors: {
     form: 'mission-form',
     cardHeader: '.card-header',
@@ -73,6 +74,8 @@ const param = {
             && differDay(item.date, this.present.date) === 0;
           return isMatch;
         });
+      } else {
+        filter = mission.getAll();
       }
       const promise = filter.then((items) => {
         this.data.items = items;
@@ -175,6 +178,7 @@ const param = {
   },
   created() {
     this.methods.init();
+    console.log('card', this.present)
   },
 };
 
