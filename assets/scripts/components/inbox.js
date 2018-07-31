@@ -1,18 +1,15 @@
 import missionCard from './missionCard';
 
-const card = Object.assign({ present: { days: 'all' } }, missionCard);
-
 const missionInboxParam = {
   query: 'inbox',
   url: './assets/templates/missionInbox.html',
   name: 'missionInbox',
-  passon: [],
+  passon: [], // 接受父组件全部present
   data() {
     return {};
   },
-  components: [card],
+  components: [missionCard],
   created() {
-    console.log('box', this)
   },
 };
 

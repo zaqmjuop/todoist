@@ -1,6 +1,15 @@
 *{
   box-sizing: border-box;
 }
+
+
+@media screen and (max-width: 600px) {
+    body {
+        background-color:lightblue;
+        color: red;
+    }
+}
+
 html{
   font-size:16px;
 }
@@ -13,28 +22,13 @@ a{
 }
 a:hover{
   cursor: pointer;
+  text-decoration: underline;
 }
-nav{
-  background-color: #3D3D3D;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  color: #FFFFFF;
-  padding: 5px;
-}
-.container{
-  width: 1000px;
-  margin: 0 auto;
-}
-#logo{
-  width: 25px;
-  height: 25px;
-  background-color: #fff;
-  border-radius: 3px;
-}
-.flex{
-  display: flex;
+a[class~=btn]{
+  padding: 3px 5px;
+  border: 1px solid blue;
+  border-radius: 5px;
+  line-height: 2em;
 }
 .flex-justify-between{
   justify-content: space-between;
@@ -44,166 +38,6 @@ nav{
 }
 nav{
   z-index: 9;
-}
-#nav-left{
-  width: 350px;
-  display: inline-block;
-}
-#nav-right{
-  width: 650px;
-  position: relative;
-}
-#nav-buttons{
-  width: 200px;
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translate(0, -50%);
-  z-index: 1;
-}
-#nav-search{
-  width: 100%;
-  position: relative;
-}
-#nav-search>i{
-  position: absolute;
-  left: 5px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #fff;
-  z-index: 3;
-}
-#nav-search>input{
-  background-color: #3D3D3D;
-  outline: none;
-  border: none;
-  border-radius: 3px;
-  padding: 5px 0 5px 26px;
-  margin: 0;
-  width: 300px;
-  z-index: 2;
-  position: relative;
-}
-#nav-search>input:hover{
-  background-color: #575757;
-}
-#nav-search>input:focus{
-  background-color: #fff;
-  animation: inputGrow 0.2s ease-in;
-  animation-fill-mode: both;
-}
-#nav-search>input:focus + i{
-  color: #575757;
-}
-@keyframes inputGrow{
-  from {background-color: #575757;}
-  to {
-    background-color: #fff;
-    width: 100%;
-  }
-}
-@keyframes inputGrow1{
-  from {background-color: #fff;
-    width: 100%;}
-  to {
-    background-color: #575757;
-  }
-}
-#left-menu{
-  padding-top: 30px;
-  padding-bottom: 50px;
-  width: 350px;
-  position: fixed;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  height: 100%;
-  background-color: cornflowerblue;
-}
-.content{
-  width: 650px;
-  background-color: #fff;
-  min-height: 500px;
-  border: 1px solid #eee;
-  margin-left: 350px;
-  padding: 40px;
-}
-#top-filters, #bottom-filters{
-  list-style: none;
-  padding: 0;
-  width: 100%;
-  user-select: none;
-}
-#top-filters .item:hover{
-  background-color: #fff;
-}
-#top-filters .active{
-  background-color: #fff;
-  font-weight: 700;
-}
-#top-filters>li{
-  padding: 9px;
-  width: 100%;
-}
-#top-filters .item-icon,#bottom-filters .item-icon,#mission-list .item-icon{
-  margin-right: 10px;
-}
-#bottom-filters>li{
-  border-bottom: 1px solid #eee;
-  padding: 9px;
-  font-weight: 700;
-}
-#bottom-filters li:hover{
-  background-color: #F7F7F7;
-}
-#mission-list{
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-#mission-list>.mission-item{
-  border-bottom: 1px solid #eee;
-  padding: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
-}
-#mission-list>.mission-item span{
-  cursor: text;
-}
-#mission-list>.mission-item i[name=finish]:hover::before{
-  content: "\f05d";
-}
-#mission-list>.mission-item>.item-before{
-  position: absolute;
-  left: -1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  display: none;
-}
-#mission-list>.mission-item:hover>.item-before{
-  display: inline-block;
-}
-#mission-list .item-placeholder{
-  background-color: #eee;
-  min-height: 1rem;
-}
-#mission-list .hide{
-  display: none;
-}
-.text-sm-center{
-  font-size: 0.625rem;
-  align-content: center;
-}
-#add-mission{
-  border: none;
-  user-select: none;
-}
-#add-mission:hover{
-  text-decoration: underline;
-}
-#mission-buttons{
-  margin-top: 5px;
 }
 input[type=datetime-local]{
   z-index: 1;
@@ -291,15 +125,6 @@ button[class~=btn-link]:hover{
   opacity: 1;
   font-weight: 700;
 }
-#alert-box{
-  position: fixed;
-  bottom: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-}
-#alert-box>*:nth-child(n+2){
-  margin-top: 3px;
-}
 .alert,.confirm{
   border-radius: 5px;
   background-color: #555555;
@@ -309,37 +134,6 @@ button[class~=btn-link]:hover{
   padding: 12px 20px;
   display: flex;
   justify-content: space-between;
-}
-#alert-box a{
-  margin-left: 1rem;
-  font-weight: 700;
-}
-#alert-box a:hover{
-  text-decoration: underline;
-}
-#alert-box *[name=submit]{
-  color: #E99388;
-}
-#alert-box *[name=cancal]{
-  color: #999;
-}
-#the-top>.body{
-  position: fixed;
-  top: 3rem;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #fff;
-  z-index: 10000;
-  border-radius: 5px;
-  box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.5);
-  min-width: 40%;
-  padding: 25px 30px;
-}
-#the-top .header{
-  margin: 0 0 0.5rem 0;
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: #555;
 }
 .relative{
   position: relative;

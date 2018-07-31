@@ -1,6 +1,3 @@
-import missionInboxParam from './inbox';
-import missionTodayParam from './missionToday';
-import missionNextWeekParam from './missionNextWeek';
 import welcome from './welcome';
 import Component from './component';
 
@@ -20,9 +17,6 @@ const router = {
     };
   },
   route: {
-    missionInboxParam,
-    missionTodayParam,
-    missionNextWeekParam,
     welcome,
   },
   methods: {
@@ -32,6 +26,7 @@ const router = {
       return this;
     },
     // 不刷新页面改变path
+    // 参数path是this.route指定的组件，state会作为present传入
     render(path, state) {
       const route = this.route[String(path)];
       if (!route) { throw new Error(`路径${path}对应Component不存在`); }
@@ -60,7 +55,7 @@ const router = {
   created() {
     this.methods.init();
     window.router = this;
-    this.methods.render('welcome', { days: 'all' });
+    this.methods.render('welcome', { query: 'all' });
   },
 };
 

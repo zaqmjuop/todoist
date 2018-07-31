@@ -10,7 +10,7 @@ const param = {
   selectors: {
     content: '.item-content',
     date: '.item-date',
-    done: '.done',
+    finish: '.finish',
     itemMain: '.item-main',
     counter: '#counter',
   },
@@ -28,11 +28,18 @@ const param = {
       return this;
     },
     bindEvents() {
-      // 删除自己
-      Dom.of(this.elements.done).on('click', () => {
-        const primaryKey = Number(this.data.primaryKey);
-        mission.remove(primaryKey)
-          .then(() => Component.removeComponent(this));
+      // 切换任务状态
+      Dom.of(this.elements.finish).on('click', () => {
+        const toggleState = (this.present.state === 'done') ? 'undone' : 'done';
+        const data = {
+          content: this.present.content,
+          date: (utils.isValidDate(this.present.date)) ? this.present.date : '',
+          primaryKey: Number(this.present.primaryKey),
+          state: toggleState,
+        };
+        mission.update(data).then(() => {
+          Dom.of(this.template).toggleClass('done');
+        });
       });
       // 更新自己
       Dom.of(this.elements.content).on('click', () => {
@@ -69,11 +76,15 @@ const param = {
       Dom.of(this.elements.content).attr('text', this.present.content);
       Dom.of(this.elements.date).attr('text', dateStr);
       Dom.of(this.template).attr('data-item-id', this.present.id);
+      if (this.present.state === 'done') {
+        Dom.of(this.template).addClass('done');
+      }
     },
   },
   created() {
     this.methods.init();
     this.methods.fill();
+    console.log('item', this.present)
   },
 };
 

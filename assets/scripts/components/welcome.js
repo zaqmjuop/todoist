@@ -22,7 +22,6 @@ const param = {
     },
   },
   created() {
-    console.log(this.present);
     this.methods.init();
   },
   components: [leftMenu, inbox],

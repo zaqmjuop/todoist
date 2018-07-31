@@ -66,11 +66,13 @@ const param = {
     hide() {
       this.methods.clear();
       Dom.of(this.template).addClass('hide');
+      this.dispatchEvent('hide');
       return this;
     },
     show() {
       this.methods.fill();
       Dom.of(this.template).removeClass('hide');
+      this.dispatchEvent('show');
       return this;
     },
     init() {
@@ -89,7 +91,6 @@ const param = {
       const promise = this.replace(pastItem)
         .then(() => {
           this.present = {};
-          this.methods.fill();
           this.methods.hide();
           return this;
         });

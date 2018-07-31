@@ -1,8 +1,326 @@
-parcelRequire=function(e,r,n,t){function i(n,t){function o(e){return i(o.resolve(e))}function c(r){return e[n][1][r]||r}if(!r[n]){if(!e[n]){var l="function"==typeof parcelRequire&&parcelRequire;if(!t&&l)return l(n,!0);if(u)return u(n,!0);if(f&&"string"==typeof n)return f(n);var p=new Error("Cannot find module '"+n+"'");throw p.code="MODULE_NOT_FOUND",p}o.resolve=c;var a=r[n]=new i.Module(n);e[n][0].call(a.exports,o,a,a.exports,this)}return r[n].exports}function o(e){this.id=e,this.bundle=i,this.exports={}}var u="function"==typeof parcelRequire&&parcelRequire,f="function"==typeof require&&require;i.isParcelRequire=!0,i.Module=o,i.modules=e,i.cache=r,i.parent=u;for(var c=0;c<n.length;c++)i(n[c]);if(n.length){var l=i(n[n.length-1]);"object"==typeof exports&&"undefined"!=typeof module?module.exports=l:"function"==typeof define&&define.amd?define(function(){return l}):t&&(this[t]=l)}return i}({3:[function(require,module,exports) {
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});var e=function(){function e(e,t){for(var r=0;r<t.length;r++){var n=t[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(e,n.key,n)}}return function(t,r,n){return r&&e(t.prototype,r),n&&e(t,n),t}}();function t(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}var r=function(e){return e&&1===e.nodeType},n=function(e){return e&&"string"==typeof e},o=function(e){return!!r(e)&&e.parentNode},i=function(e){if(!r(e))return!1;for(var t=[],n=e,i=0;i<999&&(n=o(n),r(n));i+=1)t.push(n);return t},u=function(){function o(e){if(t(this,o),"string"==typeof e){var n=e.match(/^<(.+)>$/);if(!n)return document.querySelectorAll(e);var i=n[1].toLocaleUpperCase();this.dom=document.createElement(i)}else if(e instanceof o)this.dom=e.dom;else{if(!r(e)&&e!==document)throw console.warn(e),new TypeError("无效参数");this.dom=e}return this}return e(o,[{key:"attr",value:function(e,t){if(!e||!n(e))throw new TypeError("没有key参数");var r=this;return void 0!==t?this.dom.setAttribute(e,""+t):r=this.dom.getAttribute(e),r}},{key:"addClass",value:function(e){var t=this;if(!e||"string"!=typeof e)throw new TypeError("参数应该是字符串");return e.split(" ").forEach(function(e){e&&t.dom.classList.add(e)}),this}},{key:"removeClass",value:function(e){var t=this;if(!e||"string"!=typeof e)throw new TypeError("参数应该是字符串");return e.split(" ").forEach(function(e){e&&t.dom.classList.remove(e)}),this}},{key:"hasClass",value:function(e){if(!e||"string"!=typeof e)throw new TypeError("参数应该是字符串");if(e.match(" "))throw new TypeError("参数不能含有空格");return this.dom.classList.contains(e)}},{key:"toggleClass",value:function(e){if(!e||"string"!=typeof e)throw new TypeError("参数应该是字符串");return this.hasClass(e)?this.removeClass(e):this.addClass(e),this}},{key:"append",value:function(e){var t=e instanceof o?e.dom:e;if(!t||1!==t.nodeType)throw new TypeError("参数不是html元素");return this.dom.appendChild(t),this}},{key:"remove",value:function(e){if(e){if(r(e))this.dom.removeChild(e);else if(n(e)){var t=this.dom.querySelector(e);this.dom.removeChild(t)}}else this.dom.remove();return this}},{key:"text",value:function(e){return this.dom.innerText=e,this}},{key:"html",value:function(e){return this.dom.innerHTML=e,this}},{key:"find",value:function(e){return this.dom.querySelector(e)}},{key:"children",value:function(e){return this.dom.querySelectorAll(e)}},{key:"parent",value:function(){var e=this.dom.parentNode;return e&&1===e.nodeType?e:void 0}},{key:"parents",value:function(e){var t=i(this.dom),r=[];e&&n(e)?document.querySelectorAll(e).forEach(function(e){t.includes(e)&&r.push(e)}):r=t;return r}},{key:"on",value:function(e,t){return this.dom.addEventListener(e,t),this}},{key:"off",value:function(e,t){return this.dom.removeEventListener(e,t),this}},{key:"hasParent",value:function(e){if(!o.isElement(e))return!1;var t=!1;return this.parents().forEach(function(r){e.isSameNode(r)&&(t=!0)}),t}}],[{key:"of",value:function(e){return new o(e)}},{key:"isElement",value:function(e){return e&&1===e.nodeType}}]),o}();exports.default=u;
-},{}],4:[function(require,module,exports) {
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});var e=function(){function e(e,t){for(var r=0;r<t.length;r++){var n=t[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(e,n.key,n)}}return function(t,r,n){return r&&e(t.prototype,r),n&&e(t,n),t}}();function t(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}var r=[31,28,31,30,31,30,31,31,30,31,30,31],n=function(e){return Number.isInteger(e)&&e>1900&&e<5001},a=function(e){return Number.isInteger(e)&&e>=0&&e<12},o=function(){function o(e){if(t(this,o),!(e&&e instanceof Date))throw new TypeError("参数应是一个Date实例对象");return this.year=e.getFullYear(),this.month=e.getMonth(),this.day=e.getDate(),this}return e(o,[{key:"backOneMonth",value:function(){return this.month-=1,this.month<0&&(this.year-=1,this.month=11),this}},{key:"aheadOneMonth",value:function(){return this.month+=1,this.month>11&&(this.year+=1,this.month=0),this}},{key:"toDate",value:function(){return new Date(this.year,this.month,this.day)}},{key:"reset",value:function(e){var t=o.of(e);if(!t)throw new TypeError("哪里出现了问题");return this.year=t.year,this.month=t.month,this.day=t.day,this}}],[{key:"of",value:function(e){return new o(e)}},{key:"getMonths",value:function(e){if(!n(e))throw new TypeError("参数应该是一个数字，有效值1901-5000");var t=r;return e%4==0&&(t[1]=29),t}},{key:"getDaysCount",value:function(e,t){if(!n(e))throw new TypeError("参数应该是一个数字，有效值1901-5000");if(!a(t))throw new TypeError("参数应该是一个数字，有效值0-11");return o.getMonths(e)[t]}},{key:"getWeekArray",value:function(e){if(!(e instanceof Date))throw new TypeError("参数应该是一个Date实例对象");for(var t=[],r=o.getDaysCount(e.getFullYear(),e.getMonth()),n=new Date(e.getFullYear(),e.getMonth()-1,1),a=o.getDaysCount(n.getFullYear(),n.getMonth()),u=e.getDate()-e.getDay(),i=0;i<7;i+=1){var h=u+i;h>r?h-=r:h<1&&(h+=a),t.push(h)}return t}},{key:"getMonthArray",value:function(e){if(!(e&&e instanceof Date))throw new TypeError("参数应该是一个Date实例对象");var t=[],r=o.getDaysCount(e.getFullYear(),e.getMonth()),n=o.getWeekArray(e);t.push(n);for(var a=0;a<5;a+=1){var u=e.getDate()-e.getDay()-1-7*a;if(u>0){var i=new Date(e.getFullYear(),e.getMonth(),u),h=o.getWeekArray(i);t.unshift(h)}var s=e.getDate()-e.getDay()+7+7*a;if(s<=r){var y=new Date(e.getFullYear(),e.getMonth(),s),f=o.getWeekArray(y);t.push(f)}}return t}}]),o}();exports.default=o;
-},{}],1:[function(require,module,exports) {
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});var e=function(){function e(e,t){for(var r=0;r<t.length;r++){var n=t[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(e,n.key,n)}}return function(t,r,n){return r&&e(t.prototype,r),n&&e(t,n),t}}(),t=require("./dom"),r=a(t),n=require("./customDate"),o=a(n);function a(e){return e&&e.__esModule?e:{default:e}}function i(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}var u=0,d=0,f=function(e){if(!r.default.isElement(e))throw new TypeError("参数应是HTML Element");for(var t=e.offsetTop,n=e,o=0;o<999&&(n=n.offsetParent)!==document.body;o+=1){t+=n.offsetTop}return t},s=function(e){if(!r.default.isElement(e))throw new TypeError("参数应是HTML Element");for(var t=r.default.of(e).parents(),n=e.offsetLeft,o=0;o<t.length;o+=1){var a=t[o];if(r.default.isElement(a)){if("BODY"===a.tagName&&"HTML"===a.tagName)break;if(n+=a.offsetLeft,a.offsetParent===document.body)break}}return n},l=function(e,t){if(!r.default.isElement(e)||!r.default.isElement(t))throw new TypeError("参数应是HTML Element");var n=f(t),o=n-window.scrollY,a=window.scrollY+window.innerHeight-(n+t.offsetHeight)>e.offsetHeight,i=o>e.offsetHeight;return!a&&i?n-e.offsetHeight:n+t.offsetHeight},c=function(e,t){if(!r.default.isElement(e)||!r.default.isElement(t))throw new TypeError("参数应是HTML Element");var n=s(t);return document.body.offsetWidth-t.offsetWidth-n+t.offsetWidth>e.offsetWidth?n:n+t.offsetWidth-e.offsetWidth},h=function(){if(d)return!1;d+=1;var e=function(){var e=window.innerHeight;document.body.style.minHeight=e+"px"};return window.addEventListener("resize",function(){e()}),e(),d},y=function(){var e=r.default.of("<tr>"),t=r.default.of("<th>").text("◂").addClass("prev-month"),n=r.default.of("<th>"),o=r.default.of("<th>").text("▸").addClass("next-month"),a=r.default.of("<th>").attr("colspan",2).addClass("month"),i=r.default.of("<input>").attr("type","number").addClass("year");return[t,n,r.default.of("<th>").attr("colspan",2).append(i),a,o].forEach(function(t){e.append(t)}),e},p=function(){var e=r.default.of("<tr>").addClass("week-sign");return[r.default.of("<th>").text("日").addClass("text-red"),r.default.of("<th>").text("一"),r.default.of("<th>").text("二"),r.default.of("<th>").text("三"),r.default.of("<th>").text("四"),r.default.of("<th>").text("五"),r.default.of("<th>").text("六").addClass("text-red")].forEach(function(t){e.append(t)}),e},m=function(){for(var e=r.default.of("<tr>").addClass("week"),t=0;t<7;t+=1){var n=r.default.of("<td>");e.append(n)}return e},v=function(){for(var e=r.default.of("<div>").addClass("datepicker hide"),t=r.default.of("<table>").attr("border",1).attr("cellspacing",2),n=y(),o=p(),a=r.default.of("<thead>").append(n).append(o),i=r.default.of("<tbody>"),u=0;u<6;u+=1){var d=m();i.append(d)}return t.append(a).append(i),e.append(t),e.dom},b=function(){function t(e){if(i(this,t),!e||1!==e.nodeType||"text"!==e.getAttribute("type"))throw new TypeError("参数应是一个input[type=text]");var r=new Date;return this.input=e,this.body=v(),this.current=o.default.of(r),document.body.appendChild(this.body),this.fillDayPickerByDate(this.current.toDate()),this.bindEvent(),this}return e(t,[{key:"fillDayPickerByDate",value:function(e){var t=this;if(!(e&&e instanceof Date))throw new TypeError("参数应该是一个Date实例对象");this.current=o.default.of(e);var r=o.default.getMonthArray(this.current.toDate()),n=this.body.querySelector("tbody").querySelectorAll("tr");if(this.body.querySelector(".year").value=e.getFullYear(),this.body.querySelector(".month").innerText=e.getMonth()+1,5===r.length){var a=new Date(e.getFullYear(),e.getMonth()+1,6),i=o.default.getWeekArray(a);r.push(i)}return r.forEach(function(e,o){var a=n[o].querySelectorAll("td");e.forEach(function(e,n){var i=a[n];if(i.innerText=e,0===o?Number(e)>7?i.classList.add("prev-month"):i.classList.remove("prev-month"):o>=r.length-2&&(Number(e)<15?i.classList.add("next-month"):i.classList.remove("next-month")),t.current.day===e&&!i.classList.contains("prev-month")&&!i.classList.contains("next-month")){var u=t.body.querySelector(".current-picker");u&&u.classList.remove(".current-picker"),i.classList.add(".current-picker")}})}),this}},{key:"fillDayPickerByCurrent",value:function(){var e=this.current.toDate();return this.fillDayPickerByDate(e),this}},{key:"clearPicked",value:function(){return this.body.querySelectorAll(".current-picker").forEach(function(e){e.classList.remove(".current-picker")}),this}},{key:"bindMonthArrow",value:function(){var e=this,t=this.body.querySelector(".prev-month"),r=this.body.querySelector(".next-month");return t.addEventListener("click",function(){e.current.backOneMonth(),e.fillDayPickerByCurrent()}),r.addEventListener("click",function(){e.current.aheadOneMonth(),e.fillDayPickerByCurrent()}),this}},{key:"bindPickAction",value:function(){var e=this,t=this.body.querySelector("thead"),r=this.body.querySelector("tbody").querySelectorAll("td"),n=t.querySelector(".year"),o=t.querySelector(".month"),a=this.input;return r.forEach(function(t){t.addEventListener("click",function(){var r={year:Number(n.value),month:Number(o.innerText)-1,day:Number(t.innerText)};t.classList.contains("prev-month")?(r.month-=1,r.month<0&&(r.year-=1,r.month=11)):t.classList.contains("next-month")&&(r.month+=1,r.month>11&&(r.year+=1,r.month=0));var i=new Date(r.year,r.month,r.day);e.current.reset(i),e.clearPicked(),a.value=e.current.year+"-"+(e.current.month+1)+"-"+e.current.day,t.classList.add("current-picker"),e.body.classList.add("hide")})}),this}},{key:"bindTurnOn",value:function(){var e=this;return this.input.addEventListener("mousedown",function(t){t.stopPropagation(),r.default.of(e.body).removeClass("arrow-top arrow-bottom reel hide");var n=document.querySelectorAll(".datepicker"),o=f(e.input),a=s(e.input),i=l(e.body,e.input),u=c(e.body,e.input),d=i<o?"arrow-bottom":"arrow-top",h=u<a?"pseudo-right":"";n.forEach(function(t){e.body.isSameNode(t)||t.classList.add("hide")}),e.fillDayPickerByCurrent(),r.default.of(e.body).addClass("reel "+d+" "+h),e.body.style.top=i+"px",e.body.style.left=u+"px"}),this}},{key:"bindTurnOff",value:function(){return!u&&(u+=1,document.body.addEventListener("mousedown",function(e){var t=e.target;document.querySelectorAll(".datepicker").forEach(function(e){r.default.of(t).hasParent(e)||e.classList.add("hide")})}),this)}},{key:"bindYearInput",value:function(){var e=this,t=this.body.querySelector(".year"),r=this.body.querySelector(".month");t.addEventListener("input",function(){var n=Number(t.value);if(!Number.isSafeInteger(n)||n<1900||n>5e3)return!1;var o={year:n,month:Number(r.innerText)-1,day:1},a=new Date(o.year,o.month,o.day);return e.fillDayPickerByDate(a),e})}},{key:"bindEvent",value:function(){h(),this.bindMonthArrow(),this.bindPickAction(),this.bindTurnOn(),this.bindTurnOff(),this.bindYearInput()}}]),t}(),w=function(e){return new b(e)};window.datepicker=w,exports.default=w;
-},{"./dom":3,"./customDate":4}]},{},[1], null)
-//# sourceMappingURL=/datepicker.map
+import dom from './dom';
+import CustomDate from './customDate';
+
+let isbindTurnOff = 0;
+let isWindowResize = 0;
+
+const getFixedTop = (element) => {
+  // 相对body的top
+  if (!dom.isElement(element)) throw new TypeError('参数应是HTML Element');
+  let result = 0;
+  let parent = element;
+  while (dom.isElement(parent) && parent.tagName !== 'body' && parent.tagName !== 'html') {        
+    result += parent.offsetTop;
+    parent = parent.offsetParent;
+  }
+  return result;
+};
+
+const getFixedLeft = (element) => {
+  // 相对body的top
+  if (!dom.isElement(element)) throw new TypeError('参数应是HTML Element');
+  let result = 0;
+  let parent = element;
+  while (dom.isElement(parent) && parent.tagName !== 'body' && parent.tagName !== 'html') {
+    result += parent.offsetLeft;
+    parent = parent.offsetParent;
+  }
+  return result;
+};
+
+const getResponsiveTop = (element, reference) => {
+  // 或许响应式的top，如果下方空间不够且上方空间够则在上方，否则在下方
+  if (!dom.isElement(element) || !dom.isElement(reference)) throw new TypeError('参数应是HTML Element');
+  const topSpace = getFixedTop(reference);
+  const topSeen = topSpace - window.scrollY;
+  const toSeenBottomHeight = window.scrollY + window.innerHeight;
+  const toInputBottomHeight = topSpace + reference.offsetHeight;
+  const bottomSeen = toSeenBottomHeight - toInputBottomHeight;
+  const isBottomSeenEnough = bottomSeen > element.offsetHeight;
+  const isTopSeenEnough = topSeen > element.offsetHeight;
+  let top;
+  if (!isBottomSeenEnough && isTopSeenEnough) {
+    top = topSpace - element.offsetHeight;// 在参照元素上方
+  } else {
+    top = topSpace + reference.offsetHeight; // 在参照元素下方
+  }
+  return top;
+};
+
+const getResponsiveLeft = (element, reference) => {
+  // 或许响应式的left，一般时对齐左边线，只有右侧空间不足时右边线对齐
+  if (!dom.isElement(element) || !dom.isElement(reference)) throw new TypeError('参数应是HTML Element');
+  const leftSpace = getFixedLeft(reference);
+  const rightSpace = document.body.offsetWidth - reference.offsetWidth - leftSpace;
+  const isRightEnough = (rightSpace + reference.offsetWidth) > element.offsetWidth;
+  const left = (isRightEnough)
+    ? leftSpace
+    : ((leftSpace + reference.offsetWidth) - element.offsetWidth);
+  return left;
+};
+
+const bindWindowResize = () => {
+  // 窗口大小改变时 修改body的min-height
+  if (isWindowResize) return false;
+  isWindowResize += 1;
+  const resizeBodyMinHeight = () => {
+    const windowHeight = window.innerHeight;
+    document.body.style.minHeight = `${windowHeight}px`;
+  };
+  window.addEventListener('resize', () => {
+    resizeBodyMinHeight();
+  });
+  resizeBodyMinHeight();
+  return isWindowResize;
+};
+
+const theadTop = () => {
+  const result = dom.of('<tr>');
+  const prevMonth = dom.of('<th>').text('◂').addClass('prev-month');
+  const th = dom.of('<th>');
+  const nextMonth = dom.of('<th>').text('▸').addClass('next-month');
+  const month = dom.of('<th>').attr('colspan', 2).addClass('month');
+  const input = dom.of('<input>').attr('type', 'number').addClass('year');
+  const thInput = dom.of('<th>').attr('colspan', 2).append(input);
+  const children = [prevMonth, th, thInput, month, nextMonth];
+  children.forEach((child) => {
+    result.append(child);
+  });
+  return result;
+};
+
+const theadBottom = () => {
+  const result = dom.of('<tr>').addClass('week-sign');
+  const weekDay = [
+    dom.of('<th>').text('日').addClass('text-red'),
+    dom.of('<th>').text('一'),
+    dom.of('<th>').text('二'),
+    dom.of('<th>').text('三'),
+    dom.of('<th>').text('四'),
+    dom.of('<th>').text('五'),
+    dom.of('<th>').text('六').addClass('text-red'),
+  ];
+  weekDay.forEach((day) => {
+    result.append(day);
+  });
+  return result;
+};
+
+const tdWeek = () => {
+  const result = dom.of('<tr>').addClass('week');
+  for (let i = 0; i < 7; i += 1) {
+    const td = dom.of('<td>');
+    result.append(td);
+  }
+  return result;
+};
+
+const pickerElement = () => {
+  // html元素拼接结果
+  const result = dom.of('<div>').addClass('datepicker hide');
+  const table = dom.of('<table>').attr('border', 1).attr('cellspacing', 2);
+  const thtop = theadTop();
+  const thbottom = theadBottom();
+  const thead = dom.of('<thead>').append(thtop).append(thbottom);
+  const tbody = dom.of('<tbody>');
+  for (let i = 0; i < 6; i += 1) {
+    const week = tdWeek();
+    tbody.append(week);
+  }
+  table.append(thead).append(tbody);
+  result.append(table);
+  return result.dom;
+};
+
+class Picker {
+  constructor(input) {
+    // 接受一个 <input type="text"> 元素
+    if (!input || (input.nodeType !== 1) || (input.getAttribute('type') !== 'text')) throw new TypeError('参数应是一个input[type=text]');
+    const now = new Date();
+    this.input = input;
+    this.body = pickerElement();
+    this.current = CustomDate.of(now);
+    document.body.appendChild(this.body);
+    this.fillDayPickerByDate(this.current.toDate());
+    this.bindEvent();
+    return this;
+  }
+  fillDayPickerByDate(date) {
+    // 根据日期填充选择器的日期
+    if (!date || !(date instanceof Date)) throw new TypeError('参数应该是一个Date实例对象');
+    this.current = CustomDate.of(date);
+    const monthArray = CustomDate.getMonthArray(this.current.toDate());
+    const tbody = this.body.querySelector('tbody');
+    const trs = tbody.querySelectorAll('tr');
+    this.body.querySelector('.year').value = date.getFullYear();
+    this.body.querySelector('.month').innerText = (date.getMonth() + 1);
+    if (monthArray.length === 5) {
+      const next7th = new Date(date.getFullYear(), (date.getMonth() + 1), 6);
+      const next1stWeek = CustomDate.getWeekArray(next7th);
+      monthArray.push(next1stWeek);
+    }
+    monthArray.forEach((weekArray, weekIndex) => {
+      const trItem = trs[weekIndex];
+      const tds = trItem.querySelectorAll('td');
+      weekArray.forEach((day, dayIndex) => {
+        const tdItem = tds[dayIndex];
+        tdItem.innerText = day;
+        if (weekIndex === 0) {
+          if (Number(day) > 7) {
+            tdItem.classList.add('prev-month');
+          } else {
+            tdItem.classList.remove('prev-month');
+          }
+        } else if (weekIndex >= (monthArray.length - 2)) {
+          if (Number(day) < 15) {
+            tdItem.classList.add('next-month');
+          } else {
+            tdItem.classList.remove('next-month');
+          }
+        }
+        if ((this.current.day === day) && (!tdItem.classList.contains('prev-month')) && (!tdItem.classList.contains('next-month'))) {
+          const pastPikcer = this.body.querySelector('.current-picker');
+          if (pastPikcer) pastPikcer.classList.remove('.current-picker');
+          tdItem.classList.add('.current-picker');
+        }
+      });
+    });
+    return this;
+  }
+  fillDayPickerByCurrent() {
+    // 根据this.current日期填充
+    const byDate = this.current.toDate();
+    this.fillDayPickerByDate(byDate);
+    return this;
+  }
+  clearPicked() {
+    // 清空被选择的
+    const pastPicked = this.body.querySelectorAll('.current-picker');
+    pastPicked.forEach((item) => {
+      item.classList.remove('.current-picker');
+    });
+    return this;
+  }
+  bindMonthArrow() {
+    const prevMonth = this.body.querySelector('.prev-month');
+    const nextMonth = this.body.querySelector('.next-month');
+    prevMonth.addEventListener('click', () => {
+      // 左箭头事件 月份-1
+      this.current.backOneMonth();
+      this.fillDayPickerByCurrent();
+    });
+    nextMonth.addEventListener('click', () => {
+      // 右箭头事件 月份+1
+      this.current.aheadOneMonth();
+      this.fillDayPickerByCurrent();
+    });
+    return this;
+  }
+  bindPickAction() {
+    // 选择日期
+    const thead = this.body.querySelector('thead');
+    const tbody = this.body.querySelector('tbody');
+    const daypickerItems = tbody.querySelectorAll('td');
+    const yearInput = thead.querySelector('.year');
+    const monthBoard = thead.querySelector('.month');
+    const output = this.input;
+    daypickerItems.forEach((item) => {
+      item.addEventListener('click', () => {
+        const pickValue = {
+          year: Number(yearInput.value),
+          month: Number(monthBoard.innerText) - 1,
+          day: Number(item.innerText),
+        };
+        if (item.classList.contains('prev-month')) {
+          pickValue.month -= 1;
+          if (pickValue.month < 0) {
+            pickValue.year -= 1;
+            pickValue.month = 11;
+          }
+        } else if (item.classList.contains('next-month')) {
+          pickValue.month += 1;
+          if (pickValue.month > 11) {
+            pickValue.year += 1;
+            pickValue.month = 0;
+          }
+        }
+        const pickDate = new Date(pickValue.year, pickValue.month, pickValue.day);
+        this.current.reset(pickDate);
+        this.clearPicked();
+        output.value = `${this.current.year}-${this.current.month + 1}-${this.current.day}`;
+        item.classList.add('current-picker');
+        this.body.classList.add('hide');
+      });
+    });
+    return this;
+  }
+  bindTurnOn() {
+    // 点击输入框打开日期选择器
+    this.input.addEventListener('mousedown', (event) => {
+      event.stopPropagation();
+      dom.of(this.body).removeClass('arrow-top arrow-bottom reel hide'); // 先显示才有宽高
+      const datepickers = document.querySelectorAll('.datepicker');
+      const topSpace = getFixedTop(this.input);
+      const leftSpace = getFixedLeft(this.input);
+      const top = getResponsiveTop(this.body, this.input);
+      const left = getResponsiveLeft(this.body, this.input);
+      const yclass = (top < topSpace) ? 'arrow-bottom' : 'arrow-top';
+      const xclass = (left < leftSpace) ? 'pseudo-right' : '';
+      datepickers.forEach((picker) => {
+        if (!this.body.isSameNode(picker)) picker.classList.add('hide');
+      });
+      this.fillDayPickerByCurrent();
+      dom.of(this.body).addClass(`reel ${yclass} ${xclass}`);
+      this.body.style.top = `${top}px`;
+      this.body.style.left = `${left}px`;
+    });
+    return this;
+  }
+  bindTurnOff() {
+    // 点击日期选择器或输入框以外的地方隐藏日期选择器
+    if (isbindTurnOff) return false;
+    isbindTurnOff += 1;
+    document.body.addEventListener('mousedown', (e) => { // 最后记得调整body高度
+      const touchElement = e.target;
+      const datepickers = document.querySelectorAll('.datepicker');
+      datepickers.forEach((picker) => {
+        const isTouching = dom.of(touchElement).hasParent(picker);
+        if (!isTouching) picker.classList.add('hide');
+      });
+    });
+    return this;
+  }
+  bindYearInput() {
+    // 年份输入框
+    const year = this.body.querySelector('.year');
+    const month = this.body.querySelector('.month');
+    year.addEventListener('input', () => {
+      const value = Number(year.value);
+      if (!Number.isSafeInteger(value) || (value < 1900) || (value > 5000)) return false;
+      const newDay = {
+        year: value,
+        month: (Number(month.innerText) - 1),
+        day: 1,
+      };
+      const newDate = new Date(newDay.year, newDay.month, newDay.day);
+      this.fillDayPickerByDate(newDate);
+      return this;
+    });
+  }
+  bindEvent() {
+    bindWindowResize();
+    this.bindMonthArrow();
+    this.bindPickAction();
+    this.bindTurnOn();
+    this.bindTurnOff();
+    this.bindYearInput();
+  }
+}
+
+const toPicker = (input) => {
+  const result = new Picker(input);
+  return result;
+};
+
+window.datepicker = toPicker;
+export default toPicker;

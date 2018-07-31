@@ -6,70 +6,76 @@
     li {
       width: calc(100% - 3em);
       position: relative;
-      padding: 10px 0;
-      margin: 0 auto;
-      border-bottom: 1px solid #eee;
+      padding: 10px 2em;
+      margin: 0;
+      width: 100%;
+      border: 1px solid #eee;
+      border-top: none;
+      line-height: 2em;
     }
-    li:first-child{
+
+    li:first-child {
       border-top: 1px solid #eee;
     }
 
-    li .before,
-    li .after {
-      display: none;
-      position: absolute;
-      width: 1.5em;
-      top: 10px;
+    .item-content:hover {
+      cursor: pointer;
+      background-color: yellow;
     }
 
-
-    li:hover .before,
-    li:hover .after {
-      display: inline-block;
-    }
-
-    .before {
-      left: -1.5em;
-      padding-right: 0.5em;
-    }
-
-    .after {
-      right: -1.5em;
-      padding-left: 0.5em;
-    }
-
-    .done:hover>.icon::before {
-      content: "\f05d";
-    }
-
-    .item-main{
+    .item-main {
       display: flex;
       justify-content: space-between;
     }
+
+    .finish>.icon::before {
+      border: 1px solid transparent;
+    }
+
+    .finish:hover>.icon::before {
+      cursor: pointer;
+      border: 1px solid #000;
+      border-radius: 3px;
+      color: #000;
+    }
+
+    .finish:hover>.icon::before {
+      content: "\f05d";
+    }
+
+    .done .finish:hover>.icon::before {
+      background: radial-gradient(#eee, #eee, #0f0);
+    }
+
+    .done .finish>.icon::before {
+      color: #0c0;
+      content: "\f05d";
+    }
+
+    .done .item-content,
+    .done .item-date {
+      text-decoration: line-through;
+    }
   </style>
+  <!-- "\f05d" √  "\f10c" ○  -->
+
 </head>
 
 <body>
   <li>
-    <span class="drag-icon before">
-      <i class="fa fa-arrows"></i>
-    </span>
     <div class="item-main">
       <div>
-        <span class="done">
+        <span class="finish" title="标记任务完成">
           <i class="fa fa-circle-o item-icon fa-lg icon"></i>
         </span>
-        <span class="item-content">
-          内容          
+        <span class="item-content" title="修改内容">
+          内容
         </span>
       </div>
       <div class="item-date">
         日期2018
       </div>
     </div>
-    <span class="after">
-      <i class="fa fa-ellipsis-h"></i>
-    </span>
   </li>
 </body>
 

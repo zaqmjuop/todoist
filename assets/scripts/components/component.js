@@ -179,7 +179,6 @@ class Component {
           });
         }
         param.present = passPresent;
-        // console.log('pass', param.present)
       }
       // 传递present
       promise = promise.then(() => {
@@ -371,15 +370,34 @@ class Component {
         repConent = singleStyle;
       } else if (singleStyle.match('@media')) {
         // 媒体查询 如：@media screen and (max-width: 300px) { body {background-color:lightblue; }}
-        const styleContents = singleStyle.replace(/^[^@]*@media[^{]*{/, '').replace(/}[^}]*$/, '');
+        const mediaHeadReg = /^[^@]*@media[^{]*{/;
+        const mediaHead = singleStyle.match(mediaHeadReg)[0];
+        const styleContents = singleStyle.replace(mediaHead, '').replace(/}[^}]*$/, '');
         // styleContents是style主体 body {background-color:lightblue; }
-        repConent = this.replaceGeneralScopedStyles(styleContents);
+        const replacedContents = this.replaceGeneralScopedStyles(styleContents);
+        const mediaContent = `${mediaHead} ${replacedContents} }`;
+        repConent = mediaContent;
       } else {
         // 常规单条style 如#id{} 或.class{} 或div{} 或div::before{} 或div:hover::before{}
         repConent = this.replaceGeneralScopedStyle(singleStyle);
       }
       styles[styleIndex] = repConent;
     });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     const resultStyleHTML = styles.join(' ');
     this.style.innerHTML = resultStyleHTML;
     return this;
@@ -518,6 +536,10 @@ class Component {
     promise = promise.then((cpt) => {
       // 把template插入到position的位置
       Dom.of(element).appendAccurate(cpt.template, position);
+      const head = Dom.of('head');
+      if (!head.hasChild(cpt.style)) {
+        head.append(cpt.style);
+      }
       cpt.parent = exist;
       return cpt;
     });
@@ -597,3 +619,5 @@ export default Component;
 // todo custom alert compponent 在新建或更新mission时 content为空时 应该有提示
 // todo 应该有一个向组件传递数据的方法 像HTMLElement.innerHTML一样 监视Component.present和Component.data 通过组件参数watch配置
 // todo 组件事件监听和派发方法 Component.on(type, callback) Component.sent(type, detail) 实例化后组件内和父组件可以调用
+// todo css scoped注释
+// todo css scoped @media query

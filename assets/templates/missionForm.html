@@ -2,9 +2,32 @@
 <html lang="en">
 
 <head>
-  <style>
-    .input-group-append>input{
+  <style scoped>
+    li {
+      padding: 10px 2em;
+      border: 1px solid #eee;
+      border-top: none;
+      overflow: hidden;
+      animation: mymove 1s ease-in-out;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes mymove {
+      from {
+        height: calc(2em + 20px);
+      }
+      to {
+        height: 7em;
+      }
+    }
+
+    .input-group-append>input {
       width: 100%;
+    }
+
+    .submits {
+      line-height: 2em;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -15,22 +38,17 @@
     <div class="item-main">
       <div class="w-100">
         <div class="input-group">
-          <input name="content" type="text" placeholder="例如：明天下午6点买礼物 p2 #杂物">
+          <input name="content" type="text" placeholder="例如：明天下午6点买礼物">
           <div class="input-group-append">
             <input name="date" type="text" placeholder="日期" />
           </div>
         </div>
         <div class="submits flex flex-justify-between flex-center">
           <div>
-            <button class="btn-dark submit">添加任务</button>
-            <button class="cancel-form btn-link">取消</button>
+            <a class="btn submit">添加任务</a>
+            <span>&thinsp;&thinsp;</span>
+            <a class="cancel-form">取消</a>
           </div>
-          <!-- <div>
-                            <i class="fa fa-credit-card" title="项目"></i>
-                            <i class="fa fa-clock-o" title="提醒"></i>
-                            <i class="fa fa-flag" title="优先级"></i>
-                            <i class="fa fa-ellipsis-h" title="更多选项"></i>
-                          </div> -->
         </div>
       </div>
     </div>

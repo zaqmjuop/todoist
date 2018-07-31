@@ -7,15 +7,6 @@ import utils from '../utils';
 
 const dayMark = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
 
-const differDay = (datea, dateb) => {
-  // 两个日期相差几日 返回值是一个整数 1代表dateb是datea的后一天 -1代表dateb是datea的前一天 0代表是同一天
-  const dateaStart = new Date(datea.toLocaleDateString());
-  const datebStart = new Date(dateb.toLocaleDateString());
-  const msecs = datebStart.getTime() - dateaStart.getTime();
-  const days = msecs / 86400000;
-  return days;
-};
-
 const param = {
   query: 'mission-card',
   url: './assets/templates/missionCard.html',
@@ -27,7 +18,7 @@ const param = {
       dateMark: '',
     };
   },
-  passon: [],
+  passon: [], // 接受父组件全部present
   selectors: {
     form: 'mission-form',
     cardHeader: '.card-header',
@@ -62,31 +53,20 @@ const param = {
       return promise;
     },
     loadDB() {
-      let filter;
-      if (this.data.days === 'all') {
-        filter = mission.getAll();
-      } else if (this.data.days === 'expired') {
-        filter = mission.filter(item => item.date && (differDay(item.date, utils.now) > 0));
-      } else if (this.data.date instanceof Date) {
-        filter = mission.filter((item) => {
-          const isMatch = item.date instanceof Date
-            && this.present.date instanceof Date
-            && differDay(item.date, this.present.date) === 0;
-          return isMatch;
+      console.log('load', this.present)
+      const filter = mission.methods.getQuery(this.present.query);
+      console.log(filter)
+      const promise = filter
+        .then((items) => {
+          this.data.items = items;
+          return this.data.items;
         });
-      } else {
-        filter = mission.getAll();
-      }
-      const promise = filter.then((items) => {
-        this.data.items = items;
-        return this.data.items;
-      });
       return promise;
     },
     fill() {
       if (this.data.date) {
         this.data.dateMark = `${this.data.date.getMonth() + 1}月${this.data.date.getDate()}日`;
-        this.data.differDay = differDay(utils.now, this.data.date);
+        this.data.differDay = utils.differDay(utils.now, this.data.date);
         if (this.data.differDay === 0) {
           this.data.dayMark = '今天';
         } else if (this.data.differDay === 1) {
@@ -117,9 +97,15 @@ const param = {
       if (!form) { return false; }
       this.data.form = form;
       this.data.formId = form.componentId;
+      // 表单隐藏和显示的转换
+      form.addEventListener('hide', () => {
+        Dom.of(this.elements.createMission).removeClass('hide');
+      });
+      form.addEventListener('show', () => {
+        Dom.of(this.elements.createMission).addClass('hide');
+      });
       // 默认隐藏表单
       form.methods.hide();
-      form.methods.fill();
       // 显示表单
       Dom.of(this.elements.showForm).on('click', () => {
         // 还原li item
@@ -178,7 +164,6 @@ const param = {
   },
   created() {
     this.methods.init();
-    console.log('card', this.present)
   },
 };
 

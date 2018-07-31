@@ -3,11 +3,15 @@
 
 <head>
   <style scoped>
-    .card{
-      margin-bottom: 2em;
+    .card {
+      margin: 0;
       border: 1px solid #eee;
+      display: flex;
+      flex-direction: column;
     }
+
     ul {
+      margin: 0;
       list-style: none;
       padding: 0;
     }
@@ -16,8 +20,24 @@
       font-size: 0.875em;
       color: #999;
     }
-    .show-form{
+
+    .show-form {
       cursor: pointer;
+    }
+
+    .card-header {
+      padding: 10px;
+      line-height: 2em;
+      background-color: #fff;
+      border-bottom: 1px solid #eee;
+      min-height: 3em;
+    }
+
+    li {
+      padding: 10px 2em;
+      line-height: 2em;
+      border: 1px solid #eee;
+      border-top: none;
     }
   </style>
 </head>
@@ -34,11 +54,10 @@
         <span></span>
         <div class="item-main flex flex-justify-between">
           <span class="show-form">
-            <i class="fa fa-plus"></i>
-            <span>添加任务</span>
+            <span>&thinsp;&thinsp;</span>
+            <a href="javascript:void(0)">添加任务</a>
           </span>
           <span>
-            <i class="fa fa-history"></i>
           </span>
         </div>
         <span></span>
