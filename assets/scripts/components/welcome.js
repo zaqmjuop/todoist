@@ -1,29 +1,13 @@
 import leftMenu from './leftMenu';
-import inbox from './inbox';
+import missionCard from './missionCard';
 
 const param = {
   query: 'mission-content',
   url: './assets/templates/welcome.html',
   name: 'welcome',
   data() {
-    return {
-      initen: 0,
-    };
+    return {};
   },
-  methods: {
-    init() {
-      if (this.inited) { return false; }
-      this.inited = 1;
-      this.methods.takePart();
-      return this;
-    },
-    takePart() {
-      const inboxasd = 1;
-    },
-  },
-  created() {
-    this.methods.init();
-  },
-  components: [leftMenu, inbox],
+  components: [leftMenu, missionCard],
 };
 export default param;

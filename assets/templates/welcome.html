@@ -28,7 +28,31 @@
       width: 80%;
       display: flex;
       align-items: flex-start;
+      flex-direction: column;
       overflow-y: auto;
+    }
+
+    @media screen and (max-width: 720px) {
+      .left {
+        display: none;
+      }
+      .right {
+        width: 100%;
+      }
+    }
+
+    .header {
+      background-color: #0066FF;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 2em;
+      color: #fff;
+      min-height: 4em;
+      width: 100%;
+    }
+    .body{
+      width: 100%;
     }
   </style>
 </head>
@@ -40,9 +64,16 @@
         <left-menu></left-menu>
       </div>
       <div class="right">
-        <inbox></inbox>
+        <div class="header">
+          <h3>所有任务</h3>
+          <div>asd</div>
+        </div>
+        <div class="body">
+          <mission-card></mission-card>
+        </div>
       </div>
     </div>
+  </div>
   </div>
 </body>
 

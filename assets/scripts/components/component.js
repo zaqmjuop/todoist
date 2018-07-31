@@ -383,21 +383,6 @@ class Component {
       }
       styles[styleIndex] = repConent;
     });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     const resultStyleHTML = styles.join(' ');
     this.style.innerHTML = resultStyleHTML;
     return this;

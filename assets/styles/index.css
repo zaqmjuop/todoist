@@ -2,14 +2,6 @@
   box-sizing: border-box;
 }
 
-
-@media screen and (max-width: 600px) {
-    body {
-        background-color:lightblue;
-        color: red;
-    }
-}
-
 html{
   font-size:16px;
 }
