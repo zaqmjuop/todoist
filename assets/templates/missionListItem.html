@@ -17,10 +17,16 @@
     li:first-child {
       border-top: 1px solid #eee;
     }
-
+    .item-content{
+      border: 1px solid transparent;
+      padding: 3px 5px;
+    }
     .item-content:hover {
       cursor: pointer;
-      background-color: yellow;
+      background-color: #ffc;
+      border: 1px solid #000;
+      cursor: text;
+      font-weight: 700;
     }
 
     .item-main {
@@ -56,6 +62,12 @@
     .done .item-date {
       text-decoration: line-through;
     }
+
+    .item-date {
+      color: #999;
+      font-style: italic;
+      font-weight: 500;
+    }
   </style>
   <!-- "\f05d" √  "\f10c" ○  -->
 
@@ -65,15 +77,21 @@
   <li>
     <div class="item-main">
       <div>
-        <span class="finish" title="标记任务完成">
-          <i class="fa fa-circle-o item-icon fa-lg icon"></i>
-        </span>
-        <span class="item-content" title="修改内容">
-          内容
-        </span>
+        <div>
+          <span class="finish" title="标记任务完成">
+            <i class="fa fa-circle-o item-icon fa-lg icon"></i>
+          </span>
+          <span class="item-content" title="修改内容">
+            内容
+          </span>
+        </div>
+        <div>
+          <span style="margin-right: 2em;"></span>
+          <span class="item-date">asd</span>
+        </div>
       </div>
-      <div class="item-date">
-        日期2018
+      <div>
+        按钮组位置
       </div>
     </div>
   </li>
