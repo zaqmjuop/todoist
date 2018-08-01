@@ -39,7 +39,7 @@ const router = {
       const promise = current.replace(param).then((cpt) => {
         if (current !== this) { Component.removeComponent(current); }
         this.data.current = cpt;
-        const url = `${this.data.origin}/#/${path}/`;
+        const url = `${this.data.origin.replace(/\u002f$/, '')}/#/${path}/`;
         window.history.pushState(this.data.state, 0, url);
         this.data.href = window.location.href;
         return cpt;

@@ -420,7 +420,7 @@ class Component {
     if (!url || (typeof url !== 'string')) {
       throw new TypeError(`${url}不是有效的html文件地址`);
     }
-
+    // 修改相对路径
     if (url.match(/^\u002e\u002f/)) {
       let rel = url.replace(/^\u002e/, '');
       if (origin.match(/\u002f$/)) {
@@ -429,10 +429,6 @@ class Component {
       const href = origin.concat(rel);
       console.log(href);
     }
-
-
-
-
     const promise = promiseAjax.get(url).then((result) => {
       const html = document.createElement('html');
       html.innerHTML = result;
