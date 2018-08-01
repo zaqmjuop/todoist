@@ -55,7 +55,7 @@ const router = {
   created() {
     this.methods.init();
     window.router = this;
-    // this.methods.render('welcome', { query: 'all' });
+    this.methods.render('welcome', { query: 'all' });
   },
 };
 

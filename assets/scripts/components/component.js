@@ -2,6 +2,9 @@ import Dom from '../dom';
 import Utils from '../utils';
 import promiseAjax from '../ajax';
 
+// href
+const origin = window.location.href.match(/^[^#]+/)[0];
+
 // 保存所有创建的组件
 const components = new Set();
 
@@ -182,12 +185,7 @@ class Component {
       }
       // 传递present
       promise = promise.then(() => {
-        // 取消router添加的 '/#/'
-        const originReg = /^[^#]+/;
-        const origin = window.location.href.match(originReg)[0];
-        const rel = param.url.replace(/^\u002e\u002f/, '');
-        const url = `${origin}${rel}`;
-        const ajax = Component.pjaxFormatHtml(url);
+        const ajax = Component.pjaxFormatHtml(param.url);
         return ajax;
       }).then(({ template, style }) => {
         const query = this.template.querySelector(param.query);
@@ -422,6 +420,19 @@ class Component {
     if (!url || (typeof url !== 'string')) {
       throw new TypeError(`${url}不是有效的html文件地址`);
     }
+
+    if (url.match(/^\u002e\u002f/)) {
+      let rel = url.replace(/^\u002e/, '');
+      if (origin.match(/\u002f$/)) {
+        rel = rel.replace(/^\u002f/, '');
+      }
+      const href = origin.concat(rel);
+      console.log(href);
+    }
+
+
+
+
     const promise = promiseAjax.get(url).then((result) => {
       const html = document.createElement('html');
       html.innerHTML = result;
