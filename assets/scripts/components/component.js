@@ -182,7 +182,12 @@ class Component {
       }
       // 传递present
       promise = promise.then(() => {
-        const ajax = Component.pjaxFormatHtml(param.url);
+        // 取消router添加的 '/#/'
+        const originReg = /^[^#]+/;
+        const origin = window.location.href.match(originReg)[0];
+        const rel = param.url.replace(/^\u002e\u002f/, '');
+        const url = `${origin}${rel}`;
+        const ajax = Component.pjaxFormatHtml(url);
         return ajax;
       }).then(({ template, style }) => {
         const query = this.template.querySelector(param.query);

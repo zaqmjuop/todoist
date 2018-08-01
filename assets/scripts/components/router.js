@@ -12,7 +12,7 @@ const router = {
       inited: 0,
       path: '',
       state: {},
-      origin: window.location.origin,
+      origin: window.location.href,
       href: window.location.href,
     };
   },
@@ -55,7 +55,7 @@ const router = {
   created() {
     this.methods.init();
     window.router = this;
-    this.methods.render('welcome', { query: 'all' });
+    // this.methods.render('welcome', { query: 'all' });
   },
 };
 
