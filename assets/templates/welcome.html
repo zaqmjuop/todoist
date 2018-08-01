@@ -22,6 +22,7 @@
     .left {
       width: 20%;
       overflow-y: auto;
+      transition: width 1s;
     }
 
     .right {
@@ -32,9 +33,14 @@
       overflow-y: auto;
     }
 
+    .toggle {
+      cursor: pointer;
+    }
+
     @media screen and (max-width: 720px) {
       .left {
-        display: none;
+        width: 6em;
+        overflow-x: hidden;
       }
       .right {
         width: 100%;
@@ -51,30 +57,41 @@
       min-height: 4em;
       width: 100%;
     }
-    .body{
+
+    .body {
       width: 100%;
+    }
+
+    span {
+      display: inline-block;
+    }
+
+    .title {
+      font-size: 1.2em;
+      font-weight: 700;
     }
   </style>
 </head>
 
 <body>
-  <div class="template">
+  <section class="template">
     <div class="main">
       <div class="left">
         <left-menu></left-menu>
       </div>
       <div class="right">
         <div class="header">
-          <h3>所有任务</h3>
-          <div>asd</div>
+          <div>
+            <span class="title">所有任务</span>
+          </div>
+          <div>选项的位置</div>
         </div>
         <div class="body">
           <mission-card></mission-card>
         </div>
       </div>
     </div>
-  </div>
-  </div>
+  </section>
 </body>
 
 </html>

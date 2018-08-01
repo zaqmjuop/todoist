@@ -356,7 +356,10 @@ class Component {
     // unicode *#. \u002a\u0023\u002e
     const isScoped = this.style.getAttribute('scoped') || (this.style.getAttribute('scoped') === '');
     if (!isScoped) { return false; }
-    const content = this.style.innerHTML;
+    // 去掉注释
+    const commentReg = /\u002f\u002a(\u002f\u002a|[^\u002a])*\u002a\u002f/g;
+    const removeComments = this.style.innerHTML.replace(commentReg, '');
+    const content = removeComments;
     // 去掉换行
     const compressed = content.replace(/\n/g, '').replace(/\s+/g, ' ');
     const regStyleCompleteStructure = /(@keyframes|@media|[#\u002e\u002aA-Za-z])[^{}]*{([^{}]*{[^{}]*})*[^{}]*}/g;

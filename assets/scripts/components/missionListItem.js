@@ -84,7 +84,6 @@ const param = {
   created() {
     this.methods.init();
     this.methods.fill();
-    console.log('item', this.present)
   },
 };
 

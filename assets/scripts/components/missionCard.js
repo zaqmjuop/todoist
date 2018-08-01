@@ -22,8 +22,6 @@ const param = {
   selectors: {
     form: 'mission-form',
     cardHeader: '.card-header',
-    dayMark: '.day-mark',
-    dateMark: '.date-mark',
     showForm: '.show-form',
     createMission: '.create-mission',
     cardBody: '.card-body',
@@ -37,7 +35,6 @@ const param = {
       this.data.date = this.present.date;
       this.data.days = this.present.days;
       const promise = utils.newPromise()
-        .then(() => this.methods.fill())
         .then(() => this.methods.initForm())
         .then(() => this.methods.loadDB())
         .then(() => this.methods.initItems());
@@ -53,35 +50,34 @@ const param = {
       return promise;
     },
     loadDB() {
-      console.log('load', this.present)
       const filter = mission.methods.getQuery(this.present.query);
-      console.log(filter)
       const promise = filter
         .then((items) => {
-          this.data.items = items;
+          const bysSate = utils.divisio(items, item => (item.state !== 'done')); // [[未完成], [已完成]]
+          const byDate = bysSate.map((ary) => {
+            const allot = utils.divisio(ary, item => utils.isValidDate(item.date));
+            return allot;
+          });
+          // byDate
+          // [
+          //   [
+          //     ['有日期 未完成'], ['无日期 未完成']
+          //   ],
+          //   [
+          //     ['有日期 已完成'], ['无日期 已完成']
+          //   ],
+          // ]
+          const deep = byDate.map((states) => {
+            const sortByDate = states[0].sort((a, b) => (a.date <= b.date));
+            return [sortByDate, states[1]];
+          });
+          const flat = utils.flat(deep, 2);
+          // flat 未完成在前，有日期的在前，日期升序 一维数组
+          this.data.items = flat;
           return this.data.items;
         });
+      // todo sort 未完成在前， 有日期的在前，日期升序 ''<1<2   1,2,''
       return promise;
-    },
-    fill() {
-      if (this.data.date) {
-        this.data.dateMark = `${this.data.date.getMonth() + 1}月${this.data.date.getDate()}日`;
-        this.data.differDay = utils.differDay(utils.now, this.data.date);
-        if (this.data.differDay === 0) {
-          this.data.dayMark = '今天';
-        } else if (this.data.differDay === 1) {
-          this.data.dayMark = '明天';
-        } else {
-          this.data.dayMark = dayMark[this.data.date.getDay()];
-        }
-      } else if (this.data.days === 'all') {
-        this.data.dayMark = '所有';
-      } else if (this.data.days === 'expired') {
-        this.data.dayMark = '过期';
-      }
-      Dom.of(this.elements.dayMark).attr('text', this.data.dayMark);
-      Dom.of(this.elements.dateMark).attr('text', this.data.dateMark);
-      return this;
     },
     appendItem(detail) {
       // 添加li item

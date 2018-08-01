@@ -58,6 +58,46 @@ const isEmptyString = (content) => {
   return isFalsely || isEmpty;
 };
 
+const divisio = (ary, callback) => {
+  // 把一个数组按照callback((item)=>{})分成两部分
+  // 返回一个数组包含2个数组，callback返回true的在第一个一个数组，其他的在第二个数组
+  if (!(ary instanceof Array)) { throw new TypeError(`divisio ${ary} 不是Array`); }
+  if (!(callback instanceof Function)) { throw new TypeError(`divisio ${callback} 不是Function`); }
+  const result = [[], []];
+  ary.forEach((item) => {
+    const allot = callback(item);
+    if (allot) {
+      result[0].push(item);
+    } else {
+      result[1].push(item);
+    }
+  });
+  return result;
+};
+
+const flat = (ary, deep) => {
+  // 递归到指定深度将所有子数组连接，并返回一个新数组。
+  if (!(ary instanceof Array)) { throw new TypeError(`flat ${ary} 不是Array`); }
+  if (deep && (!Number.isSafeInteger(deep) || deep < 1)) { throw new TypeError(`flat ${deep} 不是Integer或deep < 1`); }
+  let result = ary;
+  const times = deep || 1;
+  const core = (array) => {
+    const container = [];
+    array.forEach((item) => {
+      if (item instanceof Array) {
+        item.forEach(i => container.push(i));
+      } else {
+        container.push(item);
+      }
+    });
+    return container;
+  };
+  for (let index = 0; index < times; index += 1) {
+    result = core(result);
+  }
+  return result;
+};
+
 export default {
   isElement,
   isKeyEnter,
@@ -70,4 +110,6 @@ export default {
   now,
   isValidDate,
   differDay,
+  divisio,
+  flat,
 };

@@ -25,37 +25,51 @@
     li:hover {
       background-color: #eee;
       line-height: 1em;
-
     }
 
     li>* {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
+      white-space: nowrap;
     }
-
-    a {}
 
     a:hover {
       cursor: pointer;
     }
 
-    .header,
-    .now {
+    .header {
       width: 100%;
+      border-bottom: 1px solid #eee;
+      padding: 1em 0;
+      transition: font-size 2s, font-weight 2s;
     }
 
-    .now {
-      padding: 1em;
-      border-bottom: 1px solid #eee;
+    .date,
+    .time {
+      min-width: 4em;
+      font-size: 1em;
+      margin: 0 auto;
+    }
+
+    .time {
+      margin-top: 0.5em;
+    }
+
+    @media screen and (max-width: 720px) {
+      .header {
+        font-size: 12px;
+        font-weight: 700;
+      }
     }
   </style>
 </head>
 
 <body>
-  <div class="template">
-    <div class="header">
-      <div class="now text-lg-center"></div>
+  <section class="template">
+    <div class="header text-lg-center">
+      <div class="date"></div>
+      <div class="time"></div>
     </div>
     <ul>
       <li>
@@ -71,7 +85,7 @@
         <a onclick="window.router.methods.render('welcome', {query: 'expired'})">已过期</a>
       </li>
     </ul>
-  </div>
+  </section>
 </body>
 
 </html>
