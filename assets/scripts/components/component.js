@@ -2,8 +2,6 @@ import Dom from '../dom';
 import Utils from '../utils';
 import promiseAjax from '../ajax';
 
-const origin = window.location.origin;
-
 // 保存所有创建的组件
 const components = new Set();
 
@@ -184,6 +182,9 @@ class Component {
       }
       // 传递present
       promise = promise.then(() => {
+        // 取消router添加的 '/#/'
+        const originReg = /^[^#]+/;
+        const origin = window.location.href.match(originReg);
         const rel = param.url.replace(/^\u002e/, '');
         const url = `${origin}${rel}`;
         const ajax = Component.pjaxFormatHtml(url);
