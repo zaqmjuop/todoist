@@ -68,7 +68,7 @@ const param = {
           //   ],
           // ]
           const deep = byDate.map((states) => {
-            const sortByDate = states[0].sort((a, b) => (a.date <= b.date));
+            const sortByDate = states[0].sort((a, b) => (a.date >= b.date));
             return [sortByDate, states[1]];
           });
           const flat = utils.flat(deep, 2);

@@ -3,13 +3,15 @@ import CustomDate from './customDate';
 
 let isbindTurnOff = 0;
 let isWindowResize = 0;
+let touch;
+const client = { x: 0, y: 0 };
 
 const getFixedTop = (element) => {
   // 相对body的top
   if (!dom.isElement(element)) throw new TypeError('参数应是HTML Element');
   let result = 0;
   let parent = element;
-  while (dom.isElement(parent) && parent.tagName !== 'body' && parent.tagName !== 'html') {        
+  while (dom.isElement(parent) && parent.tagName !== 'body' && parent.tagName !== 'html') {
     result += parent.offsetTop;
     parent = parent.offsetParent;
   }
@@ -17,7 +19,7 @@ const getFixedTop = (element) => {
 };
 
 const getFixedLeft = (element) => {
-  // 相对body的top
+  // 相对body的left
   if (!dom.isElement(element)) throw new TypeError('参数应是HTML Element');
   let result = 0;
   let parent = element;
@@ -31,7 +33,7 @@ const getFixedLeft = (element) => {
 const getResponsiveTop = (element, reference) => {
   // 或许响应式的top，如果下方空间不够且上方空间够则在上方，否则在下方
   if (!dom.isElement(element) || !dom.isElement(reference)) throw new TypeError('参数应是HTML Element');
-  const topSpace = getFixedTop(reference);
+  const topSpace = client.y;// getFixedTop(reference);
   const topSeen = topSpace - window.scrollY;
   const toSeenBottomHeight = window.scrollY + window.innerHeight;
   const toInputBottomHeight = topSpace + reference.offsetHeight;
@@ -40,9 +42,9 @@ const getResponsiveTop = (element, reference) => {
   const isTopSeenEnough = topSeen > element.offsetHeight;
   let top;
   if (!isBottomSeenEnough && isTopSeenEnough) {
-    top = topSpace - element.offsetHeight;// 在参照元素上方
+    top = topSpace - (reference.offsetHeight / 2) - element.offsetHeight;// 在参照元素上方
   } else {
-    top = topSpace + reference.offsetHeight; // 在参照元素下方
+    top = topSpace + (reference.offsetHeight / 2); // 在参照元素下方
   }
   return top;
 };
@@ -50,12 +52,13 @@ const getResponsiveTop = (element, reference) => {
 const getResponsiveLeft = (element, reference) => {
   // 或许响应式的left，一般时对齐左边线，只有右侧空间不足时右边线对齐
   if (!dom.isElement(element) || !dom.isElement(reference)) throw new TypeError('参数应是HTML Element');
-  const leftSpace = getFixedLeft(reference);
+  const leftSpace = client.x;// getFixedLeft(reference);
   const rightSpace = document.body.offsetWidth - reference.offsetWidth - leftSpace;
-  const isRightEnough = (rightSpace + reference.offsetWidth) > element.offsetWidth;
+  const isRightEnough = (rightSpace + reference.offsetWidth) > (element.offsetWidth + 20); // 留20px空余
+  console.log(isRightEnough)
   const left = (isRightEnough)
     ? leftSpace
-    : ((leftSpace + reference.offsetWidth) - element.offsetWidth);
+    : leftSpace - element.offsetWidth; // + reference.offsetWidth;
   return left;
 };
 
@@ -257,15 +260,18 @@ class Picker {
   bindTurnOn() {
     // 点击输入框打开日期选择器
     this.input.addEventListener('mousedown', (event) => {
+      client.x = event.clientX;
+      client.y = event.clientY;
       event.stopPropagation();
       dom.of(this.body).removeClass('arrow-top arrow-bottom reel hide'); // 先显示才有宽高
       const datepickers = document.querySelectorAll('.datepicker');
-      const topSpace = getFixedTop(this.input);
-      const leftSpace = getFixedLeft(this.input);
+      const topSpace = client.y;// getFixedTop(this.input);
+      const leftSpace = client.x;// getFixedLeft(this.input);
       const top = getResponsiveTop(this.body, this.input);
       const left = getResponsiveLeft(this.body, this.input);
       const yclass = (top < topSpace) ? 'arrow-bottom' : 'arrow-top';
       const xclass = (left < leftSpace) ? 'pseudo-right' : '';
+      console.log(left, leftSpace)
       datepickers.forEach((picker) => {
         if (!this.body.isSameNode(picker)) picker.classList.add('hide');
       });

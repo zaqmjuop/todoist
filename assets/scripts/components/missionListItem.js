@@ -8,11 +8,13 @@ const param = {
   url: './assets/templates/missionListItem.html',
   name: 'missionListItem',
   selectors: {
+    template: '.template',
     content: '.item-content',
     date: '.item-date',
     finish: '.finish',
     itemMain: '.item-main',
     counter: '#counter',
+    remove: 'a[name=remove]',
   },
   data() {
     return {
@@ -65,6 +67,19 @@ const param = {
           });
         return promise;
       });
+      // 删除按钮
+      Dom.of(this.elements.remove).on('click', () => {
+        console.log(this.present)
+        const promise = mission.remove(this.present.primaryKey)
+          .then(() => {
+            this.template.style.height = '0px';
+            this.template.style.paddingTop = '0px';
+            this.template.style.paddingBottom = '0px';
+            const t = setTimeout(() => this.parent.removeChild(this), 2000);
+            return t;
+          });
+        return promise;
+      });
     },
     fill() {
       this.present = this.present || {};
@@ -75,7 +90,10 @@ const param = {
       const dateStr = utils.formatDate(this.present.date);
       Dom.of(this.elements.content).attr('text', this.present.content);
       Dom.of(this.elements.date).attr('text', dateStr);
-      Dom.of(this.template).attr('data-item-id', this.present.id);
+      if (this.present.date instanceof Date && utils.differDay(this.present.date, utils.now) > 0) {
+        Dom.of(this.elements.date).addClass('expired');
+      }
+      Dom.of(this.template).attr('data-primaryKey', this.present.primaryKey);
       if (this.present.state === 'done') {
         Dom.of(this.template).addClass('done');
       }

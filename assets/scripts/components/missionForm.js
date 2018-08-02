@@ -25,13 +25,13 @@ const param = {
       const content = Dom.of(this.elements.contentInput).attr('value');
       if (!content) { window.alert('请输入任务内容'); } // 如果没有内容就取消操作
       const date = Dom.of(this.elements.dateInput).attr('value') || '';
-      const id = Dom.of(this.template).attr('data-item-id');
+      const primaryKey = Number(Dom.of(this.template).attr('data-primaryKey'));
       const cid = Dom.of(this.template).attr('data-cid');
       const data = { content, date };
-      if (!id) {
+      if (!primaryKey) {
         this.dispatchEvent('create', data);
       } else {
-        data.id = Number(id);
+        data.id = primaryKey;
         data.cid = cid;
         this.dispatchEvent('update', data);
       }
@@ -46,7 +46,7 @@ const param = {
       this.data.submitText = (this.data.cid) ? '更新任务' : '新建任务';
       Dom.of(this.elements.contentInput).attr('value', this.data.content);
       Dom.of(this.elements.dateInput).attr('value', this.methods.formatDate(this.data.date));
-      Dom.of(this.template).attr('data-item-id', this.data.id);
+      Dom.of(this.template).attr('data-primaryKey', this.data.primaryKey);
       Dom.of(this.template).attr('data-cid', this.data.cid);
       Dom.of(this.elements.submit).attr('text', this.data.submitText);
     },

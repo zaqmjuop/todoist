@@ -12,7 +12,7 @@ const router = {
       inited: 0,
       path: '',
       state: {},
-      origin: window.location.href,
+      origin: window.location.href.match(/^[^#]+/)[0],
       href: window.location.href,
     };
   },

@@ -12,15 +12,20 @@
       border: 1px solid #eee;
       border-top: none;
       line-height: 2em;
+      height: 5em;
+      transition: height 2s, padding 2s;
+      overflow-y: hidden;
     }
 
     li:first-child {
       border-top: 1px solid #eee;
     }
-    .item-content{
+
+    .item-content {
       border: 1px solid transparent;
       padding: 3px 5px;
     }
+
     .item-content:hover {
       cursor: pointer;
       background-color: #ffc;
@@ -68,13 +73,17 @@
       font-style: italic;
       font-weight: 500;
     }
+
+    .expired {
+      color: #f00;
+    }
   </style>
   <!-- "\f05d" √  "\f10c" ○  -->
 
 </head>
 
 <body>
-  <li>
+  <li class="template">
     <div class="item-main">
       <div>
         <div>
@@ -87,11 +96,12 @@
         </div>
         <div>
           <span style="margin-right: 2em;"></span>
-          <span class="item-date">asd</span>
+          <span class="item-date">日期的位置</span>
         </div>
       </div>
       <div>
         按钮组位置
+        <a class="btn" name="remove">删除</a>
       </div>
     </div>
   </li>

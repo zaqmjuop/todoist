@@ -427,7 +427,6 @@ class Component {
         rel = rel.replace(/^\u002f/, '');
       }
       const href = origin.concat(rel);
-      console.log(href);
     }
     const promise = promiseAjax.get(url).then((result) => {
       const html = document.createElement('html');
