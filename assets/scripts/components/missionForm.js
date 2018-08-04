@@ -27,7 +27,9 @@ const param = {
       const date = Dom.of(this.elements.dateInput).attr('value') || '';
       const primaryKey = Number(Dom.of(this.template).attr('data-primaryKey'));
       const cid = Dom.of(this.template).attr('data-cid');
-      const data = { content, date };
+      const data = Object.assign({}, this.data);
+      data.content = content;
+      data.date = date;
       if (!primaryKey) {
         this.dispatchEvent('create', data);
       } else {
