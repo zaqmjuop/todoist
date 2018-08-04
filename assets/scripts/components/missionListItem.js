@@ -54,11 +54,20 @@ const param = {
           cid: this.componentId,
           content: this.data.content,
           date: this.data.date,
-          id: this.data.id,
+          primaryKey: this.present.primaryKey,
           formId: this.data.formId,
         };
         missionForm.present = detail;
         promise = promise
+          .then(() => {
+            // 修复新建表单显示状态时，点击已存在mission会因为新建表单消失跳一下
+            Dom.of(this.template).parents().forEach((parent) => {
+              const needScroll = parent.scrollTop > 0
+                && missionForm.methods.isSeen()
+                && !missionForm.data.primaryKey;
+              if (needScroll) { parent.scrollBy(0, 0); }
+            });
+          })
           .then(() => missionForm.methods.reduce())
           .then(() => this.replace(missionForm))
           .then(() => {
@@ -69,13 +78,12 @@ const param = {
       });
       // 删除按钮
       Dom.of(this.elements.remove).on('click', () => {
-        console.log(this.present)
         const promise = mission.remove(this.present.primaryKey)
           .then(() => {
             this.template.style.height = '0px';
             this.template.style.paddingTop = '0px';
             this.template.style.paddingBottom = '0px';
-            const t = setTimeout(() => this.parent.removeChild(this), 2000);
+            const t = setTimeout(() => this.parent.removeChild(this), 1000);
             return t;
           });
         return promise;

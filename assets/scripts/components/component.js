@@ -20,10 +20,10 @@ class Component {
     // param.query是Dom.of参数
     // param.template是HtmlElement
     // param.style是<style>
+    if (new.target !== Component) { throw new Error('必须使用 new 命令生成实例'); }
     if (typeof param !== 'object') { throw new TypeError('param应该是一个object'); }
     if (!Utils.isElement(param.template)) { throw new TypeError('param.template应该是一个HtmlElement'); }
     const result = Object.assign(this, param);
-
     // 在页面插入的位置
     if (Utils.isString(this.query)) {
       Dom.of(this.template).attr('data-c-query', this.query);
@@ -618,5 +618,3 @@ export default Component;
 // todo custom alert compponent 在新建或更新mission时 content为空时 应该有提示
 // todo 应该有一个向组件传递数据的方法 像HTMLElement.innerHTML一样 监视Component.present和Component.data 通过组件参数watch配置
 // todo 组件事件监听和派发方法 Component.on(type, callback) Component.sent(type, detail) 实例化后组件内和父组件可以调用
-// todo css scoped注释
-// todo css scoped @media query

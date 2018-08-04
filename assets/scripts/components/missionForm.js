@@ -41,7 +41,7 @@ const param = {
       this.present = this.present || {};
       this.data.content = this.present.content || '';
       this.data.date = this.present.date || '';
-      this.data.id = this.present.id || '';
+      this.data.primaryKey = Number(this.present.primaryKey) || '';
       this.data.cid = this.present.cid || '';
       this.data.submitText = (this.data.cid) ? '更新任务' : '新建任务';
       Dom.of(this.elements.contentInput).attr('value', this.data.content);
@@ -74,6 +74,9 @@ const param = {
       Dom.of(this.template).removeClass('hide');
       this.dispatchEvent('show');
       return this;
+    },
+    isSeen() {
+      return !Dom.of(this.template).hasClass('hide');
     },
     init() {
       if (this.data.inited) { return false; }

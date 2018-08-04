@@ -98,7 +98,7 @@ const param = {
         Dom.of(this.elements.createMission).removeClass('hide');
       });
       form.addEventListener('show', () => {
-        Dom.of(this.elements.createMission).addClass('hide');
+        // Dom.of(this.elements.createMission).addClass('hide');
       });
       // 默认隐藏表单
       form.methods.hide();

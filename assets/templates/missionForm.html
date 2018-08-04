@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
+<!-- 出现时5em->7em 隐藏之前从7em变成5em再隐藏 -->
 <head>
   <style scoped>
     li {
@@ -8,13 +8,19 @@
       border: 1px solid #eee;
       border-top: none;
       overflow: hidden;
-      animation: mymove 1s ease-in-out;
-      animation-fill-mode: forwards;
+      /* animation: mymove 1s ease-in-out;
+      animation-fill-mode: forwards; */
+      transition: height 1s;
+      height: 80px;
+    }
+    li:hover{
+      height: 110px;
+      background-color: #ffc;
     }
 
     @keyframes mymove {
       from {
-        height: calc(2em + 20px);
+        height: 5em;
       }
       to {
         height: 7em;
@@ -30,7 +36,10 @@
       margin-top: 10px;
     }
     .row{
-      padding: 0 1em;
+      padding: 0 1.1em;
+    }
+    .hide{
+      display: none;
     }
   </style>
 </head>
@@ -42,7 +51,7 @@
       <div class="w-100 row">
         <div class="input-group">
           <input name="content" type="text" placeholder="例如：明天下午6点买礼物">
-          <div class="input-group-append">
+          <div class="input-group-append w-25">
             <input name="date" type="text" placeholder="日期" />
           </div>
         </div>

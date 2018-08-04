@@ -9,16 +9,16 @@
       padding: 10px 2em;
       margin: 0;
       width: 100%;
-      border: 1px solid #eee;
-      border-top: none;
+      border-bottom: 1px solid #eee;
       line-height: 2em;
-      height: 5em;
-      transition: height 2s, padding 2s;
+      height: 80px;
+      transition: height 1s, padding 1s;
       overflow-y: hidden;
+      user-select: none;
     }
 
-    li:first-child {
-      border-top: 1px solid #eee;
+    li:hover {
+      background-color: #eee;
     }
 
     .item-content {
@@ -100,7 +100,6 @@
         </div>
       </div>
       <div>
-        按钮组位置
         <a class="btn" name="remove">删除</a>
       </div>
     </div>

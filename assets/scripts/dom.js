@@ -11,7 +11,7 @@ const isEffectiveString = (str) => {
 
 const collectClasses = (classes) => {
   if (!isEffectiveString(classes)) { throw new TypeError(`参数classes不能为 ${classes}`); }
-  return classes.replace(/\s+/g, ' ').split(' ');
+  return classes.replace(/\s+/g, ' ').replace(/^\s/, '').replace(/\s$/, '').split(' ');
 };
 
 
@@ -457,6 +457,27 @@ class Dom {
     HTMLCollection.prototype.forEach = Array.prototype.forEach;
 
     return isGlobalInited;
+  }
+  css(property, value) {
+    // css() 返回一个对象包含所有的style
+    // css(property) 查找具体style属性 property是一个String style属性名,如css('color') return '#fff'
+    // css(property, value) 设置style 相当与this.dom.style.property = value 返回this
+    if (arguments.length > 0) {
+      if (typeof property !== 'string') { throw new TypeError(`Dom.css property 不能是${property}`); }
+    }
+    if (arguments.length > 1) {
+      if (typeof value !== 'string') { throw new TypeError(`Dom.css value 不能是${value}`); }
+    }
+    let result;
+    if (arguments.length === 0) {
+      result = window.getComputedStyle(this.dom);
+    } else if (arguments.length === 1) {
+      result = window.getComputedStyle(this.dom)[property];
+    } else {
+      this.dom.style[property] = value;
+      result = this;
+    }
+    return result;
   }
 }
 
