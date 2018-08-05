@@ -24,6 +24,15 @@
       }
     }
 
+    @keyframes mymove2 {
+      from {
+        height: 80px;
+      }
+      to {
+        height: 160px;
+      }
+    }
+
     .input-group-append>input {
       width: 100%;
     }
@@ -40,8 +49,28 @@
     .hide {
       display: none;
     }
-    @media screen and (max-width: 480px){
-      
+
+    .input-group {
+      flex-wrap: wrap;
+    }
+
+    .input[name=content] {
+      width: 60%;
+    }
+
+    @media screen and (max-width: 480px) {
+      li {
+        animation: mymove2 1s ease-in-out;
+        animation-fill-mode: forwards;
+      }
+      .input-group-append {
+        margin-top: 10px;
+        width: 120px;
+        left: 0;
+      }
+      .input-group-append>input {
+        border-radius: 3px;
+      }
     }
   </style>
 </head>
@@ -53,7 +82,7 @@
       <div class="w-100 row">
         <div class="input-group">
           <input name="content" type="text" placeholder="例如：明天下午6点买礼物">
-          <div class="input-group-append w-25">
+          <div class="input-group-append">
             <input name="date" type="text" placeholder="日期" />
           </div>
         </div>
