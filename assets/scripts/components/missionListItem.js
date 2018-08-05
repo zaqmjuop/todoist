@@ -15,6 +15,7 @@ const param = {
     itemMain: '.item-main',
     counter: '#counter',
     remove: 'a[name=remove]',
+    update: 'a[name=update]',
   },
   data() {
     return {
@@ -77,6 +78,8 @@ const param = {
           });
         return promise;
       });
+      // 更新按钮
+      Dom.of(this.elements.update).on('click', () => this.elements.content.click());
       // 删除按钮
       Dom.of(this.elements.remove).on('click', () => {
         const promise = mission.remove(this.present.primaryKey)
