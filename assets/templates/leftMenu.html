@@ -38,6 +38,23 @@
       cursor: pointer;
     }
 
+    a>* {
+      vertical-align: middle;
+    }
+
+    a.router {
+      text-decoration: none;
+    }
+
+    a.router>span:hover {
+      text-decoration: underline;
+    }
+
+    a.router>img {
+      height: 20px;
+      width: 20px;
+    }
+
     .header {
       width: 100%;
       border-bottom: 1px solid #eee;
@@ -61,6 +78,9 @@
         font-size: 12px;
         font-weight: 700;
       }
+      a.router>span {
+        display: none;
+      }
     }
   </style>
 </head>
@@ -73,16 +93,28 @@
     </div>
     <ul>
       <li>
-        <a onclick="window.router.methods.render('welcome', {query: 'all'})">所有任务</a>
+        <a class="router" onclick="window.router.methods.render('welcome', {query: 'all'})" title="所有任务">
+          <img src="../images/icons/home.png">
+          <span>所有任务</span>
+        </a>
       </li>
       <li>
-        <a onclick="window.router.methods.render('welcome', {query: 'undone'})">未完成</a>
+        <a class="router" onclick="window.router.methods.render('welcome', {query: 'undone'})" title="未完成">
+          <img src="../images/icons/play-circle.png">
+          <span>未完成</span>
+        </a>
       </li>
       <li>
-        <a onclick="window.router.methods.render('welcome', {query: 'done'})">已完成</a>
+        <a class="router" onclick="window.router.methods.render('welcome', {query: 'done'})" title="已完成">
+          <img src="../images/icons/check-circle.png">
+          <span>已完成</span>
+        </a>
       </li>
       <li>
-        <a onclick="window.router.methods.render('welcome', {query: 'expired'})">已过期</a>
+        <a class="router" onclick="window.router.methods.render('welcome', {query: 'expired'})" title="已过期">
+          <img src="../images/icons/check-circle.png">
+          <span>已过期</span>
+        </a>
       </li>
     </ul>
   </section>
