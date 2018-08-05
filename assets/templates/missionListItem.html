@@ -11,7 +11,7 @@
       width: 100%;
       border-bottom: 1px solid #eee;
       line-height: 2em;
-      height: 80px;
+      height: 100px;
       transition: height 1s, padding 1s;
       overflow-y: hidden;
       user-select: none;
@@ -42,10 +42,12 @@
       justify-content: space-between;
       width: 100%;
     }
-    .item-main-left{
+
+    .item-main-left {
       max-width: 90%;
     }
-    .finish{
+
+    .finish {
       margin-right: 10px;
     }
 
@@ -66,7 +68,7 @@
 
     .line1 {
       display: flex;
-      align-items:center;
+      align-items: center;
       width: 100%;
       flex-wrap: nowrap;
     }
@@ -98,6 +100,12 @@
     .btn {
       word-break: keep-all;
     }
+
+    @media screen and (max-width: 480px) {
+      .item-main-left {
+        max-width: 80%;
+      }
+    }
   </style>
   <!-- "\f05d" √  "\f10c" ○  -->
 
@@ -106,7 +114,7 @@
 <body>
   <li class="template">
     <div class="item-main">
-      <div class="item-main-left" >
+      <div class="item-main-left">
         <div class="line1">
           <span class="finish" title="标记任务完成">
             <i class="fa fa-circle-o item-icon fa-lg icon"></i>
@@ -115,7 +123,7 @@
             内容
           </span>
         </div>
-        <div >
+        <div>
           <span style="margin-right: 2em;"></span>
           <span class="item-date">日期的位置</span>
         </div>
