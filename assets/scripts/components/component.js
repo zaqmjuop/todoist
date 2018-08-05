@@ -1,6 +1,7 @@
 import Dom from '../dom';
 import Utils from '../utils';
 import promiseAjax from '../ajax';
+import utils from '../utils';
 
 // href
 const origin = window.location.href.match(/^[^#]+/)[0];
@@ -380,7 +381,8 @@ class Component {
         const mediaHead = singleStyle.match(mediaHeadReg)[0];
         const styleContents = singleStyle.replace(mediaHead, '').replace(/}[^}]*$/, '');
         // styleContents是style主体 body {background-color:lightblue; }
-        const replacedContents = this.replaceGeneralScopedStyles(styleContents);
+        const replacedContents = (!utils.isEmptyString(styleContents))
+          ? this.replaceGeneralScopedStyles(styleContents) : '';
         const mediaContent = `${mediaHead} ${replacedContents} }`;
         repConent = mediaContent;
       } else {

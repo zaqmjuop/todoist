@@ -1,29 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <!-- 出现时5em->7em 隐藏之前从7em变成5em再隐藏 -->
+
 <head>
   <style scoped>
     li {
-      padding: 10px 2em;
+      padding: 10px;
       border: 1px solid #eee;
       border-top: none;
       overflow: hidden;
-      /* animation: mymove 1s ease-in-out;
-      animation-fill-mode: forwards; */
-      transition: height 1s;
+      animation: mymove 1s ease-in-out;
+      animation-fill-mode: forwards;
       height: 80px;
-    }
-    li:hover{
-      height: 110px;
       background-color: #ffc;
     }
 
     @keyframes mymove {
       from {
-        height: 5em;
+        height: 80px;
       }
       to {
-        height: 7em;
+        height: 120px;
       }
     }
 
@@ -35,11 +32,16 @@
       line-height: 2em;
       margin-top: 10px;
     }
-    .row{
+
+    .row {
       padding: 0 1.1em;
     }
-    .hide{
+
+    .hide {
       display: none;
+    }
+    @media screen and (max-width: 480px){
+      
     }
   </style>
 </head>
