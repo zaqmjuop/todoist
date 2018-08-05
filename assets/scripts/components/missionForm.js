@@ -30,7 +30,7 @@ const param = {
       const data = Object.assign({}, this.data);      
       data.content = content;
       data.date = date;
-      console.log(data)
+      data.state = 'undone';
       if (!primaryKey) {
         this.dispatchEvent('create', data);
       } else {

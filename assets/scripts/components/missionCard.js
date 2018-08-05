@@ -121,6 +121,7 @@ const param = {
         const present = {
           content: e.detail.content,
           date: new Date(e.detail.date),
+          state: e.detail.state,
         };
         const promise = mission.push(present)
           .then((primaryKey) => {
@@ -138,6 +139,7 @@ const param = {
           content: e.detail.content,
           date: e.detail.date,
           primaryKey: e.detail.primaryKey,
+          state: e.detail.state,
         };
         const present = Object.assign({
           cid: this.componentId,

@@ -32,7 +32,7 @@ const param = {
     bindEvents() {
       // 切换任务状态
       Dom.of(this.elements.finish).on('click', () => {
-        const toggleState = (this.present.state === 'done') ? 'undone' : 'done';
+        const toggleState = (this.data.state === 'done') ? 'undone' : 'done';
         const data = {
           content: this.present.content,
           date: (utils.isValidDate(this.present.date)) ? this.present.date : '',
@@ -40,6 +40,7 @@ const param = {
           state: toggleState,
         };
         mission.update(data).then(() => {
+          this.data.state = data.state;
           Dom.of(this.template).toggleClass('done');
         });
       });
@@ -93,8 +94,9 @@ const param = {
       this.present = this.present || {};
       this.data.content = this.present.content;
       this.data.date = this.present.date;
-      this.data.id = this.present.id;
+      this.data.primaryKey = this.present.primaryKey;
       this.data.formId = this.present.formId;
+      this.data.state = this.present.state || 'undone';
       const dateStr = utils.formatDate(this.present.date);
       Dom.of(this.elements.content).attr('text', this.present.content);
       Dom.of(this.elements.date).attr('text', dateStr);
@@ -104,6 +106,8 @@ const param = {
       Dom.of(this.template).attr('data-primaryKey', this.present.primaryKey);
       if (this.present.state === 'done') {
         Dom.of(this.template).addClass('done');
+      } else {
+        Dom.of(this.template).removeClass('done');
       }
     },
   },
