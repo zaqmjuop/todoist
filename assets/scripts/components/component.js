@@ -49,8 +49,7 @@ class Component {
     // 绑定param.methods下的function的this指向
     result.formatMethods();
 
-
-    let promise = Promise.resolve(1)
+    let promise = Promise.resolve(1);
     if (!result.template) {
       promise = result.getView();
     }
