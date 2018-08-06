@@ -3,3 +3,5 @@
 状态：开发中 [预览](https://zaqmjuop.github.io/todoist/)
 
 [todoist](https://todoist.com/)
+
+![Desktop](/assets/desktop.png)
