@@ -11,7 +11,7 @@ Mobile界面
 
 ![Mobile](./assets/images/mobile.png)
 ***
-### 该学习项目介绍: 基于原生HTML CSS JavaScript 的参照MVC设计模式和组件化设计模式的代码架构
+### 该学习项目介绍: 基于原生HTML CSS JavaScript 的参照MVC设计模式的代码架构
 ### 核心文件目录介绍
 * /assets 主目录
   * /styles CSS目录
