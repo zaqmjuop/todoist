@@ -416,7 +416,6 @@ class Component {
   }
 
   static getView(param) {
-    console.log(param)
     // 给参数获取template和style
     // 返回promise
     // 若含有template 直接返回
@@ -424,7 +423,7 @@ class Component {
     // 若都没有，则ajax请求html文件获取并缓存
     let promise = Promise.resolve(1);
     const parameter = Object.assign(param);
-    // 获取或保存cache
+    // 获取或保存cache bug 没有缓存到
     const cache = utils.isEffectiveString(param.name)
       && viewsCache.find(item => (item.name === param.name));
     if (!cache) {
@@ -432,7 +431,7 @@ class Component {
         .then(({ template, style }) => {
           const newCache = { template, style, name: param.name };
           const index = viewsCache.findIndex(item => (item.name === param.name));
-          if (index) {
+          if (index && index > -1) {
             viewsCache.splice(index, 1, newCache);
           } else {
             viewsCache.push(newCache);
