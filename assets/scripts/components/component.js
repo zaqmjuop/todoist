@@ -416,6 +416,7 @@ class Component {
   }
 
   static getView(param) {
+    console.log(param)
     // 给参数获取template和style
     // 返回promise
     // 若含有template 直接返回
@@ -423,30 +424,31 @@ class Component {
     // 若都没有，则ajax请求html文件获取并缓存
     let promise = Promise.resolve(1);
     const parameter = Object.assign(param);
-    if (!param.template) {
-      // 获取或保存cache
-      const cache = utils.isEffectiveString(param.name)
-        && viewsCache.find(item => (item.name === param.name));
-      if (!cache) {
-        promise = Component.pjaxFormatHtml(param.url)
-          .then(({ template, style }) => {
-            const newCache = { template, style, name: param.name };
-            const index = viewsCache.findIndex(item => (item.name === param.name));
-            if (index) {
-              viewsCache.splice(index, 1, newCache);
-            } else {
-              viewsCache.push(newCache);
-            }
-          });
-      }
-      promise = promise
-        .then(() => {
-          const view = viewsCache.find(item => (item.name === param.name));
-          parameter.template = view.template;
-          parameter.style = view.style;
+    // 获取或保存cache
+    const cache = utils.isEffectiveString(param.name)
+      && viewsCache.find(item => (item.name === param.name));
+    if (!cache) {
+      promise = Component.pjaxFormatHtml(param.url)
+        .then(({ template, style }) => {
+          const newCache = { template, style, name: param.name };
+          const index = viewsCache.findIndex(item => (item.name === param.name));
+          if (index) {
+            viewsCache.splice(index, 1, newCache);
+          } else {
+            viewsCache.push(newCache);
+          }
         });
     }
-    return promise.then(() => parameter);
+    promise = promise
+      .then(() => {
+        const view = viewsCache.find(item => (item.name === param.name));
+        const template = view.template && view.template.cloneNode(1);
+        const style = view.style && view.style.cloneNode(1);
+        parameter.template = template;
+        parameter.style = style;
+        return parameter;
+      });
+    return promise;
   }
 
   static pjaxFormatHtml(url) {
@@ -463,7 +465,11 @@ class Component {
       if (body.childElementCount !== 1) { throw new TypeError('<body>内应有且只有一个根元素'); }
       const template = body.firstElementChild;
       const style = styles[0] || document.createElement('style');
-      return { template, style };
+      const view = {
+        template: template && template.cloneNode(1),
+        style: style && style.cloneNode(1),
+      };
+      return view;
     });
     return promise;
   }
@@ -546,13 +552,11 @@ class Component {
     let promise = new Promise(resolve => resolve(want));
     if (!(want instanceof Component)) {
       const param = Object.assign(want);
-      promise = Component.pjaxFormatHtml(param.url).then(({ template, style }) => {
-        param.query = template;
-        param.template = template;
-        param.style = style;
-        const cpt = Component.of(param);
-        return cpt;
-      });
+      promise = Component.getView(param)
+        .then(() => {
+          param.query = param.template;
+          return Component.of(param);
+        });
     }
     promise = promise.then((cpt) => {
       // 把template插入到position的位置
@@ -574,13 +578,11 @@ class Component {
     let promise = new Promise(resolve => resolve(want));
     if (!(Component.isComponent(want))) {
       if (!utils.isString(want.url)) { throw new TypeError('param.url应该是字符串类型html文件地址'); }
-      promise = Component.pjaxFormatHtml(want.url).then(({ template, style }) => {
-        want.template = template;
-        want.style = style;
-        want.query = exist.template;
-        const cpt = Component.of(want);
-        return cpt;
-      });
+      promise = Component.getView(want)
+        .then(() => {
+          want.query = exist.template;
+          return Component.of(want);
+        });
     }
     promise = promise.then((cpt) => {
       Dom.of(exist.template).replace(cpt.template);
