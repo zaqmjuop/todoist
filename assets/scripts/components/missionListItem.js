@@ -51,20 +51,6 @@ const param = {
           }
         });
       });
-      // 切换任务状态
-      Dom.of(this.elements.finish).on('click', () => {
-        const toggleState = (this.data.state === 'done') ? 'undone' : 'done';
-        const data = {
-          content: this.present.content,
-          date: (utils.isValidDate(this.present.date)) ? this.present.date : '',
-          primaryKey: Number(this.present.primaryKey),
-          state: toggleState,
-        };
-        mission.update(data).then(() => {
-          this.data.state = data.state;
-          Dom.of(this.template).toggleClass('done');
-        });
-      });
       // 更新自己
       Dom.of(this.elements.content).on('click', () => {
         // 替换当前组件为missionForm

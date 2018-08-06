@@ -47,39 +47,11 @@
       max-width: 90%;
     }
 
-    .finish {
-      margin-right: 10px;
-    }
-
-    .finish>.icon::before {
-      border: 1px solid transparent;
-    }
-
-    .finish:hover>.icon::before {
-      cursor: pointer;
-      border: 1px solid #000;
-      border-radius: 3px;
-      color: #000;
-    }
-
-    .finish:hover>.icon::before {
-      content: "\f05d";
-    }
-
     .line1 {
       display: flex;
       align-items: center;
       width: 100%;
       flex-wrap: nowrap;
-    }
-
-    .done .finish:hover>.icon::before {
-      background: radial-gradient(#eee, #eee, #0f0);
-    }
-
-    .done .finish>.icon::before {
-      color: #0c0;
-      content: "\f05d";
     }
 
     .done .item-content,
@@ -103,17 +75,14 @@
     }
 
     @media screen and (max-width: 480px) {
-      .finish{
-        margin-right: 0;
-      }
       .item-main-left {
         max-width: 80%;
       }
-      .btn{
+      .btn {
         display: block;
         line-height: 1em;
       }
-      .btn:nth-child(n+2){
+      .btn:nth-child(n+2) {
         margin-top: 5px;
       }
     }
@@ -127,12 +96,7 @@
     <div class="item-main">
       <div class="item-main-left">
         <div class="line1">
-          <span class="finish" title="标记任务完成">
-            <i class="fa fa-circle-o item-icon fa-lg icon"></i>
-          </span>
-          <span>
-            <input class="slider" name="toggle" type="checkbox">
-          </span>
+          <input class="slider" name="toggle" type="checkbox" title="切换任务状态">
           <span class="item-content" title="修改内容">
             内容
           </span>
