@@ -26,138 +26,41 @@ class Component {
     if (typeof param !== 'object') { throw new TypeError('param应该是一个object'); }
     if (!utils.isElement(param.template)) { throw new TypeError('param.template应该是一个HtmlElement'); }
     const result = Object.assign(this, param);
-    // 在页面插入的位置
-    if (utils.isString(this.query)) {
-      Dom.of(this.template).attr('data-c-query', this.query);
+    // 索引和标识
+    if (!result.name) {
+      result.name = result.url;
     }
-    const position = Dom.of(result.query).dom || Dom.of(`*[data-c-query=${result.query}]`).dom;
+    // present
+    result.present = result.present || {};
+    // 在页面插入的位置
+    const position = Dom.of(result.query).dom;
     if (!position) {
       throw new TypeError(`选择器 ${result.query} 未找到匹配项`);
     } else {
       result.query = position;
     }
+    // parent父组件
+    const originParent = result.parent;
+    result.defineParent();
+    result.parent = originParent;
+    // 子组件components
+    result.formatComponents();
+    // 处理data和watch
+    result.formatData();
+    // 绑定param.methods下的function的this指向
+    result.formatMethods();
+
+
+
+
+  
 
     // 填充param.selectors 填充this.elements
-    result.elements = {};
-    if (result.selectors && (typeof result.selectors === 'object')) {
-      // 接受{}类型的属性param.selectors 遍历param.selectors的键，取每个键的值作为querySelector参数，
-      // 然后找到对应的HTMLElement集合并设置在this.elements属性中
-      // 例如存在param.selectors.foo = '.foo' 则得到this.elements.foo = querySelector('.foo')
-      const selectorNames = Object.keys(result.selectors);
-      const elements = {};
-      selectorNames.forEach((name) => {
-        const selector = result.selectors[name];
-        if (selector && utils.isString(selector)) {
-          const element = result.template.querySelector(selector);
-          if (utils.isElement(element)) {
-            Dom.of(element).attr('data-c-selector', name);
-            elements[name] = element;
-          }
-        }
-      });
-      if (Object.keys(elements).length > 0) {
-        elements.template = result.template;
-        result.elements = elements;
-      }
-    }
-
-    // parent
-    let parent = result.parent;
-    Object.defineProperty(result, 'parent', {
-      enumerable: true,
-      configurable: true,
-      get: () => {
-        return parent;
-      },
-      set: (cpt) => {
-        if (cpt === parent) { return parent; }
-        if (cpt !== undefined && cpt !== null && !Component.isComponent(cpt)) {
-          throw new TypeError(`父组件不可以为${cpt}`);
-        }
-        if (Component.isComponent(parent)) {
-          parent.components.delete(result);
-        }
-        if (cpt) {
-          parent = cpt;
-          parent.components.add(result);
-        } else {
-          parent = null;
-        }
-        return parent;
-      },
-    });
-    result.parent = parent;
-
-    // 子组件components
-    let componentsSet;
-    if (!result.components) {
-      componentsSet = new Set();
-    } else if ((result.components instanceof Array) || (result.components instanceof Set)) {
-      componentsSet = new Set([...result.components]);
-    } else {
-      throw new TypeError(`${param.components}不能作为子组件集`);
-    }
-    result.components = componentsSet;
-
-    // present
-    result.present = result.present || {};
-
-    // 确保param.data符合设定
-    if (!(result.data instanceof Function)) throw new TypeError('缺少data属性或data不是Function类型');
-    const data = result.data();
-    result.data = Object.assign({}, data);
-    if ((data instanceof Array) || (typeof data !== 'object')) {
-      throw new TypeError('data应该返回一个Object');
-    } else {
-      const keys = Object.keys(result.data);
-      const isHasFunc = keys.some((key) => {
-        const isFunc = result.data[key] instanceof Function;
-        return isFunc;
-      });
-      if (isHasFunc) { throw new TypeError('data返回的Object中不能含有Function'); }
-    }
-    // watch data
-    // const insideData = Object.assign({}, data);
-    if (result.watch instanceof Function) {
-      const watchs = result.watch();
-      if ((watchs instanceof Object) && (!(watchs instanceof Array))) {
-        const watchKeys = Object.keys(watchs);
-        const dataKeys = Object.keys(data);
-        const keys = watchKeys.filter(key => dataKeys.includes(key));
-        keys.forEach((key) => {
-          Object.defineProperty(result.data, key, {
-            enumerable: true,
-            get: () => data[key],
-            set: (val) => {
-              data[key] = val;
-              watchs[key]();
-            },
-          });
-        });
-      }
-    }
-
-    // 索引和标识
-    if (!result.name) {
-      const name = result.url.match(/([^/]+)\.html/)[1];
-      result.name = name;
-    }
-
+    result.fillSelectors();
     // 设置this.componentId属性
     result.setComponentId();
 
-    // 绑定param.methods下的function的this指向
-    if (result.methods) {
-      const methods = {};
-      const methodNames = Object.keys(result.methods);
-      methodNames.forEach((methodName) => {
-        const method = result.methods[methodName];
-        if (typeof method === 'function') {
-          methods[methodName] = method.bind(result);
-        }
-      });
-      result.methods = methods;
-    }
+
 
     this.formatChildren()
       .then(() => this.lifeCycle());
@@ -215,7 +118,118 @@ class Component {
       this.implanted();
     }
   }
-
+  defineParent() {
+    // 修改this.parent的getter和setter
+    let parent;
+    Object.defineProperty(this, 'parent', {
+      enumerable: true,
+      configurable: true,
+      get: () => parent,
+      set: (cpt) => {
+        if (cpt === parent) { return parent; }
+        if (cpt !== undefined && cpt !== null && !Component.isComponent(cpt)) {
+          throw new TypeError(`父组件不可以为${cpt}`);
+        }
+        if (Component.isComponent(parent)) {
+          parent.components.delete(this);
+        }
+        if (cpt) {
+          parent = cpt;
+          parent.components.add(this);
+        } else {
+          parent = null;
+        }
+        return parent;
+      },
+    });
+  }
+  formatComponents() {
+    // 子组件components
+    let componentsSet;
+    if (!this.components) {
+      componentsSet = new Set();
+    } else if ((this.components instanceof Array) || (this.components instanceof Set)) {
+      componentsSet = new Set([...this.components]);
+    } else {
+      throw new TypeError(`${this.components}不能作为子组件集`);
+    }
+    this.components = componentsSet;
+  }
+  formatData() {
+    // 确保param.data符合设定
+    if (!(this.data instanceof Function)) throw new TypeError('缺少data属性或data不是Function类型');
+    const data = this.data();
+    this.data = Object.assign({}, data);
+    if ((data instanceof Array) || (typeof data !== 'object')) {
+      throw new TypeError('data应该返回一个Object');
+    } else {
+      const keys = Object.keys(this.data);
+      const isHasFunc = keys.some((key) => {
+        const isFunc = this.data[key] instanceof Function;
+        return isFunc;
+      });
+      if (isHasFunc) { throw new TypeError('data返回的Object中不能含有Function'); }
+    }
+    // watch data
+    // const insideData = Object.assign({}, data);
+    if (this.watch instanceof Function) {
+      const watchs = this.watch();
+      if ((watchs instanceof Object) && (!(watchs instanceof Array))) {
+        const watchKeys = Object.keys(watchs);
+        const dataKeys = Object.keys(data);
+        const keys = watchKeys.filter(key => dataKeys.includes(key));
+        keys.forEach((key) => {
+          Object.defineProperty(this.data, key, {
+            enumerable: true,
+            get: () => data[key],
+            set: (val) => {
+              data[key] = val;
+              watchs[key]();
+            },
+          });
+        });
+      }
+    }
+  }
+  formatMethods() {
+    // 绑定param.methods下的function的this指向
+    if (this.methods) {
+      const methods = {};
+      const methodNames = Object.keys(this.methods);
+      methodNames.forEach((methodName) => {
+        const method = this.methods[methodName];
+        if (typeof method === 'function') {
+          methods[methodName] = method.bind(this);
+        }
+      });
+      this.methods = methods;
+    }
+  }
+  fillSelectors() {
+    // 填充param.selectors 填充this.elements
+    this.elements = {};
+    if (this.selectors && (typeof this.selectors === 'object')) {
+      // 接受{}类型的属性param.selectors 遍历param.selectors的键，取每个键的值作为querySelector参数，
+      // 然后找到对应的HTMLElement集合并设置在this.elements属性中
+      // 例如存在param.selectors.foo = '.foo' 则得到this.elements.foo = querySelector('.foo')
+      const selectorNames = Object.keys(this.selectors);
+      const elements = {};
+      selectorNames.forEach((name) => {
+        const selector = this.selectors[name];
+        if (selector && utils.isString(selector)) {
+          const element = this.template.querySelector(selector);
+          if (utils.isElement(element)) {
+            Dom.of(element).attr('data-c-selector', name);
+            elements[name] = element;
+          }
+        }
+      });
+      if (Object.keys(elements).length > 0) {
+        elements.template = this.template;
+        this.elements = elements;
+      }
+    }
+  }
   refresh(present) {
     if (present) {
       this.present = present;
