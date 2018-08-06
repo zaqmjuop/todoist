@@ -22,6 +22,53 @@ a[class~=btn]{
   border-radius: 5px;
   line-height: 2em;
 }
+input[type=checkbox].slider {
+  width: 2em;
+  height: 1em;
+  opacity: 1;
+  position: relative;
+  z-index: 1;
+  user-select: none;
+  display: inline-block;
+}
+
+input[type=checkbox].slider::before,
+input[type=checkbox].slider::after {
+  content: '';
+  height: 100%;
+  position: absolute;
+  z-index: -1;
+  transition: all 0.25s ease;
+  visibility: visible;
+  box-shadow: 0px 0px 1px 1px #666;
+}
+
+input[type=checkbox].slider::before {
+  width: 100%;
+  border-top-left-radius: 25% 50%;
+  border-top-right-radius: 25% 50%;
+  border-bottom-right-radius: 25% 50%;
+  border-bottom-left-radius: 25% 50%;
+  background: linear-gradient(to right, #0f0 50%, #eee 50%);
+  background-size: 200% 100%;
+  background-position-x: 75%;
+}
+
+input[type=checkbox].slider::after {
+  width: 50%;
+  border-radius: 50%;
+  left: 0;
+  background-color: #ccc;
+}
+
+input[type=checkbox].slider:checked::after {
+  left: 50%;
+  background-color: #060;
+}
+
+input[type=checkbox].slider:checked:before {
+  background-position-x: 25%;
+}
 .flex-justify-between{
   justify-content: space-between;
 }

@@ -16,6 +16,7 @@ const param = {
     counter: '#counter',
     remove: 'a[name=remove]',
     update: 'a[name=update]',
+    toggle: 'input[name=toggle]',
   },
   data() {
     return {
@@ -31,6 +32,25 @@ const param = {
       return this;
     },
     bindEvents() {
+      // 切换任务状态
+      const toggle = Dom.of(this.elements.toggle);
+      toggle.on('click', () => {
+        const toggleState = (toggle.dom.checked) ? 'done' : 'undone';
+        const data = {
+          content: this.present.content,
+          date: (utils.isValidDate(this.present.date)) ? this.present.date : '',
+          primaryKey: Number(this.present.primaryKey),
+          state: toggleState,
+        };
+        mission.update(data).then(() => {
+          this.data.state = data.state;
+          if (toggleState === 'done') {
+            Dom.of(this.template).addClass('done');
+          } else {
+            Dom.of(this.template).removeClass('done');
+          }
+        });
+      });
       // 切换任务状态
       Dom.of(this.elements.finish).on('click', () => {
         const toggleState = (this.data.state === 'done') ? 'undone' : 'done';
@@ -109,6 +129,7 @@ const param = {
       Dom.of(this.template).attr('data-primaryKey', this.present.primaryKey);
       if (this.present.state === 'done') {
         Dom.of(this.template).addClass('done');
+        this.elements.toggle.checked = 1;
       } else {
         Dom.of(this.template).removeClass('done');
       }
