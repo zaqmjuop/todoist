@@ -109,6 +109,7 @@ const param = {
         this.elements.toggle.checked = 1;
       } else {
         Dom.of(this.template).removeClass('done');
+        this.elements.toggle.checked = 0;
       }
     },
   },
