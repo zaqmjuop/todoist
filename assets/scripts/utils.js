@@ -58,6 +58,8 @@ const isEmptyString = (content) => {
   return isFalsely || isEmpty;
 };
 
+const isEffectiveString = content => (typeof content === 'string' && content.match(/\S/));
+
 const divisio = (ary, callback) => {
   // 把一个数组按照callback((item)=>{})分成两部分
   // 返回一个数组包含2个数组，callback返回true的在第一个一个数组，其他的在第二个数组
@@ -104,6 +106,7 @@ export default {
   isString,
   isFunction,
   isEmptyString,
+  isEffectiveString,
   newPromise,
   formatDate,
   formatTime,
