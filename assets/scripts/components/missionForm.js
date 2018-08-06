@@ -11,6 +11,7 @@ const param = {
   data() {
     return {
       inited: 0,
+      height: 0,
     };
   },
   selectors: {
@@ -68,14 +69,30 @@ const param = {
     },
     hide() {
       this.methods.clear();
+      this.methods.setHeight();
       Dom.of(this.template).addClass('hide');
       this.dispatchEvent('hide');
       return this;
     },
+    setHeight() {
+      // 获取form高度
+      const height = Dom.of(this.template).css('height');
+      const match = height.match(/\d+/);
+      if (match) {
+        const num = Number(match[0]);
+        this.data.height = num;
+      }
+      return this.data.height;
+    },
     show() {
       this.methods.fill();
       Dom.of(this.template).removeClass('hide');
-      this.dispatchEvent('show');
+      new Promise((resolve) => {
+        setTimeout(() => {
+          const height = this.methods.setHeight();
+          resolve(height);
+        }, 1000);
+      }).then(() => this.dispatchEvent('show'));
       return this;
     },
     isSeen() {

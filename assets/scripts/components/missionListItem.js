@@ -67,15 +67,6 @@ const param = {
         };
         missionForm.present = detail;
         promise = promise
-          .then(() => {
-            // 修复新建表单显示状态时，点击已存在mission会因为新建表单消失跳一下
-            Dom.of(this.template).parents().forEach((parent) => {
-              const needScroll = parent.scrollTop > 0
-                && missionForm.methods.isSeen()
-                && !missionForm.data.primaryKey;
-              if (needScroll) { parent.scrollBy(0, 0); }
-            });
-          })
           .then(() => missionForm.methods.reduce())
           .then(() => this.replace(missionForm))
           .then(() => {
