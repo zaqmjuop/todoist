@@ -24,7 +24,6 @@ class Component {
     // param.style是<style>
     if (new.target !== Component) { throw new Error('必须使用 new 命令生成实例'); }
     if (typeof param !== 'object') { throw new TypeError('param应该是一个object'); }
-    if (!utils.isElement(param.template)) { throw new TypeError('param.template应该是一个HtmlElement'); }
     const result = Object.assign(this, param);
     // 索引和标识
     if (!result.name) {
@@ -50,14 +49,22 @@ class Component {
     // 绑定param.methods下的function的this指向
     result.formatMethods();
 
-    // 填充param.selectors 填充this.elements
-    result.fillSelectors();
-    // 设置this.componentId属性
-    result.setComponentId();
-    result.formatChildren()
-      .then(() => this.lifeCycle());
 
-    components.add(result);
+    let promise = Promise.resolve(1)
+    if (!result.template) {
+      promise = result.getView();
+    }
+    promise
+      .then(() => {
+        // 填充param.selectors 填充this.elements
+        result.fillSelectors();
+        // 设置this.componentId属性
+        result.setComponentId();
+        // 保存组件
+        components.add(result);
+      })
+      .then(() => result.formatChildren())
+      .then(() => this.lifeCycle());
     return result;
   }
   formatChildren() {
@@ -109,6 +116,7 @@ class Component {
     if (utils.isFunction(this.implanted)) {
       this.implanted();
     }
+    this.state = 'done';
   }
   defineParent() {
     // 修改this.parent的getter和setter
@@ -486,13 +494,6 @@ class Component {
     return new Component(param);
   }
 
-  static pjaxCreate(param) {
-    // 通过参数param.url标示为html地址， 通过promiseAjax获取html并创建Component实例对象
-    const promise = Component.getView(param)
-      .then(parameter => Component.of(parameter));
-    return promise;
-  }
-
   // 显示全部实例化的组件
   static all() {
     return components;
@@ -635,18 +636,4 @@ class Component {
 Component.components = components;
 window.Component = Component;
 
-
 export default Component;
-
-// todo router 把没用的组件占用内存释放
-// todo 逐渐替换pjaxCreate 实例对象所有方法改为返回promise
-// 改为new Component(param) 立即返回一个Component实例对象，该实例对象有state属性标识是否加载完，若没有则先加载
-
-// todo param有parent属性处理了 是否可以在参数指定parent属性？
-// todo Component.replace(param, exist)
-// 重构组件操作方法 全部实例对象方法改为返回promise
-// todo 提取handleScopedStyle为私有方法
-// todo 改为有new进行实例化 立即返回实例化对象，该实例化有state属性判断状态，获取html改为在实例化方法内
-// todo custom alert compponent 在新建或更新mission时 content为空时 应该有提示
-// todo 应该有一个向组件传递数据的方法 像HTMLElement.innerHTML一样 监视Component.present和Component.data 通过组件参数watch配置
-// todo 组件事件监听和派发方法 Component.on(type, callback) Component.sent(type, detail) 实例化后组件内和父组件可以调用

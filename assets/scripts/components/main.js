@@ -10,7 +10,7 @@ const main = () => {
       document.body.style.offsetHeight = `${window.innerHeight}px`;
     });
     window.resizeTo(window.innerWidth, window.innerHeight);
-    Component.pjaxCreate(routerParam);
+    Component.of(routerParam);
   });
 };
 
