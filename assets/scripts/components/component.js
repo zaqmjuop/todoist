@@ -50,19 +50,11 @@ class Component {
     // 绑定param.methods下的function的this指向
     result.formatMethods();
 
-
-
-
-  
-
     // 填充param.selectors 填充this.elements
     result.fillSelectors();
     // 设置this.componentId属性
     result.setComponentId();
-
-
-
-    this.formatChildren()
+    result.formatChildren()
       .then(() => this.lifeCycle());
 
     components.add(result);
@@ -428,7 +420,10 @@ class Component {
     }
     return this;
   }
-
+  getView() {
+    // 获取template和style
+    return Component.getView(this);
+  }
   static getView(param) {
     // 给参数获取template和style
     // 返回promise
