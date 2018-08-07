@@ -6,6 +6,7 @@ const viewsCache = [];
 
 // href
 const origin = window.location.href.match(/^[^#]+/)[0];
+const root = window.location.href;
 
 // 保存所有创建的组件
 const components = new Set();
@@ -307,6 +308,36 @@ class Component {
     this.template.dispatchEvent(event);
   }
 
+  handleChildSrc(element) {
+    // 如果图片是相对路径加载失败尝试根据此组件的url属性赋值新路径
+    const path = element.getAttribute('src');
+    if (!path.match(/^\u002e/)) { return false; }
+    const concat = this.url.concat(path);
+    const split = concat.split('/');
+    // 处理 ../
+    const mergeTwoPoints = (sp) => {
+      const twoPointsIndex = sp.findIndex(item => item.match(/\u002e\u002e/));
+      if (!twoPointsIndex || twoPointsIndex < 1) { return sp; }
+      sp.splice(twoPointsIndex - 1, 2);
+      return mergeTwoPoints(sp);
+    };
+    mergeTwoPoints(split);
+    // 处理 ./
+    const mergeOnePoint = (sp) => {
+      const onePointIndex = sp.findIndex(item => item.match(/\u002e/));
+      if (!onePointIndex || onePointIndex < 1) { return sp; }
+      sp.splice(onePointIndex, 1);
+      return mergeOnePoint(sp);
+    };
+    mergeOnePoint(split);
+    const newPath = split.join('/');
+    Dom.of(element).on('error', () => {
+      console.log(`重新设置src为${newPath}`);
+      element.setAttribute('src', newPath);
+    });
+    return element;
+  }
+
   setComponentId() {
     // 设置 data-component-id 属性
     this.componentId = String(takeId());
@@ -316,6 +347,9 @@ class Component {
       if (!(element instanceof HTMLElement) || (element.childElementCount < 1)) { return false; }
       element.children.forEach((child) => {
         child.setAttribute('data-c-id', `c${this.componentId}`);
+        if (child.src) {
+          this.handleChildSrc(child);
+        }
         recursive(child);
       });
       return element;
@@ -633,6 +667,8 @@ class Component {
 }
 
 Component.components = components;
+Component.root = root;
+Component.origin = origin;
 window.Component = Component;
 
 export default Component;
