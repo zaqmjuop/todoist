@@ -231,6 +231,7 @@ class Component {
     }
   }
   refresh(present) {
+    // 刷新组件
     if (present) {
       this.present = present;
     }
