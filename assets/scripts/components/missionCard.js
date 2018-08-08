@@ -39,6 +39,9 @@ const param = {
     },
     initItems() {
       let promise = utils.newPromise();
+      if (!this.data.items || this.data.items.length < 1) {
+        window.alert('没有任务');
+      }
       // 添加 li item
       this.data.items.forEach((item) => {
         promise = promise.then(() => this.methods.appendItem(item));
