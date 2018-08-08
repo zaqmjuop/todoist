@@ -25,6 +25,7 @@ const param = {
     showForm: '.show-form',
     createMission: '.create-mission',
     cardBody: '.card-body',
+    create: '*[name=create]',
   },
   components: [
     missionForm,
@@ -117,6 +118,10 @@ const param = {
             form.methods.show();
           });
         return promise;
+      });
+      // 进入新建item界面
+      Dom.of(this.elements.create).on('click', () => {
+        window.router.methods.render('welcome', { action: 'edit' });
       });
       // 创建item
       form.addEventListener('create', (e) => {

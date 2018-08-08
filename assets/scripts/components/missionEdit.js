@@ -36,9 +36,12 @@ const param = {
     init() {
       if (this.inited) { return false; }
       this.inited = 1;
+      console.log(this.present);
+      this.data.action = (this.present.primaryKey) ? 'update' : 'create';
       this.data.picker = datepicker(this.elements.date);
       Dom.of(this.data.picker.body).attr('data-c-id', `c${this.componentId}`);
-      const promise = this.methods.loadDB()
+      const promise = Promise.resolve(1)
+        .then(() => this.methods.loadDB())
         .then(() => this.methods.bindEvents())
         .then(() => this.methods.fill());
       return promise;
@@ -66,27 +69,24 @@ const param = {
         } else {
           promise = model.push(detail);
         }
-        promise.then(() => {
+        return promise.then(() => {
           window.router.methods.render('welcome');
           window.alert('保存成功');
         });
       });
     },
     loadDB() {
-      let promise;
-      if (this.present.primaryKey) {
-        promise = model.get(this.present.primaryKey)
-          .then((items) => {
-            const item = items[0];
-            const attrs = Object.keys(item);
-            attrs.forEach((attr) => {
-              this.data[attr] = item[attr];
-            });
-            this.data.target = items[0];
-          });
-      } else {
-        promise = Promise.reject(new Error(`present.primaryKey不能为${this.present.primaryKey}`));
+      if (this.data.action === 'create') {
+        return Promise.resolve(1);
       }
+      const promise = model.get(this.present.primaryKey)
+        .then((items) => {
+          const item = items[0];
+          const attrs = Object.keys(item);
+          attrs.forEach((attr) => {
+            this.data[attr] = item[attr];
+          });
+        });
       return promise;
     },
     fill() {
