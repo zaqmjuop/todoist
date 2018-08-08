@@ -48,32 +48,6 @@ const param = {
           }
         });
       });
-      // 更新自己
-      Dom.of(this.elements.content).on('click', () => {
-        // 替换当前组件为missionForm
-        // 如果missionForm有data-cid属性 说明missionForm被其他组件替换，应先还原
-        if (!this.data.formId) { throw new Error(`Item.data.formId不能为${this.data.formId}`); }
-        let promise = utils.newPromise();
-        const missionForm = Component.findBy({ componentId: Number(this.data.formId) });
-        const realHeight = Number(Dom.of(this.template).css('height').match(/\d+/));
-        const detail = {
-          height: Dom.of(this.template).css('height'),
-          cid: this.componentId,
-          content: this.data.content,
-          date: this.data.date,
-          primaryKey: this.present.primaryKey,
-          formId: this.data.formId,
-        };
-        missionForm.present = detail;
-        promise = promise
-          .then(() => missionForm.methods.reduce())
-          .then(() => this.replace(missionForm))
-          .then(() => {
-            missionForm.present = detail;
-            missionForm.methods.show();
-          });
-        return promise;
-      });
       // 更新按钮
       Dom.of(this.elements.update).on('click', () => {
         window.router.methods.render('welcome', { action: 'edit', primaryKey: this.data.primaryKey });
