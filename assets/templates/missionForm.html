@@ -8,28 +8,7 @@
       border: 1px solid #eee;
       border-top: none;
       overflow: hidden;
-      animation: mymove 1s ease-in-out;
-      animation-fill-mode: forwards;
       height: 100px;
-      background-color: #ffc;
-    }
-
-    @keyframes mymove {
-      from {
-        height: 100px;
-      }
-      to {
-        height: 120px;
-      }
-    }
-
-    @keyframes mymove2 {
-      from {
-        height: 100px;
-      }
-      to {
-        height: 160px;
-      }
     }
 
     .input-group-append>input {
@@ -57,18 +36,9 @@
       width: 60%;
     }
 
-    @media screen and (max-width: 480px) {
-      li {
-        animation: mymove2 1s ease-in-out;
-        animation-fill-mode: forwards;
-      }
-      .input-group-append {
-        margin-top: 10px;
-        width: 200px;
-        left: 0;
-      }
-      .input-group-append>input {
-        border-radius: 3px;
+    @media screen and (max-width: 420px) {
+      .input-group-append{
+        width: 36px;
       }
     }
   </style>

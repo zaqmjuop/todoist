@@ -12,15 +12,12 @@ const param = {
     content: '.item-content',
     date: '.item-date',
     finish: '.finish',
-    itemMain: '.item-main',
-    counter: '#counter',
     remove: 'a[name=remove]',
     update: 'a[name=update]',
     toggle: 'input[name=toggle]',
   },
   data() {
     return {
-      counter: 1,
       inited: 0,
     };
   },
@@ -58,7 +55,9 @@ const param = {
         if (!this.data.formId) { throw new Error(`Item.data.formId不能为${this.data.formId}`); }
         let promise = utils.newPromise();
         const missionForm = Component.findBy({ componentId: Number(this.data.formId) });
+        const realHeight = Number(Dom.of(this.template).css('height').match(/\d+/));
         const detail = {
+          height: Dom.of(this.template).css('height'),
           cid: this.componentId,
           content: this.data.content,
           date: this.data.date,

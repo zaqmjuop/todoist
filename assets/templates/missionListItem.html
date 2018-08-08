@@ -6,53 +6,22 @@
     li {
       width: calc(100% - 3em);
       position: relative;
-      padding: 10px;
+      padding: 5px;
       margin: 0;
       width: 100%;
       border-bottom: 1px solid #eee;
       line-height: 2em;
-      height: 100px;
       transition: height 1s, padding 1s;
-      overflow-y: hidden;
+      overflow-y: visible;
       user-select: none;
     }
 
-    li:hover {
-      background-color: #eee;
-    }
-
     .item-content {
-      display: inline-block;
-      border: 1px solid transparent;
-      padding: 0 0 10px 0;
-      white-space: nowrap;
-      overflow-x: auto;
-      margin-left: 10px;
+      overflow-y: visible;
     }
 
     .item-content:hover {
-      cursor: pointer;
-      background-color: #ffc;
-      border: 1px solid #000;
       cursor: text;
-      font-weight: 700;
-    }
-
-    .item-main {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-    }
-
-    .item-main-left {
-      max-width: 90%;
-    }
-
-    .line1 {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      flex-wrap: nowrap;
     }
 
     .done .item-content,
@@ -75,17 +44,45 @@
       user-select: none;
     }
 
-    @media screen and (max-width: 480px) {
+    @media screen and (max-width: 420px) {
       .item-main-left {
         max-width: 80%;
       }
-      .btn {
-        display: block;
-        line-height: 1em;
-      }
+
       .btn:nth-child(n+2) {
         margin-top: 5px;
       }
+    }
+
+    p {
+      margin: 0;
+      line-height: 1.5em;
+      white-space: pre-wrap;
+      word-break: break-all;
+      word-wrap: break-word;
+    }
+
+    span {
+      display: inline-block;
+    }
+
+    .top {
+      position: relative;
+      display: grid;
+      grid-template-columns: 3em 1fr;
+    }
+
+    .slider {
+      position: absolute;
+    }
+
+    .toggle {
+      text-align: center;
+    }
+
+    .option {
+      display: grid;
+      grid-template-columns:  3em 1fr 100px;
     }
   </style>
   <!-- "\f05d" √  "\f10c" ○  -->
@@ -94,19 +91,17 @@
 
 <body>
   <li class="template">
-    <div class="item-main">
-      <div class="item-main-left">
-        <div class="line1">
-          <input class="slider" name="toggle" type="checkbox" title="切换任务状态">
-          <span class="item-content" title="修改内容">
-            内容
-          </span>
-        </div>
-        <div>
-          <span style="margin-right: 2em;"></span>
-          <span class="item-date">日期的位置</span>
-        </div>
-      </div>
+    <div class="top">
+      <span class="toggle">
+        <input class="slider" name="toggle" type="checkbox" title="切换任务状态">
+      </span>
+      <p class="item-content" title="修改内容">
+        内容
+      </p>
+    </div>
+    <div class="option">
+      <span></span>
+      <span class="item-date">日期的位置</span>
       <div>
         <a class="btn" name="remove">删除</a>
         <a class="btn" name="update">更新</a>

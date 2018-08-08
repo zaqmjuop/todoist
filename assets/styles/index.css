@@ -2,9 +2,6 @@
   box-sizing: border-box;
 }
 
-html{
-  font-size:16px;
-}
 body{
   background-color: #FAFAFA;
 }
@@ -21,6 +18,10 @@ a[class~=btn]{
   border: 1px solid blue;
   border-radius: 5px;
   line-height: 2em;
+}
+a.btn{
+  display: inline-block;
+  line-height: 1em;
 }
 input[type=checkbox].slider {
   width: 2em;
@@ -220,4 +221,12 @@ button[class~=btn-link]:hover{
 }
 .list-menu li:hover{
   background-color: #eee;
+}
+@media screen and (max-width: 420px) {
+  *{
+    font-size: 14px;
+  }
+  .input-group input{
+    padding: 3px;
+  }
 }

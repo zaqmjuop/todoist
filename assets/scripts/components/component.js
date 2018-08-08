@@ -27,8 +27,8 @@ class Component {
     if (typeof param !== 'object') { throw new TypeError('param应该是一个object'); }
     const result = Object.assign(this, param);
     // 索引和标识
-    if (!result.name) {
-      result.name = result.url;
+    if (!utils.isEffectiveString(result.name)) {
+      throw new Error(`Component.name 不能为${result.name}`);
     }
     // present
     result.present = result.present || {};

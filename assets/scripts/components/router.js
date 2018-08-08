@@ -1,4 +1,5 @@
 import welcome from './welcome';
+import missionEdit from './missionEdit';
 import Component from './component';
 
 const router = {
@@ -18,6 +19,7 @@ const router = {
   },
   route: {
     welcome,
+    edit: missionEdit,
   },
   methods: {
     init() {

@@ -1,6 +1,7 @@
 import main from './components/main';
 import Dom from './dom';
 
+
 document.addEventListener('DOMContentLoaded', () => {
   window.Dom = Dom;
   window.addEventListener('resize', () => {

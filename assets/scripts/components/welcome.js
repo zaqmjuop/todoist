@@ -2,12 +2,6 @@ import leftMenu from './leftMenu';
 import missionCard from './missionCard';
 import Dom from '../dom';
 
-// const defaultQuery = {
-//   all: getAll,
-//   expired: getExpired,
-//   done: getDone,
-//   undone: getUndone,
-// };
 const text = {
   all: '所有任务',
   expired: '已过期',
@@ -19,10 +13,6 @@ const param = {
   query: 'mission-content',
   url: './assets/templates/welcome.html',
   name: 'welcome',
-  // present 是增量传递
-  present: {
-    text,
-  },
   selectors: {
     title: '.title',
     left: '.left',
@@ -38,6 +28,7 @@ const param = {
     },
   },
   created() {
+    console.log(this.present)
     const title = text[this.present.query] || String(this.present.query);
     Dom.of(this.elements.title).attr('text', title);
     this.methods.init();

@@ -30,7 +30,7 @@ const param = {
       const cid = Dom.of(this.template).attr('data-cid');
       const data = Object.assign({}, this.data);
       data.content = content;
-      data.date = date;
+      data.date = new Date(date);
       data.state = 'undone';
       if (!primaryKey) {
         this.dispatchEvent('create', data);
@@ -53,6 +53,9 @@ const param = {
       Dom.of(this.template).attr('data-primaryKey', this.data.primaryKey);
       Dom.of(this.template).attr('data-cid', this.data.cid);
       Dom.of(this.elements.submit).attr('text', this.data.submitText);
+      if (this.present.height) {
+        Dom.of(this.template).css('height', this.present.height);
+      }
     },
     formatDate(parameter) {
       // parameter可以是表示时间字符串 如'2018/01/01'或'2018-01-01'或Date

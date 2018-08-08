@@ -162,6 +162,7 @@ const param = {
   },
   created() {
     this.methods.init();
+    console.log(this.present)
   },
 };
 
