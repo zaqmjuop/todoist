@@ -34,6 +34,9 @@ const param = {
       if (this.data.inited) { return false; }
       this.data.date = this.present.date;
       this.data.days = this.present.days;
+      if (!this.present.query) {
+        this.present.query = 'all';
+      }
       const promise = utils.newPromise()
         .then(() => this.methods.initForm())
         .then(() => this.methods.loadDB())

@@ -39,11 +39,11 @@ const param = {
     },
   },
   created() {
-    console.log(this.present)
     if (this.present.action === 'edit') {
       missionEdit.present = this.present;
       this.appendChild(missionEdit, this.elements.body, 0);
     } else {
+      this.present.query = this.present.query || 'all';
       missionCard.present = this.present;
       this.appendChild(missionCard, this.elements.body, 0);
     }

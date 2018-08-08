@@ -53,11 +53,15 @@ const router = {
       const promise = this.methods.render(this.data.path, this.data.state);
       return promise;
     },
+    fill() {
+      console.log(window.location.href);
+    },
   },
   created() {
     this.methods.init();
     window.router = this;
-    this.methods.render('welcome', { query: 'all' });
+    this.methods.fill();
+    this.methods.render('welcome', { action: 'edit', primaryKey: 6 });
   },
 };
 

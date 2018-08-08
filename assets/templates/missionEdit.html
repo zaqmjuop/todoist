@@ -1,10 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+  <style scoped>
+    .template {
+      padding: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      resize: none;
+      overflow-y: scroll;
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: 1px solid #ccf;
+    }
+
+    .top {
+      display: grid;
+      grid-template-columns: 1fr 100px;
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
+
 <body>
-  <div>
-    edit
+  <div class="template">
+    <div class="top">
+      <input type="text" name="date">
+      <div class="text-right">
+        <a class="btn" name="cancal">取消</a>
+        <a class="btn" name="submit">保存</a>
+      </div>
+    </div>
+
+
+
+    <textarea rows='20'>
+            在 w3school.com.cn，您将学会如何开发网站。我们提供全面的免费 web 技术教程。
+            </textarea>
   </div>
 </body>
+
 </html>
