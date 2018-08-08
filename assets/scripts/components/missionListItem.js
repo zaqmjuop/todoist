@@ -1,6 +1,5 @@
 import Dom from '../dom';
 import mission from '../model';
-import Component from './component';
 import utils from '../utils';
 
 const param = {

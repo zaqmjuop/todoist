@@ -1,11 +1,7 @@
-import missionForm from './missionForm';
-import Component from './component';
 import Dom from '../dom';
 import mission from '../model';
 import missionListItem from './missionListItem';
 import utils from '../utils';
-
-const dayMark = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
 
 const param = {
   query: 'mission-card',
@@ -22,14 +18,10 @@ const param = {
   selectors: {
     form: 'mission-form',
     cardHeader: '.card-header',
-    showForm: '.show-form',
     createMission: '.create-mission',
     cardBody: '.card-body',
     create: '*[name=create]',
   },
-  components: [
-    missionForm,
-  ],
   methods: {
     init() {
       if (this.data.inited) { return false; }
@@ -39,7 +31,7 @@ const param = {
         this.present.query = 'all';
       }
       const promise = utils.newPromise()
-        .then(() => this.methods.initForm())
+        .then(() => this.methods.bindEvents())
         .then(() => this.methods.loadDB())
         .then(() => this.methods.initItems());
       this.data.inited = 1;
@@ -88,89 +80,18 @@ const param = {
       const present = Object.assign(detail);
       present.formId = this.data.formId;
       const itemParam = Object.assign({ present }, missionListItem);
-      const position = Dom.of(this.elements.form).getIndex();
-      const append = this.appendChild(itemParam, this.elements.cardBody, position);
+      const append = this.appendChild(itemParam, this.elements.cardBody, -1);
       return append;
     },
-    initForm() {
-      const form = this.findBy({ name: missionForm.name });
-      if (!form) { return false; }
-      this.data.form = form;
-      this.data.formId = form.componentId;
-      // 表单隐藏和显示的转换
-      form.addEventListener('hide', () => {
-        Dom.of(this.elements.createMission).removeClass('hide');
-      });
-      form.addEventListener('show', () => {
-        // Dom.of(this.elements.createMission).addClass('hide');
-      });
-      // 默认隐藏表单
-      form.methods.hide();
-      // 显示表单
-      Dom.of(this.elements.showForm).on('click', () => {
-        // 还原li item
-        const promise = form.methods.reduce()
-          .then(() => {
-            const position = Dom.of(this.elements.createMission).getIndex();
-            return this.appendChild(form, this.elements.cardBody, position);
-          }).then(() => {
-            form.present = { date: this.data.date };
-            form.methods.show();
-          });
-        return promise;
-      });
+    bindEvents() {
       // 进入新建item界面
       Dom.of(this.elements.create).on('click', () => {
         window.router.methods.render('welcome', { action: 'edit' });
       });
-      // 创建item
-      form.addEventListener('create', (e) => {
-        if (!e.detail.content) { return false; }
-        const present = {
-          content: e.detail.content,
-          date: new Date(e.detail.date),
-          state: e.detail.state,
-        };
-        const promise = mission.push(present)
-          .then((primaryKey) => {
-            // 添加li item
-            present.primaryKey = primaryKey;
-            return this.methods.appendItem(present);
-          })
-          .then(() => form.methods.hide());
-        return promise;
-      });
-      // 更新item
-      form.addEventListener('update', (e) => {
-        if (!e.detail.content) { return false; }
-        const upData = {
-          content: e.detail.content,
-          date: e.detail.date,
-          primaryKey: e.detail.primaryKey,
-          state: e.detail.state,
-        };
-        const present = Object.assign({
-          cid: this.componentId,
-          formId: this.data.formId,
-        }, upData);
-        mission.update(upData)
-          .then((primaryKey) => {
-            // 更新后将form替换为li
-            const li = Component.findBy({ componentId: Number(e.detail.cid) });
-            present.primaryKey = primaryKey;
-            li.present = present;
-            li.methods.fill();
-            this.replaceChild(li, this.data.form);
-          })
-          .then(() => form.methods.hide());
-        return present;
-      });
-      return form;
     },
   },
   created() {
     this.methods.init();
-    console.log(this.present)
   },
 };
 

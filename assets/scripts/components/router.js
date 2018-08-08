@@ -61,7 +61,7 @@ const router = {
     this.methods.init();
     window.router = this;
     this.methods.fill();
-    this.methods.render('welcome', { action: 'edit', primaryKey: 6 });
+    this.methods.render('welcome');
   },
 };
 

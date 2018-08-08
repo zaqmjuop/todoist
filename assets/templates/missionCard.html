@@ -4,20 +4,18 @@
 <head>
   <style scoped>
     .card {
+      position: relative;
       margin: 0;
       border: 1px solid #eee;
       display: flex;
       flex-direction: column;
+      height: 100%;
     }
 
     ul {
       margin: 0;
       list-style: none;
       padding: 0;
-    }
-
-    .show-form {
-      cursor: pointer;
     }
 
     .card-header {
@@ -35,8 +33,21 @@
       line-height: 2em;
       border-bottom: 1px solid #eee;
     }
-    .seat{
-      height: 200px;
+    .new{
+      user-select: none;
+      width: 1em;
+      height: 1em;
+      position: fixed;
+      bottom: 1em;
+      right: 1em;
+      text-align: center;
+      z-index: 2;
+      opacity: 1;
+      background-color: blue;
+      color: #fff;
+      border-radius: 1em;
+      font-size: 4em;
+      line-height: 0.9em;
     }
   </style>
 </head>
@@ -44,22 +55,8 @@
 <body>
   <section class="card">
     <ul class="card-body">
-      <mission-form></mission-form>
-      <li class="create-mission">
-        <span></span>
-        <div class="item-main flex flex-justify-between">
-          <span class="show-form">
-            <span>&thinsp;&thinsp;</span>
-            <a href="javascript:void(0)">添加任务</a>
-            <a name="create">create</a>
-          </span>
-          <span>
-          </span>
-        </div>
-        <span></span>
-      </li>
-      <li class="seat"></li>
     </ul>
+    <div class="new" name="create">+</div>
   </section>
 </body>
 
