@@ -590,7 +590,7 @@ class Component {
       throw new TypeError(`${element}不是组件id:${exist.componentId}的子元素`);
     }
     if (!Number.isSafeInteger(position)) {
-      throw new TypeError(`不是整数${position}`);
+      throw new TypeError(`Component.appendComponent position不能是${position}`);
     }
     let promise = new Promise(resolve => resolve(want));
     if (!(want instanceof Component)) {

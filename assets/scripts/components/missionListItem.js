@@ -75,7 +75,9 @@ const param = {
         return promise;
       });
       // 更新按钮
-      Dom.of(this.elements.update).on('click', () => this.elements.content.click());
+      Dom.of(this.elements.update).on('click', () => {
+        window.router.methods.render('welcome', { action: 'edit', primaryKey: this.data.primaryKey });
+      });
       // 删除按钮
       Dom.of(this.elements.remove).on('click', () => {
         const promise = mission.remove(this.present.primaryKey)
