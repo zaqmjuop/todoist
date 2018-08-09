@@ -1,3 +1,4 @@
+import "babel-polyfill";
 import main from './components/main';
 import Dom from './dom';
 

@@ -23,6 +23,7 @@ class Component {
     // param.query是Dom.of参数
     // param.template是HtmlElement
     // param.style是<style>
+    if (param instanceof Component) { return param; }
     if (new.target !== Component) { throw new Error('必须使用 new 命令生成实例'); }
     if (typeof param !== 'object') { throw new TypeError('param应该是一个object'); }
     const result = Object.assign(this, param);
@@ -34,9 +35,7 @@ class Component {
     result.present = result.present || {};
     // 在页面插入的位置
     const position = Dom.of(result.query).dom;
-    if (!position) {
-      throw new TypeError(`选择器 ${result.query} 未找到匹配项`);
-    } else {
+    if (utils.isElement(position)) {
       result.query = position;
     }
     // parent父组件
@@ -50,22 +49,33 @@ class Component {
     // 绑定param.methods下的function的this指向
     result.formatMethods();
 
-    let promise = Promise.resolve(1);
-    if (!result.template) {
-      promise = result.getView();
-    }
-    promise
+    result.load();
+    return result;
+  }
+  load() {
+    if (this.loadPromise) { return Promise.resolve(this.loadPromise); }
+    const promise = Promise.resolve(1)
+      .then(() => {
+        const view = this.template || this.getView();
+        return view;
+      })
       .then(() => {
         // 填充param.selectors 填充this.elements
-        result.fillSelectors();
+        this.fillSelectors();
         // 设置this.componentId属性
-        result.setComponentId();
+        this.setComponentId();
         // 保存组件
-        components.add(result);
+        components.add(this);
       })
-      .then(() => result.formatChildren())
-      .then(() => this.lifeCycle());
-    return result;
+      .then(() => this.formatChildren())
+      .then(() => this.lifeCycle())
+      .then(() => {
+        this.loaded = 'done';
+        this.loadPromise = 'done';
+        return this;
+      });
+    this.loadPromise = promise;
+    return this.loadPromise;
   }
   formatChildren() {
     // 处理子组件components中不是组件实例化对象的对象
@@ -92,8 +102,9 @@ class Component {
         .then(() => Component.getView(param))
         .then(() => {
           const query = this.template.querySelector(param.query);
-          if (!Dom.isElement(query)) { throw new Error(`子组件插入位置未找到${item.query}`); }
-          param.query = query;
+          if (Dom.isElement(query)) {
+            param.query = query;
+          }
           param.parent = this;
           const cpt = Component.of(param);
           const selector = Dom.of(query).attr('data-c-selector');
@@ -116,7 +127,7 @@ class Component {
     if (utils.isFunction(this.implanted)) {
       this.implanted();
     }
-    this.state = 'done';
+    this.state = 'implanted';
   }
   defineParent() {
     // 修改this.parent的getter和setter
@@ -441,24 +452,25 @@ class Component {
     this.style.innerHTML = resultStyleHTML;
     return this;
   }
-
+  implantStyle() {
+    // 插入style
+    if (!this.style) { return false; }
+    const head = Dom.of('head');
+    if (!head.hasChild(this.style)) { head.append(this.style); }
+    return this.style;
+  }
   implant() {
     // 根据this.query嵌入页面
     const isScoped = this.style.getAttribute('scoped') || (this.style.getAttribute('scoped') === '');
-    Dom.of(this.query).replace(this.template);
+    if (utils.isElement(this.query)) {
+      Dom.of(this.query).replace(this.template);
+    }
     // 处理style
     if (this.style) {
-      if (isScoped) {
-        // 处理scoped style
-        this.handleScopedStyle();
-      }
+      // 处理scoped style
+      if (isScoped) { this.handleScopedStyle(); }
       // 插入 style
-      const existStyle = document.querySelector(`style[data-c-id=c${this.componentId}]`);
-      if (existStyle) {
-        document.querySelector('head').replaceChild(this.style, existStyle);
-      } else {
-        document.querySelector('head').appendChild(this.style);
-      }
+      this.implantStyle();
     }
     return this;
   }
@@ -547,6 +559,15 @@ class Component {
     // 返回值promise resolve(want)
     return Component.appendComponent(want, this, element, position);
   }
+  insertTo(element, position) {
+    // 插入一个组件到目标位置中
+    // want是组件参数或组件实例化对象
+    // element应是一个HTMLElement元素
+    // position是位置 -1表示成为最后一个子元素，0表示成为第一个子元素，1表示成为第二个子元素
+    // 当position<0或大于指定元素的子元素数时，插入为最后一个元素
+    // 返回值promise resolve(this)
+    return Component.insertComponent(this, element, position);
+  }
   replaceChild(want, exist) {
     // 替换子元素
     // want是组件参数或组件实例化对象
@@ -604,14 +625,31 @@ class Component {
     promise = promise.then((cpt) => {
       // 把template插入到position的位置
       Dom.of(element).appendAccurate(cpt.template, position);
-      const head = Dom.of('head');
-      if (!head.hasChild(cpt.style)) {
-        head.append(cpt.style);
-      }
+      cpt.implantStyle();
       cpt.parent = exist;
       return cpt;
     });
     return promise;
+  }
+
+  static insertComponent(want, element, position) {
+    // 插入一个组件到目标位置中
+    // want是组件参数或组件实例化对象
+    // element应是一个HTMLElement元素
+    // position是位置 -1表示成为最后一个子元素，0表示成为第一个子元素，1表示成为第二个子元素
+    // 当position<0或大于指定元素的子元素数时，插入为最后一个元素
+    // 返回值promise resolve(want)
+    if (!utils.isElement(element)) { throw new TypeError(`Component.insertComponent element不能是${element}`); }
+    if (!Number.isSafeInteger(position)) {
+      throw new TypeError(`Component.insertComponent position不能是${position}`);
+    }
+    async function action() {
+      const cpt = await Component.of(want).load();
+      Dom.of(element).appendAccurate(cpt.template, position);
+      cpt.implantStyle();
+      return cpt;
+    }
+    return action();
   }
 
   static replaceComponent(want, exist) {
