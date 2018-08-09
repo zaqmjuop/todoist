@@ -53,14 +53,10 @@ const router = {
       const promise = this.methods.render(this.data.path, this.data.state);
       return promise;
     },
-    fill() {
-      console.log(window.location.href);
-    },
   },
   created() {
     this.methods.init();
     window.router = this;
-    this.methods.fill();
     this.methods.render('welcome');
   },
 };

@@ -35,25 +35,31 @@
     }
     .new{
       user-select: none;
-      width: 1em;
-      height: 1em;
       position: fixed;
       bottom: 1em;
       right: 1em;
       text-align: center;
       z-index: 2;
-      opacity: 1;
-      background-color: blue;
+      opacity: 0.9;
+      background-color: #36f;
       color: #fff;
-      border-radius: 1em;
-      font-size: 4em;
-      line-height: 0.9em;
+      font-size: 2em;
+      line-height: 1em;
+      width: 1em;
+      height: 1em;
+      box-shadow: 0 0 5px #69f;
+    }
+    .option{
+      border-bottom: 1px solid #eee;
     }
   </style>
 </head>
 
 <body>
   <section class="card">
+    <div class="option">
+      <input class="filter" type="text" placeholder="筛选">
+    </div>
     <ul class="card-body">
     </ul>
     <div class="new" name="create">+</div>

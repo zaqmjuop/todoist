@@ -23,6 +23,9 @@ a.btn{
   display: inline-block;
   line-height: 1em;
 }
+input:focus{
+  outline-color: #9cf;
+}
 input[type=checkbox].slider {
   width: 2em;
   height: 1em;

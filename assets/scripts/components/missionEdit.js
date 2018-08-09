@@ -36,7 +36,6 @@ const param = {
     init() {
       if (this.inited) { return false; }
       this.inited = 1;
-      console.log(this.present);
       this.data.action = (this.present.primaryKey) ? 'update' : 'create';
       this.data.picker = datepicker(this.elements.date);
       Dom.of(this.data.picker.body).attr('data-c-id', `c${this.componentId}`);

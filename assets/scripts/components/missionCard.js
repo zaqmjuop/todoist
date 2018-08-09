@@ -21,6 +21,7 @@ const param = {
     createMission: '.create-mission',
     cardBody: '.card-body',
     create: '*[name=create]',
+    filter: '.filter',
   },
   methods: {
     init() {
@@ -91,6 +92,18 @@ const param = {
       // 进入新建item界面
       Dom.of(this.elements.create).on('click', () => {
         window.router.methods.render('welcome', { action: 'edit' });
+      });
+      const filter = Dom.of(this.elements.filter);
+      filter.on('input', () => {
+        const value = filter.attr('value');
+        const items = this.where({ name: 'missionListItem' });
+        items.forEach((item) => {
+          if (!item.data.content.match(value)) {
+            Dom.of(item.template).addClass('hide');
+          } else {
+            Dom.of(item.template).removeClass('hide');
+          }
+        });
       });
     },
   },
