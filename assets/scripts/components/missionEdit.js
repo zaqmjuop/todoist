@@ -55,7 +55,10 @@ const param = {
       Dom.of(this.elements.submit).on('click', () => {
         const content = this.elements.content.value;
         if (!utils.isEffectiveString(content)) {
-          return window.alert('内容不能为空');
+          const msg = '内容不能为空';
+          const notice = window.notice.methods.render(msg, 'error');
+          Dom.of(this.template).appendAccurate(notice, 0);
+          return msg;
         }
         let date = new Date(this.elements.date.value);
         if (!utils.isValidDate(date)) {
@@ -71,7 +74,9 @@ const param = {
         }
         return promise.then(() => {
           window.router.methods.render('welcome');
-          window.alert('保存成功');
+          const msg = '保存成功';
+          window.notice.methods.alert(msg, 'success');
+          return msg;
         });
       });
     },

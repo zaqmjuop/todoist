@@ -1,4 +1,7 @@
 import Component from './component';
+import Dom from '../dom';
+import utils from '../utils';
+import { Domain } from 'domain';
 
 const param = {
   // 必需 name 组件的名称，可以用于查找组件
@@ -12,14 +15,36 @@ const param = {
   data() {
     return { counter: 1 };
   },
+  selectors: {
+    content: '.content',
+    cancal: '.cancal',
+  },
   methods: {
-    fill() {
-      this.insertTo(document.body, 0);
+    render(content, klass) {
+      // 返回一个HTMLElement实例的alert box
+      // content是内容,klass一个字符串表示颜色，默认是蓝色,可选'success','error','warn','primary','gray'
+      const clone = document.importNode(this.template, 1);
+      clone.className = utils.isEffectiveString(klass) ? klass : '';
+      Dom.of(clone).child('.content').innerText = String(content);
+      this.methods.bindAlertEvents(clone);
+      return clone;
+    },
+    bindAlertEvents(alert) {
+      // bind cancal
+      if (!utils.isElement(alert)) { throw new TypeError(`element不能是${alert}`); }
+      Dom.of(alert).child('.cancal').onclick = () => alert.classList.add('hide');
+    },
+    alert(content, klass) {
+      // 替代window.alert
+      // content是内容,klass一个字符串表示颜色，默认是蓝色,可选'success','error','warn','primary','gray'
+      const box = this.methods.render(content, klass);
+      Dom.of('body').appendAccurate(box, 0);
+      return box;
     },
   },
   created() {
-    window.alert2 = this;
-    this.methods.fill();
+    window.notice = this;
+    this.methods.bindAlertEvents(this.template);
   },
 };
 

@@ -3,20 +3,61 @@
 
 <head>
   <style scoped>
-    p{
-      color: red;
+    aside {
+      display: flex;
+      justify-content: space-between;
+      padding: 3px 5px;
+      border-width: 1px;
+      border-style: solid;
+      border-color: #69f;
+      background: linear-gradient(#def 65%, #9cf 65%);
+      color: #339;
+    }
+
+    p {
       margin: 0;
+    }
+
+    .gray {
+      border-color: #ccc;
+      background: linear-gradient(#eee 65%, #ccc 65%);
+      color: #666;
+    }
+
+    .success {
+      border-color: #9f9;
+      background: linear-gradient(#dfd 65%, #bfb 65%);
+      color: #060;
+    }
+
+    .warn {
+      border-color: #ff9;
+      background: linear-gradient(#ffd 65%, #ffb 65%);
+      color: #660;
+    }
+
+    .error {
+      border-color: #fbb;
+      background: linear-gradient(#fdd 65%, #fbb 65%);
+      color: #600;
+    }
+
+    .primary {
+      border-color: #69f;
+      background: linear-gradient(#def 65%, #8bf 65%);
+      color: #339;
+    }
+    .hide{
+      display: none;
     }
   </style>
 </head>
 
 <body>
-  <div >
-    <p>alert</p>
-    <div>
-      <span>x</span>
-    </div>
-  </div>
+  <aside>
+    <p class="content">alert</p>
+    <span class="cancal">x</span>
+  </aside>
 </body>
 
 </html>
