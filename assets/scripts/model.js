@@ -45,6 +45,16 @@ const getMark = (mark) => {
   });
   return filter;
 };
+
+const getObj = (obj) => {
+  const keys = Object.keys(obj);
+  const filter = mission.filter((item) => {
+    const isMatch = keys.every(key => (item[key] === obj[key]));
+    return isMatch;
+  });
+  return filter;
+};
+
 const getQuery = (query) => {
   let result;
   if (typeof query === 'string') {
@@ -55,6 +65,8 @@ const getQuery = (query) => {
     }
   } else if (query instanceof Date) {
     result = getDate(query);
+  } else if (query instanceof Object) {
+    result = getObj(query);
   } else {
     console.warn(`mission.methods.GetQuery 尚不支持查询${query}`);
   }
@@ -62,11 +74,10 @@ const getQuery = (query) => {
 };
 
 mission.quadrants = [
-  { important: undefined, urgent: undefined },
-  { important: 1, urgent: 1 },
-  { important: 1, urgent: 0 },
-  { important: 0, urgent: 1 },
-  { important: 0, urgent: 0 },
+  { important: true, urgent: true },
+  { important: true, urgent: false },
+  { important: false, urgent: true },
+  { important: false, urgent: false },
 ];
 
 mission.methods = {

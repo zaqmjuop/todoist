@@ -1,14 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
+  <style scoped>
+    .template {
+      height: 100%;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+    }
+
+    .template>div {
+      overflow-y: auto;
+    }
+
+    .urgent-important {
+      background-color: red;
+    }
+
+    .urgent-not-important {
+      background-color: gold;
+    }
+
+    .not-urgent-important {
+      background-color: green;
+    }
+
+    .not-urgent-not-important {
+      background-color: gainsboro;
+    }
+
+    h6{
+      margin: 0;
+      text-align: center;
+    }
+  </style>
 </head>
+
 <body>
-  <div>
-     quadrants
+  <div class="template">
+    <div class="urgent-important" data-position="urgent-important">
+      <h6>重要 紧急</h6>
+    </div>
+    <div class="urgent-not-important" data-position="urgent-not-important">
+      <h6>不重要 紧急</h6>
+    </div>
+    <div class="not-urgent-important" data-position="not-urgent-important">
+      <h6>重要 不紧急</h6>
+    </div>
+    <div class="not-urgent-not-important" data-position="not-urgent-not-important">
+      <h6>不重要 不紧急</h6>
+    </div>
   </div>
 </body>
+
 </html>

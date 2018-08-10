@@ -59,25 +59,14 @@ const param = {
             const allot = utils.divisio(ary, item => utils.isValidDate(item.date));
             return allot;
           });
-          // byDate
-          // [
-          //   [
-          //     ['有日期 未完成'], ['无日期 未完成']
-          //   ],
-          //   [
-          //     ['有日期 已完成'], ['无日期 已完成']
-          //   ],
-          // ]
           const deep = byDate.map((states) => {
             const sortByDate = states[0].sort((a, b) => (a.date >= b.date));
             return [sortByDate, states[1]];
           });
           const flat = utils.flat(deep, 2);
-          // flat 未完成在前，有日期的在前，日期升序 一维数组
           this.data.items = flat;
           return this.data.items;
         });
-      // todo sort 未完成在前， 有日期的在前，日期升序 ''<1<2   1,2,''
       return promise;
     },
     appendItem(detail) {

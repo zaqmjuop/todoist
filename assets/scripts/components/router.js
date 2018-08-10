@@ -1,7 +1,5 @@
 import welcome from './welcome';
-import missionEdit from './missionEdit';
 import Component from './component';
-import quadrants from './quadrants';
 
 const router = {
   query: 'router',
@@ -20,12 +18,20 @@ const router = {
   },
   route: {
     welcome,
-    quadrants,
   },
   methods: {
     init() {
       if (this.data.inited) { return false; }
       this.data.inited = 1;
+      // 页面加载时若存在 #/route/ 就跳转，否则跳转到route第一个
+      const home = Object.keys(this.route)[0];
+      let way = home;
+      const hashMatch = window.location.hash.match(/#\u002f([^?\u002f]+)/);
+      if (hashMatch) {
+        const hash = hashMatch[1];
+        way = hash;
+      }
+      this.methods.render(way);
       return this;
     },
     // 不刷新页面改变path
@@ -58,7 +64,6 @@ const router = {
   created() {
     this.methods.init();
     window.router = this;
-    this.methods.render('quadrants');
   },
 };
 

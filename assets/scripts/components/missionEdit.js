@@ -3,22 +3,6 @@ import Dom from '../dom';
 import datepicker from '../lib/datepicker';
 import utils from '../utils';
 
-/*
-{}
-content
-:
-"少时诵诗书所所所所所所所所所所所所所所所少时诵诗书所所所所所所所所所所所所所所所所"
-date
-:
-Sun Jul 29 2018 00:00:00 GMT+0800 (中国标准时间) {}
-primaryKey
-:
-4
-state
-:
-"undone"
-*/
-
 const param = {
   query: 'mission-edit',
   url: './assets/templates/missionEdit.html',
@@ -113,8 +97,10 @@ const param = {
             const data = res[0];
             Dom.of(this.elements.content).text(data.content);
             Dom.of(this.elements.date).attr('value', utils.formatDate(data.date));
+            // 四象限选项
             const quadrantSelect = model.quadrants.findIndex((item) => {
-              const isMatch = item.important === data.important && item.urgent === data.urgent;
+              const isMatch = (item.important === !!data.important)
+                && (item.urgent === !!data.urgent);
               return isMatch;
             });
             if (quadrantSelect > -1) {
