@@ -1,6 +1,5 @@
 import Dom from '../dom';
 import missionCard from './missionCard';
-import Component from './component';
 
 const param = {
   query: 'quadrants',

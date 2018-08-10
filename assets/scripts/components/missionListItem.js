@@ -53,14 +53,13 @@ const param = {
       });
       // 删除按钮
       Dom.of(this.elements.remove).on('click', () => {
-        const promise = mission.remove(this.present.primaryKey)
-          .then(() => {
-            this.template.style.height = '0px';
-            this.template.style.paddingTop = '0px';
-            this.template.style.paddingBottom = '0px';
-            const t = setTimeout(() => this.parent.removeChild(this), 1000);
-            return t;
-          });
+        this.template.style.height = '0px';
+        this.template.style.paddingTop = '0px';
+        this.template.style.paddingBottom = '0px';
+        const promise = new Promise((resolve) => {
+          setTimeout(() => resolve(this.parent.removeChild(this)), 1000);
+        })
+          .then(() => mission.remove(this.present.primaryKey));
         return promise;
       });
     },
