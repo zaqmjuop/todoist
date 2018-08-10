@@ -31,6 +31,7 @@ const param = {
     date: 'input[name=date]',
     cancal: '*[name=cancal]',
     submit: '*[name=submit]',
+    quadrant: '*[name=quadrant]',
   },
   methods: {
     init() {
@@ -61,7 +62,11 @@ const param = {
         }
         let date = new Date(this.elements.date.value);
         if (!utils.isValidDate(date)) { date = ''; }
-        const detail = { content, date, state: 'undone' };
+        const quadrantSelected = this.elements.quadrant.value || 0;
+        const quadrant = model.quadrants[quadrantSelected];
+        const detail = {
+          content, date, state: 'undone', important: quadrant.important, urgent: quadrant.urgent,
+        };
         let promise;
         if (this.data.primaryKey) {
           promise = model.get(this.data.primaryKey)
@@ -70,6 +75,8 @@ const param = {
               data.content = content;
               data.date = date;
               data.state = 'undone';
+              data.important = quadrant.important;
+              data.urgent = quadrant.urgent;
               return model.update(data);
             });
         } else {
@@ -98,8 +105,24 @@ const param = {
       return promise;
     },
     fill() {
-      Dom.of(this.elements.content).text(this.data.content);
-      Dom.of(this.elements.date).attr('value', utils.formatDate(this.data.date));
+      let promise = Promise.resolve(1);
+      if (this.data.primaryKey) {
+        promise = promise
+          .then(() => model.get(this.data.primaryKey))
+          .then((res) => {
+            const data = res[0];
+            Dom.of(this.elements.content).text(data.content);
+            Dom.of(this.elements.date).attr('value', utils.formatDate(data.date));
+            const quadrantSelect = model.quadrants.findIndex((item) => {
+              const isMatch = item.important === data.important && item.urgent === data.urgent;
+              return isMatch;
+            });
+            if (quadrantSelect > -1) {
+              this.elements.quadrant.value = quadrantSelect;
+            }
+          });
+      }
+      return promise;
     },
   },
   created() {

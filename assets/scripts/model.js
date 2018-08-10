@@ -61,6 +61,13 @@ const getQuery = (query) => {
   return result;
 };
 
+mission.quadrants = [
+  { important: undefined, urgent: undefined },
+  { important: 1, urgent: 1 },
+  { important: 1, urgent: 0 },
+  { important: 0, urgent: 1 },
+  { important: 0, urgent: 0 },
+];
 
 mission.methods = {
   getAll, getExpired, getDate, getMark, getQuery,
