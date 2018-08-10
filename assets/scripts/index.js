@@ -1,7 +1,6 @@
 import 'babel-polyfill';
 import main from './components/main';
 import Dom from './dom';
-import category from './category'
 
 
 document.addEventListener('DOMContentLoaded', () => {

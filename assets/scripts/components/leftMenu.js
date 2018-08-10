@@ -1,5 +1,4 @@
 import utils from '../utils';
-import Dom from '../dom';
 
 const param = {
   query: 'left-menu',

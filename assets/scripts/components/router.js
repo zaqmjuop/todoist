@@ -1,6 +1,7 @@
 import welcome from './welcome';
 import missionEdit from './missionEdit';
 import Component from './component';
+import quadrants from './quadrants';
 
 const router = {
   query: 'router',
@@ -19,7 +20,7 @@ const router = {
   },
   route: {
     welcome,
-    edit: missionEdit,
+    quadrants,
   },
   methods: {
     init() {
@@ -57,7 +58,7 @@ const router = {
   created() {
     this.methods.init();
     window.router = this;
-    this.methods.render('welcome');
+    this.methods.render('quadrants');
   },
 };
 
