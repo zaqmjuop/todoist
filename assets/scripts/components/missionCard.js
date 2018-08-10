@@ -42,7 +42,7 @@ const param = {
       let promise = utils.newPromise();
       if (!this.data.items || this.data.items.length < 1) {
         const notice = window.notice.methods.render('没有任务');
-        Dom.of(this.template).appendAccurate(notice, 0);
+        Dom.of(this.template).appendAccurate(notice, 2);
       }
       // 添加 li item
       this.data.items.forEach((item) => {

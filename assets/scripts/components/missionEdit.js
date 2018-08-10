@@ -60,14 +60,18 @@ const param = {
           return msg;
         }
         let date = new Date(this.elements.date.value);
-        if (!utils.isValidDate(date)) {
-          date = '';
-        }
+        if (!utils.isValidDate(date)) { date = ''; }
         const detail = { content, date, state: 'undone' };
         let promise;
         if (this.data.primaryKey) {
-          detail.primaryKey = this.data.primaryKey;
-          promise = model.update(detail);
+          promise = model.get(this.data.primaryKey)
+            .then((res) => {
+              const data = res[0];
+              data.content = content;
+              data.date = date;
+              data.state = 'undone';
+              return model.update(data);
+            });
         } else {
           promise = model.push(detail);
         }
