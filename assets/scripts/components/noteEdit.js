@@ -16,6 +16,15 @@ const param = {
     submit: '*[name=submit]',
   },
   methods: {
+    fill() {
+      console.log('fill', this.present)
+      note.get(this.present.primaryKey)
+        .then((res) => {
+          const item = res[0];
+          this.data.item = item;
+          Dom.of(this.elements.content).text(item.content);
+        });
+    },
     bindEvents() {
       // 撤销按钮
       Dom.of(this.elements.cancal).on('click', () => {
@@ -30,12 +39,9 @@ const param = {
           return msg;
         }
         const now = new Date();
-        const detail = {
-          content, createdAt: now, updateAt: now,
-        };
         let promise;
-        if (this.data.primaryKey) {
-          promise = note.get(this.data.primaryKey)
+        if (this.data.item.primaryKey) {
+          promise = note.get(this.data.item.primaryKey)
             .then((res) => {
               const data = res[0];
               data.content = content;
@@ -43,7 +49,8 @@ const param = {
               return note.update(data);
             });
         } else {
-          promise = note.push(detail);
+          const data = { content, createdAt: now, updateAt: now };
+          promise = note.push(data);
         }
         return promise.then(() => {
           window.router.methods.render('welcome', { action: 'noteCard' });
@@ -57,6 +64,7 @@ const param = {
   created() {
     console.log('noteEdit create');
     this.methods.bindEvents();
+    this.methods.fill();
   },
 };
 
