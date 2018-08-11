@@ -3,6 +3,7 @@ import missionCard from './missionCard';
 import missionEdit from './missionEdit';
 import quadrants from './quadrants';
 import noteCard from './noteCard';
+import noteEdit from './noteEdit';
 import Dom from '../dom';
 
 const text = {
@@ -51,6 +52,9 @@ const param = {
     } else if (this.present.action === 'noteCard') {
       noteCard.present = this.present;
       this.appendChild(noteCard, this.elements.body, 0);
+    } else if (this.present.action === 'noteEdit') {
+      noteEdit.present = this.present;
+      this.appendChild(noteEdit, this.elements.body, 0);
     } else {
       this.present.query = this.present.query || 'all';
       missionCard.present = this.present;
