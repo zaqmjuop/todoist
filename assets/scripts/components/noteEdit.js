@@ -68,7 +68,7 @@ const param = {
   },
   created() {
     this.methods.bindEvents();
-    this.methods.fill();
+    return this.methods.fill();
   },
 };
 

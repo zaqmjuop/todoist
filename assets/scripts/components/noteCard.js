@@ -62,9 +62,8 @@ const param = {
   },
   created() {
     this.methods.bindEvents();
-    const load = this.methods.loadDB()
+    return this.methods.loadDB()
       .then(() => this.methods.fill());
-    return load;
   },
 };
 

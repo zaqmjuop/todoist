@@ -1,5 +1,5 @@
-import note from "../model/note";
-import Dom from "../dom";
+import note from '../model/note';
+import Dom from '../dom';
 
 const param = {
   name: 'noteItem',
@@ -18,7 +18,7 @@ const param = {
     fill() {
       let promise = Promise.resolve(1);
       if (this.present.primaryKey) {
-        note.get(this.present.primaryKey)
+        promise = note.get(this.present.primaryKey)
           .then((res) => {
             this.data.item = res[0];
             Dom.of(this.elements.content).text(res[0].content);
@@ -42,8 +42,7 @@ const param = {
   },
   created() {
     this.methods.bindEvents();
-    const create = this.methods.fill();
-    return create;
+    return this.methods.fill();
   },
 };
 
