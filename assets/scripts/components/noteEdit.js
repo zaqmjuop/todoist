@@ -17,13 +17,17 @@ const param = {
   },
   methods: {
     fill() {
-      console.log('fill', this.present)
-      note.get(this.present.primaryKey)
-        .then((res) => {
-          const item = res[0];
-          this.data.item = item;
-          Dom.of(this.elements.content).text(item.content);
-        });
+      // 读取this.present.primaryKey并填充
+      const primaryKey = Number(this.present.primaryKey);
+      let promise = Promise.resolve(1);
+      if (primaryKey) {
+        promise = note.get(primaryKey)
+          .then((res) => {
+            this.data.item = res[0];
+            Dom.of(this.elements.content).text(this.data.item.content);
+          });
+      }
+      return promise;
     },
     bindEvents() {
       // 撤销按钮
@@ -40,16 +44,17 @@ const param = {
         }
         const now = new Date();
         let promise;
-        if (this.data.item.primaryKey) {
-          promise = note.get(this.data.item.primaryKey)
+        const primaryKey = this.data.item && this.data.item.primaryKey;
+        if (primaryKey) {
+          promise = note.get(primaryKey)
             .then((res) => {
-              const data = res[0];
-              data.content = content;
-              data.updateAt = now;
-              return note.update(data);
+              const item = res[0];
+              item.content = content;
+              item.updatedAt = now;
+              return note.update(item);
             });
         } else {
-          const data = { content, createdAt: now, updateAt: now };
+          const data = { content, createdAt: now, updatedAt: now };
           promise = note.push(data);
         }
         return promise.then(() => {
@@ -62,7 +67,6 @@ const param = {
     },
   },
   created() {
-    console.log('noteEdit create');
     this.methods.bindEvents();
     this.methods.fill();
   },

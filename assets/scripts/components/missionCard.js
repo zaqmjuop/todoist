@@ -81,15 +81,22 @@ const param = {
       Dom.of(this.elements.create).on('click', () => {
         window.router.methods.render('welcome', { action: 'edit' });
       });
+      // 筛选
       const filter = Dom.of(this.elements.filter);
       filter.on('input', () => {
         const value = filter.attr('value');
         const items = this.where({ name: 'missionListItem' });
         items.forEach((item) => {
-          if (!item.data.content.match(value)) {
-            Dom.of(item.template).addClass('hide');
-          } else {
+          let isMatch = false;
+          try {
+            isMatch = !!item.data.content.match(value);
+          } catch (err) {
+            isMatch = false;
+          }
+          if (isMatch) {
             Dom.of(item.template).removeClass('hide');
+          } else {
+            Dom.of(item.template).addClass('hide');
           }
         });
       });
