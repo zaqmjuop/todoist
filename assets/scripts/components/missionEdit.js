@@ -1,4 +1,4 @@
-import model from '../model';
+import model from '../model/mission';
 import Dom from '../dom';
 import datepicker from '../lib/datepicker';
 import utils from '../utils';

@@ -58,8 +58,8 @@ const param = {
       const realHeight = Dom.of(box).css('height').match(/\d*/);
       const height = (realHeight && Number(realHeight[0])) || 0;
       top += height;
-      Dom.of(element).attr('data-notice-top', String(top));
       Dom.of(box).css('opacity', '0');
+      Dom.of(element).attr('data-notice-top', String(top));
       // 自动删除
       setTimeout(() => {
         const minus = Number(Dom.of(element).attr('data-notice-top').match(/\d+/)[0]) - height;
@@ -72,5 +72,5 @@ const param = {
     this.methods.bindNoticeEvents(this.template);
   },
 };
-// todo 合并 alert noticeIn共同点
+
 export default param;

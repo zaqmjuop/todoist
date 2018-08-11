@@ -1,5 +1,5 @@
 import Dom from '../dom';
-import mission from '../model';
+import mission from '../model/mission';
 import missionListItem from './missionListItem';
 import utils from '../utils';
 

@@ -1,7 +1,7 @@
 import ArrayStorage from 'arraystorage';
-import utils from './utils';
+import utils from '../utils';
 
-const mission = new ArrayStorage();
+const mission = new ArrayStorage({ databaseName: 'mission' });
 
 const getAll = () => {
   const filter = mission.getAll();
@@ -85,4 +85,3 @@ mission.methods = {
 };
 
 export default mission;
-
