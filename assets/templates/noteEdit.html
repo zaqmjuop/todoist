@@ -3,12 +3,38 @@
 
 <head>
   <style scoped>
+    .template {
+      padding: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      resize: none;
+      overflow-y: scroll;
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: 1px solid #ccf;
+    }
+
+    .option {
+      display: grid;
+      grid-template-columns: 1fr 100px;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 
 <body>
-  <div>
-    note editawddddddddddddddddddddddddddddddd
+  <div class="template">
+    <div class="option">
+      <div class="text-right">
+        <a class="btn" name="cancal">取消</a>
+        <a class="btn" name="submit">保存</a>
+      </div>
+    </div>
+    <textarea rows='20' placeholder="要做什么"></textarea>
   </div>
 </body>
 
