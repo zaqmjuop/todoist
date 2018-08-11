@@ -63,7 +63,6 @@ const router = {
   },
   created() {
     this.methods.init();
-    window.router = this;
   },
 };
 

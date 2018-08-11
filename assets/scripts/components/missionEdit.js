@@ -40,8 +40,7 @@ const param = {
         const content = this.elements.content.value;
         if (!utils.isEffectiveString(content)) {
           const msg = '内容不能为空';
-          const notice = window.notice.methods.render(msg, 'error');
-          Dom.of(this.template).appendAccurate(notice, 0);
+          window.notice.methods.noticeIn(this.template, msg, 'error');
           return msg;
         }
         let date = new Date(this.elements.date.value);

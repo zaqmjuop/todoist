@@ -1,10 +1,12 @@
 import Component from './component';
 import routerParam from './router';
-import alertParam from './alert';
+import noticeParam from './notice';
 
 async function main() {
-  await Component.of(routerParam);
-  await Component.of(alertParam);
+  const router = await Component.of(routerParam);
+  const notice = await Component.of(noticeParam);
+  window.router = router;
+  window.notice = notice;
   return console.log('组件加载完毕');
 }
 

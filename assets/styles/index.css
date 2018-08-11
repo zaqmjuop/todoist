@@ -170,16 +170,6 @@ button[class~=btn-link]:hover{
   opacity: 1;
   font-weight: 700;
 }
-.alert,.confirm{
-  border-radius: 5px;
-  background-color: #555555;
-  color: #fff;
-  font-size: 0.875rem;
-  font-weight: 500;
-  padding: 12px 20px;
-  display: flex;
-  justify-content: space-between;
-}
 .relative{
   position: relative;
 }
