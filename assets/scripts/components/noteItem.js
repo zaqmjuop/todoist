@@ -13,6 +13,7 @@ const param = {
     content: 'p',
     edit: '.edit',
     remove: '.remove',
+    date: '*[name=date]',
   },
   methods: {
     fill() {
@@ -22,7 +23,7 @@ const param = {
           .then((res) => {
             this.data.item = res[0];
             Dom.of(this.elements.content).text(res[0].content);
-            Dom.of(this.elements.header).text(`${res[0].updatedAt.toLocaleDateString()} ${res[0].updatedAt.toLocaleTimeString()}`);
+            Dom.of(this.elements.date).text(`${res[0].updatedAt.toLocaleDateString()} ${res[0].updatedAt.toLocaleTimeString()}`);
           });
       }
       return promise;

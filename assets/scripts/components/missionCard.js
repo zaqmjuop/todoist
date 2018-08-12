@@ -77,10 +77,6 @@ const param = {
       return append;
     },
     bindEvents() {
-      // 进入新建item界面
-      Dom.of(this.elements.create).on('click', () => {
-        window.router.methods.render('welcome', { action: 'edit' });
-      });
       // 筛选
       const filter = Dom.of(this.elements.filter);
       filter.on('input', () => {

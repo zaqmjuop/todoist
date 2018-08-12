@@ -23,10 +23,6 @@ const param = {
         });
     },
     bindEvents() {
-      // 进入新建note界面
-      Dom.of(this.elements.create).on('click', () => {
-        window.router.methods.render('welcome', { action: 'noteEdit' });
-      });
       // 筛选
       const filter = Dom.of(this.elements.filter);
       filter.on('input', () => {

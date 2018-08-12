@@ -54,6 +54,17 @@
     .option {
       border-bottom: 1px solid #eee;
     }
+
+    .pc-create {
+      border: 1px solid #eee;
+      padding: 10px 20px;
+    }
+
+    @media screen and (max-width: 420px) {
+      .pc-create {
+        display: none;
+      }
+    }
   </style>
 </head>
 
@@ -64,7 +75,10 @@
     </div>
     <ul class="card-body">
     </ul>
-    <div class="new" name="create">+</div>
+    <div class="pc-create">
+      <a onclick="window.router.methods.render('welcome', { action: 'noteEdit' });">新建记事</a>
+    </div>
+    <div onclick="window.router.methods.render('welcome', { action: 'noteEdit' });" class="new" name="create">+</div>
   </section>
 </body>
 
