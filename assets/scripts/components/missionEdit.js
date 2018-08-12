@@ -47,9 +47,7 @@ const param = {
         if (!utils.isValidDate(date)) { date = ''; }
         const quadrantSelected = this.elements.quadrant.value || 0;
         const quadrant = model.quadrants[quadrantSelected];
-        const detail = {
-          content, date, state: 'undone', important: quadrant.important, urgent: quadrant.urgent,
-        };
+        const now = new Date();
         let promise;
         if (this.data.primaryKey) {
           promise = model.get(this.data.primaryKey)
@@ -60,10 +58,20 @@ const param = {
               data.state = 'undone';
               data.important = quadrant.important;
               data.urgent = quadrant.urgent;
+              data.updatedAt = now;
               return model.update(data);
             });
         } else {
-          promise = model.push(detail);
+          const data = {
+            content,
+            date,
+            state: 'undone',
+            important: quadrant.important,
+            urgent: quadrant.urgent,
+            createdAt: now,
+            updatedAt: now,
+          };
+          promise = model.push(data);
         }
         return promise.then(() => {
           window.router.methods.render('welcome');

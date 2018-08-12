@@ -5,8 +5,10 @@
   <style scoped>
     .template {
       user-select: none;
-      border: 1px solid #eee;
       height: 100%;
+      border-right: 1px solid #399;
+      background: radial-gradient(#8ba, #8b9);
+      opacity: 0.9;
     }
 
     ul {
@@ -14,7 +16,7 @@
       margin: 0;
       padding: 0;
       height: auto;
-      border-top: 1px solid #eee;
+      border-top: 1px solid #399;
     }
 
     li {
@@ -24,8 +26,18 @@
     }
 
     li:hover {
-      background-color: #eee;
       line-height: 1em;
+      background: linear-gradient(#9cb, #9ca);
+      opacity: 0.9;
+    }
+
+    #currentLink {
+      color: #246;
+      background: linear-gradient(#7a9, #7a8);
+    }
+
+    #currentLink>a {
+      color: #246;
     }
 
     li>* {
@@ -33,6 +45,11 @@
       top: 50%;
       transform: translateY(-50%);
       white-space: nowrap;
+    }
+
+    a {
+      color: #fff;
+      font-weight: 700;
     }
 
     a:hover {
@@ -56,13 +73,6 @@
       width: 20px;
     }
 
-    .header {
-      width: 100%;
-      border-bottom: 1px solid #eee;
-      padding: 1em 0;
-      transition: font-size 2s, font-weight 2s;
-    }
-
     .date,
     .time {
       min-width: 4em;
@@ -74,11 +84,9 @@
       margin-top: 0.5em;
     }
 
+
+
     @media screen and (max-width: 420px) {
-      .header {
-        font-size: 12px;
-        font-weight: 700;
-      }
       a.router>span {
         display: none;
       }
@@ -88,8 +96,6 @@
 
 <body>
   <section class="template">
-    <div class="header text-lg-center">
-    </div>
     <ul>
       <li>
         <a class="router" onclick="window.router.methods.render('welcome', {query: 'all'})" title="所有任务">
@@ -121,7 +127,7 @@
         <a class="router" onclick="window.router.methods.render('welcome', {action: 'quadrants'})">四象限</a>
       </li>
       <li>
-        <a class="router" onclick="window.router.methods.render('welcome', {action: 'noteCard'})">noteCard</a>
+        <a class="router" onclick="window.router.methods.render('welcome', {action: 'noteCard'})">便签</a>
       </li>
     </ul>
   </section>

@@ -5,6 +5,9 @@ import quadrants from './quadrants';
 import noteCard from './noteCard';
 import noteEdit from './noteEdit';
 import Dom from '../dom';
+import Component from './component';
+
+const left = Component.of(leftMenu);
 
 const text = {
   all: '所有任务',
@@ -42,6 +45,8 @@ const param = {
     },
   },
   created() {
+    // 左侧选项栏
+    this.appendChild(left, this.elements.left, 0);
     // 右侧子页面
     if (this.present.action === 'edit') {
       missionEdit.present = this.present;
@@ -63,6 +68,5 @@ const param = {
     this.methods.init();
     this.methods.fill();
   },
-  components: [leftMenu],
 };
 export default param;

@@ -71,6 +71,7 @@ class Dom {
   attr(key, value) {
     // 查看或修改元素的属性
     // 如果参数key是text或html 则修改innerText或innerHTML
+    if (!this.dom) { return null; }
     if (!isEffectiveString(key)) { throw new TypeError(`参数key不能为 ${key}`); }
     let result = this;
     if (arguments.length > 1) {
