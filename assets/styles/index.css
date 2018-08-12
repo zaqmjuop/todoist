@@ -6,9 +6,11 @@ body{
   background-color: #FAFAFA;
 }
 a{
-  color: blue;
+  color: #033;
   text-decoration: none;
   user-select: none;
+  
+  opacity: 0.9;
 }
 a:hover{
   cursor: pointer;
@@ -16,16 +18,25 @@ a:hover{
 }
 a[class~=btn]{
   padding: 3px 5px;
-  border: 1px solid blue;
+  border: 1px solid #033;
   border-radius: 5px;
   line-height: 2em;
+  background: linear-gradient(#efe 50%, #dfd 80%);
 }
 a.btn{
   display: inline-block;
   line-height: 1em;
 }
-input:focus{
-  outline-color: #9cf;
+input, textarea{
+  border-color: #699;
+  border-style: solid;
+  border-width: 1px;
+  padding: 3px 5px;
+}
+input:focus,textarea:focus{
+  outline-color: #6f9;
+  outline-width: 2px;
+  box-shadow: 0px 0px 5px #6f9;
 }
 input[type=checkbox].slider {
   width: 2em;
