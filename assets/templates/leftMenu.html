@@ -73,19 +73,6 @@
       width: 20px;
     }
 
-    .date,
-    .time {
-      min-width: 4em;
-      font-size: 1em;
-      margin: 0 auto;
-    }
-
-    .time {
-      margin-top: 0.5em;
-    }
-
-
-
     @media screen and (max-width: 420px) {
       a.router>span {
         display: none;
@@ -97,37 +84,37 @@
 <body>
   <section class="template">
     <ul>
-      <li>
-        <a class="router" onclick="window.router.methods.render('welcome', {query: 'all'})" title="所有任务">
+      <li onclick="window.router.methods.render('welcome', {query: 'all'})">
+        <a class="router" title="所有任务">
           <img src="../images/icons/home.png">
           <span>所有任务</span>
         </a>
       </li>
-      <li>
-        <a class="router" onclick="window.router.methods.render('welcome', {query: 'undone'})" title="未完成">
+      <li onclick="window.router.methods.render('welcome', {query: 'undone'})">
+        <a class="router" title="未完成">
           <img src="../images/icons/play-circle.png">
           <span>未完成</span>
         </a>
       </li>
-      <li>
-        <a class="router" onclick="window.router.methods.render('welcome', {query: 'done'})" title="已完成">
+      <li onclick="window.router.methods.render('welcome', {query: 'done'})">
+        <a class="router" title="已完成">
           <img src="../images/icons/check-circle.png">
           <span>已完成</span>
         </a>
       </li>
-      <li>
-        <a class="router" onclick="window.router.methods.render('welcome', {query: 'expired'})" title="已过期">
+      <li onclick="window.router.methods.render('welcome', {query: 'expired'})">
+        <a class="router" title="已过期">
           <img src="../images/icons/warning-circle.png">
           <span>已过期</span>
         </a>
       </li>
     </ul>
     <ul>
-      <li>
-        <a class="router" onclick="window.router.methods.render('welcome', {action: 'quadrants'})">四象限</a>
+      <li onclick="window.router.methods.render('welcome', {action: 'quadrants'})">
+        <a class="router">四象限</a>
       </li>
-      <li>
-        <a class="router" onclick="window.router.methods.render('welcome', {action: 'noteCard'})">便签</a>
+      <li onclick="window.router.methods.render('welcome', {action: 'noteCard'})">
+        <a class="router">便签</a>
       </li>
     </ul>
   </section>

@@ -6,7 +6,6 @@
     .card {
       position: relative;
       margin: 0;
-      border: 1px solid #eee;
       display: flex;
       flex-direction: column;
       height: 100%;
@@ -21,19 +20,13 @@
     .card-header {
       padding: 10px 2em;
       line-height: 2em;
-      background-color: #fff;
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid #cfc;
       min-height: 3em;
       display: flex;
-      justify-content:space-between;
+      justify-content: space-between;
     }
 
-    .create-mission {
-      padding: 10px 2em;
-      line-height: 2em;
-      border-bottom: 1px solid #eee;
-    }
-    .new{
+    .new {
       user-select: none;
       position: fixed;
       bottom: 1em;
@@ -41,23 +34,26 @@
       text-align: center;
       z-index: 2;
       opacity: 0.9;
-      background-color: #36f;
+      background-color: #0cc;
       color: #fff;
       font-size: 2em;
       line-height: 1em;
       width: 1em;
       height: 1em;
-      box-shadow: 0 0 5px #69f;
+      box-shadow: 0 0 5px #f00;
     }
-    .option{
-      border-bottom: 1px solid #eee;
-    }
-    .pc-create{
-      border: 1px solid #eee;
+
+    .pc-create {
       padding: 10px 20px;
+      background: linear-gradient(#efe, #ded);
     }
-    @media screen and (max-width: 420px){
-      .pc-create{
+
+    .pc-create>a {
+      color: #066;
+    }
+
+    @media screen and (max-width: 420px) {
+      .pc-create {
         display: none;
       }
     }
@@ -66,7 +62,7 @@
 
 <body>
   <section class="card">
-    <div class="option">
+    <div class="option card-header">
       <input class="filter" type="text" placeholder="筛选">
     </div>
     <ul class="card-body">

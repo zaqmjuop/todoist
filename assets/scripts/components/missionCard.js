@@ -18,7 +18,6 @@ const param = {
   selectors: {
     form: 'mission-form',
     cardHeader: '.card-header',
-    createMission: '.create-mission',
     cardBody: '.card-body',
     create: '*[name=create]',
     filter: '.filter',
