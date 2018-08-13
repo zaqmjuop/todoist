@@ -8,12 +8,9 @@ const param = {
   name: 'missionListItem',
   selectors: {
     template: '.template',
-    content: '.item-content',
-    date: '.item-date',
-    finish: '.finish',
-    remove: 'a[name=remove]',
-    update: 'a[name=update]',
-    toggle: 'input[name=toggle]',
+    content: '.content',
+    date: '.date',
+    toggle: '.toggle',
   },
   data() {
     return {
@@ -48,8 +45,8 @@ const param = {
           });
         return promise;
       });
-      // 更新按钮
-      Dom.of(this.elements.update).on('click', () => {
+      // 更新按钮 点击content跳转到edit
+      Dom.of(this.elements.content).on('click', () => {
         window.router.methods.render('welcome', { action: 'edit', primaryKey: this.data.item.primaryKey });
       });
     },

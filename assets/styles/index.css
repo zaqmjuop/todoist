@@ -9,12 +9,13 @@ a{
   color: #033;
   text-decoration: none;
   user-select: none;
-  
-  opacity: 0.9;
+  word-break: keep-all;  
+  opacity: 1;
 }
 a:hover{
   cursor: pointer;
   text-decoration: underline;
+  
 }
 a[class~=btn]{
   padding: 3px 5px;

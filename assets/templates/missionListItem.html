@@ -4,54 +4,19 @@
 <head>
   <style scoped>
     li {
-      width: calc(100% - 3em);
-      height: 100px;
       position: relative;
-      padding: 5px;
-      margin: 0;
       width: 100%;
-      border-bottom: 1px solid #666;
-      line-height: 2em;
-      overflow-y: hidden;
-      user-select: none;
+      display: grid;
+      grid-template-rows: 2em 1fr;
     }
 
-    .item-content {
-      overflow-y: visible;
-    }
-
-    .item-content:hover {
-      cursor: text;
-    }
-
-    .done .item-content,
-    .done .item-date {
+    .done .content,
+    .done .date {
       text-decoration: line-through;
-    }
-
-    .item-date {
-      color: #999;
-      font-style: italic;
-      font-weight: 500;
     }
 
     .expired {
       color: #f00;
-    }
-
-    .btn {
-      word-break: keep-all;
-      user-select: none;
-    }
-
-    @media screen and (max-width: 420px) {
-      .item-main-left {
-        max-width: 80%;
-      }
-
-      .btn:nth-child(n+2) {
-        margin-top: 5px;
-      }
     }
 
     p {
@@ -62,50 +27,24 @@
       word-wrap: break-word;
     }
 
-    span {
-      display: inline-block;
-    }
-
-    .top {
-      position: relative;
-      display: grid;
-      grid-template-columns: 3em 1fr;
-    }
-
     .slider {
       position: absolute;
     }
-
-    .toggle {
-      text-align: center;
-    }
-
-    .option {
-      display: grid;
-      grid-template-columns:  3em 1fr 100px;
+    .header{
+      display: flex;
+      align-items: center;
     }
   </style>
-  <!-- "\f05d" √  "\f10c" ○  -->
 
 </head>
 
 <body>
   <li class="template">
-    <div class="top">
-      <span class="toggle">
-        <input class="slider" name="toggle" type="checkbox" title="切换任务状态">
-      </span>
-      <p class="item-content" title="修改内容">
-        内容
-      </p>
+    <div class="header">
+      <input class="slider toggle" type="checkbox" title="切换任务状态">
+      <span class="date">日期的位置</span>
     </div>
-    <div class="option">
-      <span></span>
-      <span class="item-date">日期的位置</span>
-      <div>
-        <a class="btn" name="update">更新</a>
-      </div>
-    </div>
+    <p class="content" title="修改内容"> 内容 </p>
   </li>
 </body>
 
