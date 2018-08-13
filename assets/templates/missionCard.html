@@ -20,7 +20,7 @@
     .card-header {
       padding: 10px 2em;
       line-height: 2em;
-      border-bottom: 1px solid #cfc;
+      border-bottom: 1px solid #9c9;
       min-height: 3em;
       display: flex;
       justify-content: space-between;
@@ -42,21 +42,6 @@
       height: 1em;
       box-shadow: 0 0 5px #f00;
     }
-
-    .pc-create {
-      padding: 10px 20px;
-      background: linear-gradient(#efe, #ded);
-    }
-
-    .pc-create>a {
-      color: #066;
-    }
-
-    @media screen and (max-width: 420px) {
-      .pc-create {
-        display: none;
-      }
-    }
   </style>
 </head>
 
@@ -67,9 +52,6 @@
     </div>
     <ul class="card-body">
     </ul>
-    <div class="pc-create">
-      <a onclick="window.router.methods.render('welcome', { action: 'edit' });">新建任务</a>
-    </div>
     <div onclick="window.router.methods.render('welcome', { action: 'edit' });" class="new" name="create">+</div>
   </section>
 </body>
