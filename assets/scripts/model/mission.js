@@ -47,13 +47,11 @@ const getMark = (mark) => {
 };
 
 const getObj = (obj) => {
-  console.log(obj)
   const keys = Object.keys(obj);
   const filter = mission.filter((item) => {
     const isMatch = keys.every(key => (item[key] === obj[key]));
     return isMatch;
   });
-  filter.then((res)=> console.log(res))
   return filter;
 };
 

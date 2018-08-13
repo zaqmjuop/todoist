@@ -34,7 +34,7 @@ const param = {
     bindEvents() {
       // 撤销按钮
       Dom.of(this.elements.cancal).on('click', () => {
-        window.router.methods.render('welcome');
+        window.router.methods.render('welcome', { action: 'quadrants' });
       });
       // 删除按钮
       Dom.of(this.elements.remove).on('click', () => {
@@ -84,7 +84,7 @@ const param = {
           promise = mission.push(data);
         }
         return promise.then(() => {
-          window.router.methods.render('welcome');
+          window.router.methods.render('welcome', { action: 'quadrants' });
           const msg = '保存成功';
           window.notice.methods.alert(msg, 'success');
           return msg;
@@ -126,7 +126,6 @@ const param = {
           });
       } else {
         Dom.of(this.elements.remove).addClass('hide');
-        console.log(0)
       }
       return promise;
     },
