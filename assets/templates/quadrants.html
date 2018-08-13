@@ -13,43 +13,54 @@
 
     .template>div {
       overflow-y: auto;
+      border-width: 3px;
+      border-style: solid;
+      margin: 1px;
     }
 
     .urgent-important {
-      background-color: red;
+      background: linear-gradient(#fee, #ecc 40%);
+      border-color: #e03;
     }
 
     .urgent-not-important {
-      background-color: gold;
+      background: linear-gradient(#ffd, #eeb 40%);
+      border-color: #f90;
     }
 
     .not-urgent-important {
-      background-color: green;
+      background: linear-gradient(#eef, #cce 40%);
+      border-color: #06c;
     }
 
     .not-urgent-not-important {
-      background-color: gainsboro;
+      background: linear-gradient(#eee, #ddd 40%);
+      border-color: #999;
     }
 
     h6{
       margin: 0;
       text-align: center;
     }
+    .card{
+      display: grid;
+      grid-template-rows: 2em 1fr;
+    }
   </style>
 </head>
 
 <body>
   <div class="template">
-    <div class="urgent-important" data-position="urgent-important">
+    <div class="card urgent-important" data-position="urgent-important">
       <h6>重要 紧急</h6>
     </div>
-    <div class="urgent-not-important" data-position="urgent-not-important">
+    <div class="card urgent-not-important" data-position="urgent-not-important">
       <h6>不重要 紧急</h6>
     </div>
-    <div class="not-urgent-important" data-position="not-urgent-important">
+    <div class="card not-urgent-important" data-position="not-urgent-important">
       <h6>重要 不紧急</h6>
     </div>
-    <div class="not-urgent-not-important" data-position="not-urgent-not-important">
+    <div class="card not-urgent-not-important" data-position="not-urgent-not-important">
       <h6>不重要 不紧急</h6>
     </div>
   </div>

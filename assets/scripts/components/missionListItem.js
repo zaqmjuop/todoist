@@ -32,20 +32,21 @@ const param = {
       const toggle = Dom.of(this.elements.toggle);
       toggle.on('click', () => {
         const toggleState = (toggle.dom.checked) ? 'done' : 'undone';
-        const data = {
-          content: this.present.content,
-          date: (utils.isValidDate(this.present.date)) ? this.present.date : '',
-          primaryKey: Number(this.present.primaryKey),
-          state: toggleState,
-        };
-        mission.update(data).then(() => {
-          this.data.state = data.state;
-          if (toggleState === 'done') {
-            Dom.of(this.template).addClass('done');
-          } else {
-            Dom.of(this.template).removeClass('done');
-          }
-        });
+        const promise = mission.get(Number(this.present.primaryKey))
+          .then((res) => {
+            const data = res[0];
+            data.state = toggleState;
+            data.updatedAt = new Date();
+            return mission.update(data);
+          }).then(() => {
+            this.data.state = toggleState.state;
+            if (toggleState === 'done') {
+              Dom.of(this.template).addClass('done');
+            } else {
+              Dom.of(this.template).removeClass('done');
+            }
+          });
+        return promise;
       });
       // 更新按钮
       Dom.of(this.elements.update).on('click', () => {
