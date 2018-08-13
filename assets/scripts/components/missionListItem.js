@@ -70,6 +70,20 @@ const param = {
         this.elements.toggle.checked = 0;
       }
     },
+    match(value) {
+      // 匹配字符串，如匹配就显示，否则隐藏
+      let isMatch = false;
+      try {
+        isMatch = !!this.data.item.content.match(value);
+      } catch (err) {
+        isMatch = false;
+      }
+      if (isMatch) {
+        Dom.of(this.template).removeClass('hide');
+      } else {
+        Dom.of(this.template).addClass('hide');
+      }
+    },
   },
   created() {
     this.methods.init();

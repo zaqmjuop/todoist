@@ -81,19 +81,7 @@ const param = {
       filter.on('input', () => {
         const value = filter.attr('value');
         const items = this.where({ name: 'missionListItem' });
-        items.forEach((item) => {
-          let isMatch = false;
-          try {
-            isMatch = !!item.data.content.match(value);
-          } catch (err) {
-            isMatch = false;
-          }
-          if (isMatch) {
-            Dom.of(item.template).removeClass('hide');
-          } else {
-            Dom.of(item.template).addClass('hide');
-          }
-        });
+        items.forEach((item) => { item.methods.match(value); });
       });
     },
   },
