@@ -120,14 +120,16 @@ class Component {
   }
   lifeCycle() {
     // 生命周期
+    let promise = Promise.resolve(1);
     if (utils.isFunction(this.created)) {
-      this.created();
+      promise = promise.then(() => this.created());
     }
-    this.implant();
+    promise = promise.then(() => this.implant());
     if (utils.isFunction(this.implanted)) {
-      this.implanted();
+      promise = promise.then(() => this.implanted());
     }
     this.state = 'implanted';
+    return promise;
   }
   defineParent() {
     // 修改this.parent的getter和setter

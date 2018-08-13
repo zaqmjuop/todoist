@@ -14,25 +14,32 @@ const router = {
       state: {},
       origin: window.location.href.match(/^[^#]+/)[0],
       href: window.location.href,
+      home: 'welcome',
     };
   },
   route: {
     welcome,
   },
   methods: {
-    init() {
-      if (this.data.inited) { return false; }
-      this.data.inited = 1;
+    init(path, state) {
+      // 若init有参数则初始化跳转到Init参数
+      // 否则若有有效url则跳转到有效url
+      // 否则跳转到this.data.home
+      if (this.data.initPromise) { return this.data.initPromise; }
+      this.data.initPromise = Promise.resolve(1);
       // 页面加载时若存在 #/route/ 就跳转，否则跳转到route第一个
-      const home = Object.keys(this.route)[0];
-      let way = home;
       const hashMatch = window.location.hash.match(/#\u002f([^?\u002f]+)/);
-      if (hashMatch) {
-        const hash = hashMatch[1];
-        way = hash;
+      const home = { path, state };
+      if (!path) {
+        if (hashMatch) {
+          home.path = hashMatch[1];
+        } else {
+          home.path = this.data.home;
+        }
       }
-      this.methods.render(way);
-      return this;
+      this.data.initPromise = this.data.initPromise
+        .then(() => this.methods.render(home.path, home.state));
+      return this.data.initPromise;
     },
     // 不刷新页面改变path
     // 参数path是this.route指定的组件，state会作为present传入
@@ -62,7 +69,7 @@ const router = {
     },
   },
   created() {
-    this.methods.init();
+    return this.methods.init();
   },
 };
 
