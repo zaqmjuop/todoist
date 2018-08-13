@@ -10,9 +10,11 @@ const param = {
     return {};
   },
   selectors: {
+    card: '.card',
     create: '*[name=create]',
     cardBody: '.card-body',
     filter: '.filter',
+    background: '.background',
   },
   methods: {
     loadDB() {

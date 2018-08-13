@@ -45,6 +45,13 @@
     .card{
       display: grid;
       grid-template-rows: 2em 1fr;
+      position: relative;
+    }
+    .title{
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
     }
   </style>
 </head>
@@ -52,16 +59,16 @@
 <body>
   <div class="template">
     <div class="card urgent-important" data-position="urgent-important">
-      <h6>重要 紧急</h6>
+      <h6 class="title">重要 紧急</h6>
     </div>
     <div class="card urgent-not-important" data-position="urgent-not-important">
-      <h6>不重要 紧急</h6>
+      <h6 class="title">不重要 紧急</h6>
     </div>
     <div class="card not-urgent-important" data-position="not-urgent-important">
-      <h6>重要 不紧急</h6>
+      <h6 class="title">重要 不紧急</h6>
     </div>
     <div class="card not-urgent-not-important" data-position="not-urgent-not-important">
-      <h6>不重要 不紧急</h6>
+      <h6 class="title">不重要 不紧急</h6>
     </div>
   </div>
 </body>
