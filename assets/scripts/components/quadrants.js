@@ -23,8 +23,8 @@ const param = {
             const position = Dom.of(box).attr('data-position');
             this.data.urgent = !position.match('not-urgent');
             this.data.important = !position.match('not-important');
-            this.data.top = (this.data.urgent) ? 5 : 0.2;
-            this.data.left = (this.data.important) ? 4 : 0.25;
+            this.data.top = (this.data.urgent) ? 10 : 0.1;
+            this.data.left = (this.data.important) ? 10 : 0.1;
             this.methods.changeSize();
             // 添加missionCard到该box
             const existCard = this.findBy({ name: 'missionCard' });
