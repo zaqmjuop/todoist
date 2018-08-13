@@ -1,4 +1,4 @@
-import model from '../model/mission';
+import mission from '../model/mission';
 import Dom from '../dom';
 import datepicker from '../lib/datepicker';
 import utils from '../utils';
@@ -15,6 +15,7 @@ const param = {
     date: 'input[name=date]',
     cancal: '*[name=cancal]',
     submit: '*[name=submit]',
+    remove: '*[name=remove]',
     quadrant: '*[name=quadrant]',
   },
   methods: {
@@ -35,6 +36,15 @@ const param = {
       Dom.of(this.elements.cancal).on('click', () => {
         window.router.methods.render('welcome');
       });
+      // 删除按钮
+      Dom.of(this.elements.remove).on('click', () => {
+        if (!this.data.primaryKey) { return Promise.resolve('没有查询到数据'); }
+        return mission.remove(this.data.primaryKey)
+          .then(() => {
+            window.router.methods.render('welcome', { action: 'quadrants' });
+            window.notice.methods.alert('删除一条任务');
+          });
+      });
       // 提交按钮
       Dom.of(this.elements.submit).on('click', () => {
         const content = this.elements.content.value;
@@ -46,11 +56,11 @@ const param = {
         let date = new Date(this.elements.date.value);
         if (!utils.isValidDate(date)) { date = ''; }
         const quadrantSelected = this.elements.quadrant.value || 0;
-        const quadrant = model.quadrants[quadrantSelected];
+        const quadrant = mission.quadrants[quadrantSelected];
         const now = new Date();
         let promise;
         if (this.data.primaryKey) {
-          promise = model.get(this.data.primaryKey)
+          promise = mission.get(this.data.primaryKey)
             .then((res) => {
               const data = res[0];
               data.content = content;
@@ -59,7 +69,7 @@ const param = {
               data.important = quadrant.important;
               data.urgent = quadrant.urgent;
               data.updatedAt = now;
-              return model.update(data);
+              return mission.update(data);
             });
         } else {
           const data = {
@@ -71,7 +81,7 @@ const param = {
             createdAt: now,
             updatedAt: now,
           };
-          promise = model.push(data);
+          promise = mission.push(data);
         }
         return promise.then(() => {
           window.router.methods.render('welcome');
@@ -85,7 +95,7 @@ const param = {
       if (this.data.action === 'create') {
         return Promise.resolve(1);
       }
-      const promise = model.get(this.present.primaryKey)
+      const promise = mission.get(this.present.primaryKey)
         .then((items) => {
           const item = items[0];
           const attrs = Object.keys(item);
@@ -99,13 +109,13 @@ const param = {
       let promise = Promise.resolve(1);
       if (this.data.primaryKey) {
         promise = promise
-          .then(() => model.get(this.data.primaryKey))
+          .then(() => mission.get(this.data.primaryKey))
           .then((res) => {
             const data = res[0];
             Dom.of(this.elements.content).text(data.content);
             Dom.of(this.elements.date).attr('value', utils.formatDate(data.date));
             // 四象限选项
-            const quadrantSelect = model.quadrants.findIndex((item) => {
+            const quadrantSelect = mission.quadrants.findIndex((item) => {
               const isMatch = (item.important === !!data.important)
                 && (item.urgent === !!data.urgent);
               return isMatch;
@@ -114,6 +124,9 @@ const param = {
               this.elements.quadrant.value = quadrantSelect;
             }
           });
+      } else {
+        Dom.of(this.elements.remove).addClass('hide');
+        console.log(0)
       }
       return promise;
     },

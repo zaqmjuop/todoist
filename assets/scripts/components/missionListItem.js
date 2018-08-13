@@ -52,17 +52,6 @@ const param = {
       Dom.of(this.elements.update).on('click', () => {
         window.router.methods.render('welcome', { action: 'edit', primaryKey: this.data.primaryKey });
       });
-      // 删除按钮
-      Dom.of(this.elements.remove).on('click', () => {
-        this.template.style.height = '0px';
-        this.template.style.paddingTop = '0px';
-        this.template.style.paddingBottom = '0px';
-        const promise = new Promise((resolve) => {
-          setTimeout(() => resolve(this.parent.removeChild(this)), 1000);
-        })
-          .then(() => mission.remove(this.present.primaryKey));
-        return promise;
-      });
     },
     fill() {
       this.present = this.present || {};

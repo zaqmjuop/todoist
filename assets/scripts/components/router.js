@@ -69,7 +69,7 @@ const router = {
     },
   },
   created() {
-    return this.methods.init();
+    return this.methods.init('welcome', { action: 'quadrants' });
   },
 };
 
