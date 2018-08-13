@@ -32,14 +32,14 @@ const param = {
       const toggle = Dom.of(this.elements.toggle);
       toggle.on('click', () => {
         const toggleState = (toggle.dom.checked) ? 'done' : 'undone';
-        const promise = mission.get(Number(this.present.primaryKey))
+        const promise = mission.get(Number(this.data.item.primaryKey))
           .then((res) => {
             const data = res[0];
             data.state = toggleState;
             data.updatedAt = new Date();
             return mission.update(data);
           }).then(() => {
-            this.data.state = toggleState.state;
+            this.data.item.state = toggleState.state;
             if (toggleState === 'done') {
               Dom.of(this.template).addClass('done');
             } else {
@@ -50,24 +50,22 @@ const param = {
       });
       // 更新按钮
       Dom.of(this.elements.update).on('click', () => {
-        window.router.methods.render('welcome', { action: 'edit', primaryKey: this.data.primaryKey });
+        window.router.methods.render('welcome', { action: 'edit', primaryKey: this.data.item.primaryKey });
       });
     },
     fill() {
-      this.present = this.present || {};
-      this.data.content = this.present.content;
-      this.data.date = this.present.date;
-      this.data.primaryKey = this.present.primaryKey;
-      this.data.formId = this.present.formId;
-      this.data.state = this.present.state || 'undone';
-      const dateStr = utils.formatDate(this.present.date);
-      Dom.of(this.elements.content).attr('text', this.present.content);
+      if (!this.present.primaryKey) { throw new Error('missionListItem没有primaryKey'); }
+      this.data.item = this.present;
+      const dateStr = utils.formatDate(this.data.item.date);
+      Dom.of(this.elements.content).attr('text', this.data.item.content);
       Dom.of(this.elements.date).attr('text', dateStr);
-      if (this.present.date instanceof Date && utils.differDay(this.present.date, utils.now) > 0) {
+      const isExpired = this.data.item.date instanceof Date
+        && utils.differDay(this.data.item.date, utils.now) > 0;
+      if (isExpired) {
         Dom.of(this.elements.date).addClass('expired');
       }
-      Dom.of(this.template).attr('data-primaryKey', this.present.primaryKey);
-      if (this.present.state === 'done') {
+      Dom.of(this.template).attr('data-primaryKey', this.data.item.primaryKey);
+      if (this.data.item.state === 'done') {
         Dom.of(this.template).addClass('done');
         this.elements.toggle.checked = 1;
       } else {

@@ -12,32 +12,21 @@ const param = {
     header: '.header',
     content: 'p',
     edit: '.edit',
-    remove: '.remove',
     date: '*[name=date]',
   },
   methods: {
     fill() {
-      let promise = Promise.resolve(1);
-      if (this.present.primaryKey) {
-        promise = note.get(this.present.primaryKey)
-          .then((res) => {
-            this.data.item = res[0];
-            Dom.of(this.elements.content).text(res[0].content);
-            Dom.of(this.elements.date).text(`${res[0].updatedAt.toLocaleDateString()} ${res[0].updatedAt.toLocaleTimeString()}`);
-          });
-      }
-      return promise;
+      if (!this.present) { throw new Error('noteItem没有primaryKey'); }
+      this.data.item = this.present;
+      const time = `${this.data.item.updatedAt.toLocaleDateString()} ${this.data.item.updatedAt.toLocaleTimeString()}`;
+      Dom.of(this.elements.date).text(time);
+      Dom.of(this.elements.content).text(this.data.item.content);
+      return this.data.item;
     },
     bindEvents() {
       // 修改按钮
       Dom.of(this.elements.edit).on('click', () => {
         window.router.methods.render('welcome', { action: 'noteEdit', primaryKey: this.data.item.primaryKey });
-      });
-      // 删除按钮
-      Dom.of(this.elements.remove).on('click', () => {
-        Dom.of(this.template).addClass('hide');
-        note.remove(this.data.item.primaryKey)
-          .then(() => Dom.of(this.template).remove());
       });
     },
   },

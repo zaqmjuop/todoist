@@ -14,6 +14,7 @@ const param = {
     content: 'textarea',
     cancal: '*[name=cancal]',
     submit: '*[name=submit]',
+    remove: '*[name=remove]',
   },
   methods: {
     fill() {
@@ -33,6 +34,15 @@ const param = {
       // 撤销按钮
       Dom.of(this.elements.cancal).on('click', () => {
         window.router.methods.render('welcome', { action: 'noteCard' });
+      });
+      // 删除按钮
+      Dom.of(this.elements.remove).on('click', () => {
+        const promise = note.remove(this.data.item.primaryKey)
+          .then(() => {
+            window.router.methods.render('welcome', { action: 'noteCard' });
+            window.notice.methods.alert('删除一条便签');
+          });
+        return promise;
       });
       // 提交按钮
       Dom.of(this.elements.submit).on('click', () => {

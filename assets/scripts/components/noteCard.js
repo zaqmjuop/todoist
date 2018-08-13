@@ -60,8 +60,8 @@ const param = {
   },
   created() {
     this.methods.bindEvents();
-    // return this.methods.loadDB()
-    //   .then(() => this.methods.fill());
+    return this.methods.loadDB()
+      .then(() => this.methods.fill());
   },
 };
 

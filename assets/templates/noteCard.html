@@ -10,12 +10,15 @@
       display: flex;
       flex-direction: column;
       height: 100%;
+      width: 100%;
     }
 
     ul {
       margin: 0;
       list-style: none;
       padding: 0;
+      width: 100%;
+      height: 100%;
     }
 
     .card-header {
@@ -51,21 +54,20 @@
       top: 0;
       left: 0;
       z-index: -1;
-      opacity: 0.4;
+      opacity: 0.3;
     }
   </style>
 </head>
 
 <body>
   <section class="card">
-    <img class="background" src="../images/noteBack.jpg">
     <div class="option card-header">
       <input class="filter" type="text" placeholder="筛选">
     </div>
     <ul class="card-body">
     </ul>
     <div onclick="window.router.methods.render('welcome', { action: 'noteEdit' });" class="new" name="create">+</div>
-
+    <img class="background" src="../images/noteBack.jpg">
   </section>
 </body>
 
