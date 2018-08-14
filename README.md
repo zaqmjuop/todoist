@@ -29,7 +29,6 @@ Mobile界面
     * /leftMenu.html 左侧菜单栏
     * /missionCard.html 右侧清单主体
     * /missionListItem.html 任务条目
-    * /missionForm.html 任务表单
 * Controller 层
   * /assets/scripts/components 控制器和组件主要目录
     * /component.js Controller核心控制文件

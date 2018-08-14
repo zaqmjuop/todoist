@@ -32,10 +32,18 @@ const param = {
       return promise;
     },
     bindEvents() {
+      // 跳转到四象限页面
+      const redirectHome = () => window.router.methods.render('welcome', { action: 'quadrants' });
       // 撤销按钮
-      Dom.of(this.elements.cancal).on('click', () => {
-        window.router.methods.render('welcome', { action: 'quadrants' });
-      });
+      Dom.of(this.elements.cancal).on('click', () => redirectHome);
+      // 绑定ESC
+      const touchEsc = (event) => {
+        if (event.keyCode === 27) {
+          redirectHome();
+          document.removeEventListener('keydown', touchEsc);
+        }
+      };
+      document.addEventListener('keydown', touchEsc);
       // 删除按钮
       Dom.of(this.elements.remove).on('click', () => {
         if (!this.data.primaryKey) { return Promise.resolve('没有查询到数据'); }
