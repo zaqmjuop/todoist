@@ -35,7 +35,16 @@ const param = {
             card.present = card.present || {};
             card.present.query = { important: !!this.data.important, urgent: !!this.data.urgent };
             this.appendChild(card, box, 2)
-              .then(() => { this.data.currentBox = box; });
+              .then(() => {
+                // 把上一个currentBox的title恢复到中间，把下一个currentBox移到右侧
+                if (this.data.currentBox) {
+                  const beforeTitle = Dom.of(this.data.currentBox).child('.title');
+                  Dom.of(beforeTitle).removeClass('hide');
+                }
+                this.data.currentBox = box;
+                const title = Dom.of(this.data.currentBox).child('.title');
+                Dom.of(title).addClass('hide');
+              });
           }
         });
       });
@@ -48,7 +57,6 @@ const param = {
   },
   created() {
     this.methods.bindEvents();
-    this.methods.changeSize();
     this.template.firstElementChild.click();
   },
 };

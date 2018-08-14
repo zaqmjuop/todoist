@@ -7,8 +7,9 @@
       position: relative;
       width: 100%;
       display: grid;
-      grid-template-rows: 2em 1fr;
+      grid-template-rows: 1fr 2em;
       grid-template-columns: 3em 1fr;
+      align-items: center;
       background: linear-gradient(rgba(240, 240, 240, 0.4), rgba(224, 224, 224, 0.6));
       padding: 5px 1em 5px 1em;
       border: 1px solid #ccc;
@@ -28,17 +29,14 @@
     }
 
     .content {
-      font-size: 120%;
+      font-size: 1em;
       cursor: pointer;
-    }
-    .expired {
-      color: #f66;
-      font-weight: 900;
     }
 
     p {
       margin: 0;
       line-height: 1.5em;
+      font-size: 1em;
       white-space: pre-wrap;
       word-break: break-all;
       word-wrap: break-word;
@@ -48,8 +46,33 @@
       position: absolute;
       top: 0.8em;
     }
-    .hide{
+
+    .hide {
       display: none;
+    }
+
+    .green {
+      color: #093;
+    }
+
+    .blue {
+      color: #00e;
+    }
+
+    .red {
+      color: #e00;
+      font-weight: 900;
+    }
+
+    .yellow {
+      color: #f80;
+      font-weight: 700;
+    }
+
+    @media screen and (max-width: 420px) {
+      .content {
+        font-size: 87.5%;
+      }
     }
   </style>
 
@@ -57,8 +80,10 @@
 
 <body>
   <li class="template">
-    <input class="slider toggle" type="checkbox" title="切换任务状态">    
-    <p class="content" title="修改内容"> 内容 </p>
+    <input class="slider toggle" type="checkbox" title="切换任务状态">
+    <p class="content" title="修改内容"> 内容
+      <br>asda
+      <br>asd </p>
     <span></span>
     <span class="date">日期的位置</span>
   </li>

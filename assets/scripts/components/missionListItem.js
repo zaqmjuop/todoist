@@ -56,10 +56,18 @@ const param = {
       const dateStr = utils.formatDate(this.data.item.date);
       Dom.of(this.elements.content).attr('text', this.data.item.content);
       Dom.of(this.elements.date).attr('text', dateStr);
-      const isExpired = this.data.item.date instanceof Date
-        && utils.differDay(this.data.item.date, utils.now) > 0;
-      if (isExpired) {
-        Dom.of(this.elements.date).addClass('expired');
+      if (this.data.item.date instanceof Date) {
+        // rest 为1表示剩余1天，-1表示过期一天，0表示当天
+        const rest = utils.differDay(utils.now, this.data.item.date);
+        let dateColor = 'green';
+        if (rest < 0) {
+          dateColor = 'red';
+        } else if (rest < 2) {
+          dateColor = 'yellow';
+        } else if (rest < 8) {
+          dateColor = 'blue';
+        }
+        Dom.of(this.elements.date).addClass(dateColor);
       }
       Dom.of(this.template).attr('data-primaryKey', this.data.item.primaryKey);
       if (this.data.item.state === 'done') {

@@ -92,7 +92,7 @@ const param = {
       });
     },
     loadDB() {
-      if (this.data.action === 'create') {
+      if (this.data.action === 'create' || !this.present.primaryKey) {
         return Promise.resolve(1);
       }
       const promise = mission.get(this.present.primaryKey)

@@ -1,3 +1,14 @@
+const getEnv = () => {
+  let isBrowser;
+  try {
+    isBrowser = !!window;
+  } catch (error) {
+    isBrowser = false;
+  }
+  const env = (isBrowser) ? 'browser' : 'node';
+  return env;
+};
+
 const isKeyEnter = event => ((event instanceof KeyboardEvent) && (event.keyCode === 13));
 
 const isElement = element => (element && (element.nodeType === 1));
@@ -39,8 +50,8 @@ const differDay = (datea, dateb) => {
   if (!(datea instanceof Date) || !(dateb instanceof Date)) {
     throw new TypeError(`differDay的参数不能是 ${datea} 和 ${dateb}`);
   }
-  const dateaStart = datea;
-  const datebStart = dateb;
+  const dateaStart = new Date(datea.toDateString());
+  const datebStart = new Date(dateb.toDateString());
   const msecs = datebStart.getTime() - dateaStart.getTime();
   const days = msecs / 86400000;
   return days;
@@ -115,4 +126,5 @@ export default {
   differDay,
   divisio,
   flat,
+  getEnv,
 };

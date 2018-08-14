@@ -322,11 +322,19 @@ class Component {
     this.template.dispatchEvent(event);
   }
 
-  handleChildSrc(element) {
+  handleImgSrc(element) {
+    // 修改图片的src
+    // 开发服务器是相对于component.html
+    // 而打包完是相当于index.html
     // 如果图片是相对路径加载失败尝试根据此组件的url属性赋值新路径
-    const path = element.getAttribute('src');
-    if (!path.match(/^\u002e/)) { return false; }
-    const concat = this.url.concat(path);
+    // 开发环境不用管
+    // \u002e是.
+    if (element.tagName !== 'IMG') { return false; }
+    if (utils.getEnv() === 'node') { return false; }
+    const beforeSrc = element.getAttribute('src');
+    if (!beforeSrc.match(/^\u002e/)) { return false; }
+    // 把元素的src属性和组件的url结合，就是相对组件url的路径
+    const concat = this.url.concat(beforeSrc);
     const split = concat.split('/');
     // 处理 ../
     const mergeTwoPoints = (sp) => {
@@ -344,10 +352,23 @@ class Component {
       return mergeOnePoint(sp);
     };
     mergeOnePoint(split);
-    const newPath = split.join('/');
+    const afterPath = split.join('/');
+    Dom.of(element).attr('src', afterPath);
+    console.log(`重新设置src为${afterPath}`);
+    // 还是错误就尝试替换成白色图像，再失败就清除src
+    let retry = 0;
+    let blank = '';
     Dom.of(element).on('error', () => {
-      console.log(`重新设置src为${newPath}`);
-      element.setAttribute('src', newPath);
+      if (retry < 1) {
+        blank = afterPath.replace(/[^\u002f]+$/, 'blank.png');
+      } else if (retry === 1) {
+        blank = beforeSrc.replace(/[^\u002f]+$/, 'blank.png');
+      } else {
+        blank = '';
+      }
+      Dom.of(element).attr('src', blank);
+      retry += 1;
+      return blank;
     });
     return element;
   }
@@ -362,7 +383,7 @@ class Component {
       element.children.forEach((child) => {
         child.setAttribute('data-c-id', `c${this.componentId}`);
         if (child.src) {
-          this.handleChildSrc(child);
+          this.handleImgSrc(child);
         }
         recursive(child);
       });
@@ -713,3 +734,4 @@ Component.origin = origin;
 window.Component = Component;
 
 export default Component;
+// todo 把handleImgSrc放在html变成元素之前处理 就不会重复请求图片了
