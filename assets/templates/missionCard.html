@@ -24,6 +24,7 @@
       min-height: 3em;
       display: flex;
       justify-content: space-between;
+      align-items: center;
     }
 
     .new {
@@ -42,6 +43,12 @@
       height: 1em;
       box-shadow: 0 0 5px #f00;
     }
+    .top-new{
+      width: 1.7em;
+      height: 1.7em;
+      display: table;
+      vertical-align: middle;
+    }
   </style>
 </head>
 
@@ -49,6 +56,9 @@
   <section class="card">
     <div class="option card-header">
       <input class="filter" type="text" placeholder="筛选">
+      <a onclick="window.router.methods.render('welcome', { action: 'edit' });">
+        <img class="top-new" src="../images/icons/plus-circle.png">
+      </a>
     </div>
     <ul class="card-body">
     </ul>

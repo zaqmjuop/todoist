@@ -38,10 +38,7 @@ const param = {
       return promise;
     },
     initItems() {
-      let promise = utils.newPromise();
-      if (!this.data.items || this.data.items.length < 1) {
-        window.notice.methods.noticeIn(this.template, '没有任务', 'warn');
-      }
+      let promise = Promise.resolve(1);
       // 添加 li item
       this.data.items.forEach((item) => {
         promise = promise.then(() => this.methods.appendItem(item));
@@ -69,9 +66,7 @@ const param = {
     },
     appendItem(detail) {
       // 添加li item
-      const present = Object.assign(detail);
-      present.formId = this.data.formId;
-      const itemParam = Object.assign({ present }, missionListItem);
+      const itemParam = Object.assign({ present: detail }, missionListItem);
       const append = this.appendChild(itemParam, this.elements.cardBody, -1);
       return append;
     },

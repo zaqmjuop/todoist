@@ -35,7 +35,7 @@ const param = {
       // 跳转到四象限页面
       const redirectHome = () => window.router.methods.render('welcome', { action: 'quadrants' });
       // 撤销按钮
-      Dom.of(this.elements.cancal).on('click', () => redirectHome);
+      Dom.of(this.elements.cancal).on('click', () => redirectHome());
       // 绑定ESC
       const touchEsc = (event) => {
         if (event.keyCode === 27) {
