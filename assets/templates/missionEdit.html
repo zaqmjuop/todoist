@@ -5,45 +5,49 @@
   <style scoped>
     .template {
       padding: 10px;
+      display: grid;
+      grid-template-rows: 2em 6em 1fr;
+      height: 100%;
     }
 
     textarea {
+      height: 100%;
       width: 100%;
       resize: none;
       overflow-y: scroll;
     }
 
-    .option {
-      display: grid;
-      grid-template-columns: 1fr 100px;
-      margin-bottom: 10px;
+    .middle>* {
+      display: block;
+      margin-top: 14px;
     }
 
     .hide {
       display: none;
+    }
+    .btn{
+      margin-left: 1em;
     }
   </style>
 </head>
 
 <body>
   <div class="template">
-    <div>
+    <div class="text-right">
+      <a class="btn" name="remove">删除</a>
+      <a class="btn" name="cancal">取消</a>
+      <a class="btn" name="submit">保存</a>
+    </div>
+    <div class="middle">
       <select name="quadrant">
         <option value="0">很重要-很紧急</option>
         <option value="1">重要-不紧急</option>
         <option value="2">不重要-紧急</option>
         <option value="3">不重要-不紧急</option>
       </select>
-    </div>
-    <div class="option">
       <input type="text" name="date" placeholder="选择一个日期">
-      <div class="text-right">
-        <a class="btn" name="cancal">取消</a>
-        <a class="btn" name="submit">保存</a>
-        <a class="btn" name="remove">删除</a>
-      </div>
     </div>
-    <textarea rows='20' placeholder="要做什么"></textarea>
+    <textarea placeholder="要做什么"></textarea>
   </div>
 </body>
 

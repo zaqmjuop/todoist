@@ -28,6 +28,17 @@ a.btn{
   display: inline-block;
   line-height: 1em;
 }
+select{
+  background: linear-gradient(rgba(240,240,240,0.4),rgba(220,220,220,0.6));
+    border-color: #699;
+  border-style: solid;
+  border-width: 1px;
+}
+select:focus{
+  outline-color: #6f9;
+  outline-width: 2px;
+  box-shadow: 0px 0px 5px #6f9;
+}
 input, textarea{
   border-color: #699;
   border-style: solid;
@@ -228,6 +239,9 @@ button[class~=btn-link]:hover{
 .list-menu li:hover{
   background-color: #eee;
 }
+
+
+
 @media screen and (max-width: 420px) {
   *{
     font-size: 14px;
