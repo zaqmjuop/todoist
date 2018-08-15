@@ -43,9 +43,6 @@ class Component {
    * @param {Function} param.implanted - 可选，一个回调函数，组件实例化后插入到页面之后执行
    */
   constructor(param) {
-    // param.query是Dom.of参数
-    // param.template是HtmlElement
-    // param.style是<style>
     if (param instanceof Component) { return param; }
     if (new.target !== Component) { throw new Error('必须使用 new 命令生成实例'); }
     if (typeof param !== 'object') { throw new TypeError('param应该是一个object'); }
