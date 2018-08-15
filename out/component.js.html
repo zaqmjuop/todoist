@@ -1,8 +1,32 @@
-/**
- * @author zaqmjuop <1060007045@qq.com>
- */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: component.js</title>
 
-import Dom from '../dom';
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: component.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import Dom from '../dom';
 import promiseAjax from '../ajax';
 import utils from '../utils';
 
@@ -45,7 +69,7 @@ class Component {
   constructor(param) {
     // param.query是Dom.of参数
     // param.template是HtmlElement
-    // param.style是<style>
+    // param.style是&lt;style>
     if (param instanceof Component) { return param; }
     if (new.target !== Component) { throw new Error('必须使用 new 命令生成实例'); }
     if (typeof param !== 'object') { throw new TypeError('param应该是一个object'); }
@@ -113,7 +137,7 @@ class Component {
           passPresent = this.present;
         } else {
           const presentKeys = Object.keys(this.present);
-          const passKeys = param.passon.filter(key => ((typeof key === 'string') && presentKeys.includes(key)));
+          const passKeys = param.passon.filter(key => ((typeof key === 'string') &amp;&amp; presentKeys.includes(key)));
           passKeys.forEach((key) => {
             passPresent[key] = this.present[key];
           });
@@ -163,7 +187,7 @@ class Component {
       get: () => parent,
       set: (cpt) => {
         if (cpt === parent) { return parent; }
-        if (cpt !== undefined && cpt !== null && !Component.isComponent(cpt)) {
+        if (cpt !== undefined &amp;&amp; cpt !== null &amp;&amp; !Component.isComponent(cpt)) {
           throw new TypeError(`父组件不可以为${cpt}`);
         }
         if (Component.isComponent(parent)) {
@@ -210,7 +234,7 @@ class Component {
     // const insideData = Object.assign({}, data);
     if (this.watch instanceof Function) {
       const watchs = this.watch();
-      if ((watchs instanceof Object) && (!(watchs instanceof Array))) {
+      if ((watchs instanceof Object) &amp;&amp; (!(watchs instanceof Array))) {
         const watchKeys = Object.keys(watchs);
         const dataKeys = Object.keys(data);
         const keys = watchKeys.filter(key => dataKeys.includes(key));
@@ -244,7 +268,7 @@ class Component {
   fillSelectors() {
     // 填充param.selectors 填充this.elements
     this.elements = {};
-    if (this.selectors && (typeof this.selectors === 'object')) {
+    if (this.selectors &amp;&amp; (typeof this.selectors === 'object')) {
       // 接受{}类型的属性param.selectors 遍历param.selectors的键，取每个键的值作为querySelector参数，
       // 然后找到对应的HTMLElement集合并设置在this.elements属性中
       // 例如存在param.selectors.foo = '.foo' 则得到this.elements.foo = querySelector('.foo')
@@ -252,7 +276,7 @@ class Component {
       const elements = {};
       selectorNames.forEach((name) => {
         const selector = this.selectors[name];
-        if (selector && utils.isString(selector)) {
+        if (selector &amp;&amp; utils.isString(selector)) {
           const element = this.template.querySelector(selector);
           if (utils.isElement(element)) {
             Dom.of(element).attr('data-c-selector', name);
@@ -290,17 +314,17 @@ class Component {
     const keys = Object.keys(query);
     const keyName = keys.find(key => (key === 'name'));
     const keyId = keys.find(key => (key === 'componentId'));
-    if (!keyName && !keyId) { throw new Error(`查询参数无效${JSON.stringify(query)}`); }
-    if (arguments.length > 1 && !(cpt instanceof Component)) { throw new TypeError(`不是有效组件${JSON.stringify(cpt)}`); }
-    if (keyId && !Number.isSafeInteger(query.componentId)) { throw new TypeError(`不是有效组件componentId ${query.componentId}`); }
+    if (!keyName &amp;&amp; !keyId) { throw new Error(`查询参数无效${JSON.stringify(query)}`); }
+    if (arguments.length > 1 &amp;&amp; !(cpt instanceof Component)) { throw new TypeError(`不是有效组件${JSON.stringify(cpt)}`); }
+    if (keyId &amp;&amp; !Number.isSafeInteger(query.componentId)) { throw new TypeError(`不是有效组件componentId ${query.componentId}`); }
     let result = null;
     const set = (arguments.length > 1) ? cpt.components : components;
     const cpts = Array.from(set);
-    for (let index = 0; index < cpts.length; index += 1) {
+    for (let index = 0; index &lt; cpts.length; index += 1) {
       const item = cpts[index];
       const matchName = !(keyName) || (query.name === item.name);
       const matchCId = !(keyId) || (Number(query.componentId) === Number(item.componentId));
-      const isMatch = matchName && matchCId;
+      const isMatch = matchName &amp;&amp; matchCId;
       if (isMatch) {
         result = item;
         break;
@@ -327,14 +351,14 @@ class Component {
    * @returns {Array}
    */
   static where(query, cpt) {
-    if (!query.name && !query.componentId) { throw new Error(`查询参数无效${JSON.stringify(query)}`); }
-    if (arguments.length > 1 && !(cpt instanceof Component)) { throw new TypeError(`不是有效组件${JSON.stringify(cpt)}`); }
+    if (!query.name &amp;&amp; !query.componentId) { throw new Error(`查询参数无效${JSON.stringify(query)}`); }
+    if (arguments.length > 1 &amp;&amp; !(cpt instanceof Component)) { throw new TypeError(`不是有效组件${JSON.stringify(cpt)}`); }
     const set = (arguments.length > 1) ? cpt.components : components;
     const cpts = Array.from(set);
     const filter = cpts.filter((item) => {
       const matchName = !(query.name) || query.name === item.name;
       const matchCId = !(query.componentId) || query.componentId === item.componentId;
-      const isMatch = matchName && matchCId;
+      const isMatch = matchName &amp;&amp; matchCId;
       return isMatch;
     });
     return filter;
@@ -386,7 +410,7 @@ class Component {
     // 处理 ../
     const mergeTwoPoints = (sp) => {
       const twoPointsIndex = sp.findIndex(item => item.match(/\u002e\u002e/));
-      if (!twoPointsIndex || twoPointsIndex < 1) { return sp; }
+      if (!twoPointsIndex || twoPointsIndex &lt; 1) { return sp; }
       sp.splice(twoPointsIndex - 1, 2);
       return mergeTwoPoints(sp);
     };
@@ -394,7 +418,7 @@ class Component {
     // 处理 ./
     const mergeOnePoint = (sp) => {
       const onePointIndex = sp.findIndex(item => item.match(/\u002e/));
-      if (!onePointIndex || onePointIndex < 1) { return sp; }
+      if (!onePointIndex || onePointIndex &lt; 1) { return sp; }
       sp.splice(onePointIndex, 1);
       return mergeOnePoint(sp);
     };
@@ -406,7 +430,7 @@ class Component {
     let retry = 0;
     let blank = '';
     Dom.of(element).on('error', () => {
-      if (retry < 1) {
+      if (retry &lt; 1) {
         blank = afterPath.replace(/[^\u002f]+$/, 'blank.png');
       } else if (retry === 1) {
         blank = beforeSrc.replace(/[^\u002f]+$/, 'blank.png');
@@ -426,7 +450,7 @@ class Component {
     this.template.setAttribute('data-c-id', `c${this.componentId}`);
     this.style.setAttribute('data-c-id', `c${this.componentId}`);
     const recursive = (element) => {
-      if (!(element instanceof HTMLElement) || (element.childElementCount < 1)) { return false; }
+      if (!(element instanceof HTMLElement) || (element.childElementCount &lt; 1)) { return false; }
       element.children.forEach((child) => {
         child.setAttribute('data-c-id', `c${this.componentId}`);
         if (child.src) {
@@ -558,13 +582,13 @@ class Component {
     const parameter = Object.assign(param);
     // 获取或保存cache bug 没有缓存到
     const cache = utils.isEffectiveString(param.name)
-      && viewsCache.find(item => (item.name === param.name));
+      &amp;&amp; viewsCache.find(item => (item.name === param.name));
     if (!cache) {
       promise = Component.pjaxFormatHtml(param.url)
         .then(({ template, style }) => {
           const newCache = { template, style, name: param.name };
           const index = viewsCache.findIndex(item => (item.name === param.name));
-          if (index && index > -1) {
+          if (index &amp;&amp; index > -1) {
             viewsCache.splice(index, 1, newCache);
           } else {
             viewsCache.push(newCache);
@@ -574,8 +598,8 @@ class Component {
     promise = promise
       .then(() => {
         const view = viewsCache.find(item => (item.name === param.name));
-        const template = view.template && view.template.cloneNode(1);
-        const style = view.style && view.style.cloneNode(1);
+        const template = view.template &amp;&amp; view.template.cloneNode(1);
+        const style = view.style &amp;&amp; view.style.cloneNode(1);
         parameter.template = template;
         parameter.style = style;
         return parameter;
@@ -584,7 +608,7 @@ class Component {
   }
 
   static pjaxFormatHtml(url) {
-    // promiseAjax请求html文件 返回一个对象{template, style} template是该html文件的<body>下第一个子元素 style是第一个<style>
+    // promiseAjax请求html文件 返回一个对象{template, style} template是该html文件的&lt;body>下第一个子元素 style是第一个&lt;style>
     if (!utils.isEffectiveString(url)) {
       throw new TypeError(`${url}不是有效的html文件地址`);
     }
@@ -593,13 +617,13 @@ class Component {
       html.innerHTML = result;
       const styles = html.querySelectorAll('style');
       const body = html.querySelector('body');
-      if (styles.length > 1) { throw new TypeError('至多可以有一个<style>元素'); }
-      if (body.childElementCount !== 1) { throw new TypeError('<body>内应有且只有一个根元素'); }
+      if (styles.length > 1) { throw new TypeError('至多可以有一个&lt;style>元素'); }
+      if (body.childElementCount !== 1) { throw new TypeError('&lt;body>内应有且只有一个根元素'); }
       const template = body.firstElementChild;
       const style = styles[0] || document.createElement('style');
       const view = {
-        template: template && template.cloneNode(1),
-        style: style && style.cloneNode(1),
+        template: template &amp;&amp; template.cloneNode(1),
+        style: style &amp;&amp; style.cloneNode(1),
       };
       return view;
     });
@@ -628,7 +652,7 @@ class Component {
    */
   static isComponent(component) {
     // 判断是否是一个组件实例化对象
-    return component && (component instanceof Component);
+    return component &amp;&amp; (component instanceof Component);
   }
   /**
    * 添加一个子组件到指定位置
@@ -696,7 +720,7 @@ class Component {
     if (!Component.isComponent(exist)) {
       throw new TypeError(`${exist}不是组件`);
     }
-    const validElement = Dom.isElement(element) &&
+    const validElement = Dom.isElement(element) &amp;&amp;
       (exist.template.isSameNode(element) || Dom.of(element).hasParent(exist.template));
     if (!validElement) {
       throw new TypeError(`${element}不是组件id:${exist.componentId}的子元素`);
@@ -789,7 +813,7 @@ class Component {
       cpt.components.clear();
       cpt.parent = null;
       clearTemplate(cpt);
-      if (cpt.removed && cpt.removed instanceof Function) { cpt.removed(); }
+      if (cpt.removed &amp;&amp; cpt.removed instanceof Function) { cpt.removed(); }
       return cpt;
     };
     const promise = new Promise((resolve) => {
@@ -808,3 +832,26 @@ window.Component = Component;
 
 export default Component;
 // todo 把handleImgSrc放在html变成元素之前处理 就不会重复请求图片了
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Component.html">Component</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Aug 16 2018 05:27:00 GMT+0800 (CST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

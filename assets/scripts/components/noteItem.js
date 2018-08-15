@@ -1,4 +1,3 @@
-import note from '../model/note';
 import Dom from '../dom';
 
 const param = {
