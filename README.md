@@ -24,7 +24,7 @@
   * /scripts JavaScript目录
   * /images 图片目录
   * /template 视图模板目录
-### 主要文件介绍
+### 主要文件介绍 也有[jsdoc](https://zaqmjuop.github.io/todoist/out/Component.html)
 * Model层 基于对web浏览器离线数据库API indexedDB的封装库 [ArrayStorage](https://github.com/zaqmjuop/arraystorage) 进行二次封装model
   * /assets/models/
     * [mission.js](https://github.com/zaqmjuop/todoist/blob/master/assets/scripts/model/mission.js) Mission model
