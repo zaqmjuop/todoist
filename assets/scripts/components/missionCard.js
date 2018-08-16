@@ -33,6 +33,7 @@ const param = {
       const promise = utils.newPromise()
         .then(() => this.methods.bindEvents())
         .then(() => this.methods.loadDB())
+        .then(() => this.methods.sort())
         .then(() => this.methods.initItems());
       this.data.inited = 1;
       return promise;
@@ -45,24 +46,35 @@ const param = {
       });
       return promise;
     },
-    loadDB() {
-      const filter = mission.methods.getQuery(this.present.query);
-      const promise = filter
-        .then((items) => {
-          const bysSate = utils.divisio(items, item => (item.state !== 'done')); // [[未完成], [已完成]]
-          const byDate = bysSate.map((ary) => {
-            const allot = utils.divisio(ary, item => utils.isValidDate(item.date));
-            return allot;
-          });
-          const deep = byDate.map((states) => {
-            const sortByDate = states[0].sort((a, b) => (a.date >= b.date));
-            return [sortByDate, states[1]];
-          });
-          const flat = utils.flat(deep, 2);
-          this.data.items = flat;
-          return this.data.items;
+    sort() {
+      // 排序，按完成状态分成2组，每组按时间排序，然后合并
+      const dones = [];
+      const undones = [];
+      this.data.items.forEach((item) => {
+        if (item.state === 'done') {
+          dones.push(item);
+        } else {
+          undones.push(item);
+        }
+      });
+      const sortByDate = (items) => {
+        items.sort((a, b) => {
+          const datea = (utils.isValidDate(a.date)) ? a.date.getTime() : 0;
+          const dateb = (utils.isValidDate(b.date)) ? b.date.getTime() : 0;
+          return (datea - dateb);
         });
-      return promise;
+        return items;
+      };
+      sortByDate(dones);
+      sortByDate(undones);
+      const sorted = undones.concat(dones);
+      this.data.items = sorted;
+      return sorted;
+    },
+    loadDB() {
+      const filter = mission.methods.getQuery(this.present.query)
+        .then((res) => { this.data.items = res; });
+      return filter;
     },
     appendItem(detail) {
       // 添加li item
