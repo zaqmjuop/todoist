@@ -16,7 +16,9 @@ const collectClasses = (classes) => {
 
 
 let isGlobalInited = 0;
-
+/**
+ * DOM操作类，API模仿JQuery，但返回值不同
+ */
 class Dom {
   constructor(query) {
     // 允许的参数类型 1.Dom实例对象 2.HTMLElement 3.创建元素所需tagName 4.querySelector

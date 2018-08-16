@@ -111,7 +111,8 @@ const flat = (ary, deep) => {
   return result;
 };
 
-export default {
+/** 工具方法集合 */
+const utils = {
   isElement,
   isKeyEnter,
   isString,
@@ -128,3 +129,5 @@ export default {
   flat,
   getEnv,
 };
+
+export default utils;

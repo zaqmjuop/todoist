@@ -1,5 +1,6 @@
 import utils from '../utils';
-import Dom from '../dom';
+
+/** 页面左侧选项板 */
 
 const param = {
   query: 'left-menu',

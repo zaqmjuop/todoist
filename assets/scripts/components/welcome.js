@@ -6,6 +6,8 @@ import noteCard from './noteCard';
 import noteEdit from './noteEdit';
 import Component from './component';
 
+/** 应用主体组件 */
+
 const left = Component.of(leftMenu);
 
 const param = {

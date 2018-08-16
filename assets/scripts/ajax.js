@@ -15,6 +15,7 @@ const ajax = {
   },
 };
 
+/** ajax封装模块 */
 const promiseAjax = {
   get: (url) => {
     // promise ajax get

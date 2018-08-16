@@ -1,6 +1,8 @@
 import Dom from '../dom';
 import missionCard from './missionCard';
 
+/** 四象限组件 */
+
 const param = {
   query: 'quadrants',
   url: './assets/templates/quadrants.html',

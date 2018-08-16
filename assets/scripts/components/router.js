@@ -1,6 +1,8 @@
 import welcome from './welcome';
 import Component from './component';
 
+/** 路由组件 */
+
 const router = {
   query: 'router',
   url: './assets/templates/router.html',

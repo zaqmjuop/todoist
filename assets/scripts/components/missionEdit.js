@@ -3,6 +3,8 @@ import Dom from '../dom';
 import datepicker from '../lib/datepicker';
 import utils from '../utils';
 
+/** 编辑任务组件 */
+
 const param = {
   query: 'mission-edit',
   url: './assets/templates/missionEdit.html',

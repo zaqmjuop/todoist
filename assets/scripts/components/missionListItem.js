@@ -2,6 +2,8 @@ import Dom from '../dom';
 import mission from '../model/mission';
 import utils from '../utils';
 
+/** 任务成员组件 */
+
 const param = {
   query: 'mission-list-item',
   url: './assets/templates/missionListItem.html',

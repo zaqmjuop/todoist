@@ -1,7 +1,3 @@
-/**
- * @author zaqmjuop <1060007045@qq.com>
- */
-
 import Dom from '../dom';
 import promiseAjax from '../ajax';
 import utils from '../utils';
@@ -22,8 +18,14 @@ const takeId = () => {
   return counter;
 };
 
+/** 组件类,一个组件由一个html文件和一个配置文件js组成.
+ * html文件提供组件的template和style.
+ * js文件提供组件的JavaScript.
+ * 可以对组件进行增加，删除，修改，查询的操作，就像操作HTMLElement一样.
+ * 组件之间也可以有父子关系，父子间通过事件进行通讯.
+ * 组件实例化后会被分配一个componentId用于查询.
+ */
 class Component {
-  // script来自js文件  template和style 来自html文件
   /**
    * 实例化一个组件
    * @param {Object} param - 必须，组件配置对象

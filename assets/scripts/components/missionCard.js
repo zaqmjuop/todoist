@@ -3,6 +3,8 @@ import mission from '../model/mission';
 import missionListItem from './missionListItem';
 import utils from '../utils';
 
+/** 任务列表组件 */
+
 const param = {
   query: 'mission-card',
   url: './assets/templates/missionCard.html',

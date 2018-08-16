@@ -84,4 +84,5 @@ mission.methods = {
   getAll, getExpired, getDate, getMark, getQuery,
 };
 
+/** 任务model */
 export default mission;

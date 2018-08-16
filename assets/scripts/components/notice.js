@@ -1,6 +1,8 @@
 import Dom from '../dom';
 import utils from '../utils';
 
+/** 消息通知组件 */
+
 const param = {
   name: 'notice',
   query: 'notice',
