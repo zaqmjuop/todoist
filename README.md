@@ -1,15 +1,9 @@
 
 ### <center>这是一个页面简洁且的离线web任务管理工具</center>
 ### <center>同时是一个基于原生前端语言的SPA学习项目</center>
-### [尝试一下](https://zaqmjuop.github.io/todoist/)
-#### 支持多种分辨率
-Desktop界面
+### 界面预览  [尝试一下](https://zaqmjuop.github.io/todoist/)
+![Desktop](./assets/images/GIF.gif)
 
-![Desktop](./assets/images/desktop.png)
-
-Mobile界面 
-
-![Mobile](./assets/images/mobile.png)
 ***
 ### 该学习项目介绍: 基于原生HTML CSS JavaScript 的参照MVC设计模式的代码架构
 ### 核心文件目录介绍
