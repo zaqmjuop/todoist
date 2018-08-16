@@ -32,14 +32,12 @@ const param = {
       return promise;
     },
     bindEvents() {
-      // 跳转到四象限页面
-      const redirectHome = () => window.router.methods.render('welcome', { action: 'quadrants' });
       // 撤销按钮
-      Dom.of(this.elements.cancal).on('click', () => redirectHome());
+      Dom.of(this.elements.cancal).on('click', () => window.router.methods.back());
       // 绑定ESC
       const touchEsc = (event) => {
         if (event.keyCode === 27) {
-          redirectHome();
+          window.router.methods.back();
           document.removeEventListener('keydown', touchEsc);
         }
       };
@@ -49,7 +47,7 @@ const param = {
         if (!this.data.primaryKey) { return Promise.resolve('没有查询到数据'); }
         return mission.remove(this.data.primaryKey)
           .then(() => {
-            window.router.methods.render('welcome', { action: 'quadrants' });
+            window.router.methods.back();
             window.notice.methods.alert('删除一条任务');
           });
       });
@@ -92,7 +90,7 @@ const param = {
           promise = mission.push(data);
         }
         return promise.then(() => {
-          window.router.methods.render('welcome', { action: 'quadrants' });
+          window.router.methods.back();
           const msg = '保存成功';
           window.notice.methods.alert(msg, 'success');
           return msg;

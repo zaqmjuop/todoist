@@ -15,6 +15,7 @@ const router = {
       origin: window.location.href.match(/^[^#]+/)[0],
       href: window.location.href,
       home: 'welcome',
+      history: [],
     };
   },
   route: {
@@ -56,6 +57,8 @@ const router = {
         if (current !== this) { Component.removeComponent(current); }
         this.data.current = cpt;
         const url = `${this.data.origin.replace(/\u002f$/, '')}/#/${path}/`;
+        const log = { path, state: this.data.state };
+        this.data.history.push(log);
         window.history.pushState(this.data.state, 0, url);
         this.data.href = window.location.href;
         return cpt;
@@ -66,6 +69,15 @@ const router = {
       if (!this.data.path) { return false; }
       const promise = this.methods.render(this.data.path, this.data.state);
       return promise;
+    },
+    back() {
+      let promise;
+      if (this.data.history.length > 1) {
+        this.data.history.pop();
+        const prev = this.data.history.pop();
+        promise = this.methods.render(prev.path, prev.state);
+      }
+      return promise || Promise.resolve('没有历史');
     },
   },
   created() {
