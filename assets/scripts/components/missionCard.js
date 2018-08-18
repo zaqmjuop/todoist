@@ -104,6 +104,7 @@ const param = {
     },
   },
   created() {
+    console.log('card', this.present)
     this.methods.init();
   },
 };

@@ -126,17 +126,20 @@ const param = {
     },
     fill() {
       // 四象限选项
-      const quadrant = {};
       if (this.data.item.primaryKey) {
         Dom.of(this.elements.content).text(this.data.item.content);
         Dom.of(this.elements.date).attr('value', utils.formatDate(this.data.item.date));
-        quadrant.urgent = this.data.item.urgent;
-        quadrant.important = this.data.item.important;
       } else {
         Dom.of(this.elements.remove).addClass('hide');
-        quadrant.urgent = this.present.urgent || true;
-        quadrant.important = this.present.important || true;
+        if (Object.keys(this.present).includes('urgent')) {
+          this.data.item.urgent = this.present.urgent;
+          this.data.item.important = this.present.important;
+        } else {
+          this.data.item.urgent = true;
+          this.data.item.important = true;
+        }
       }
+      console.log('fill', this.data.item)
       // 四象限选项
       const quadrantSelect = mission.quadrants.findIndex((item) => {
         let isMatch = true;
@@ -150,6 +153,7 @@ const param = {
     },
   },
   created() {
+    console.log('edit', this.present)
     this.methods.init();
   },
 };
