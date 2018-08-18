@@ -19,44 +19,47 @@
     }
 
     .urgent-important {
-      background: linear-gradient(#fee 75%, #fdd);
+      background: radial-gradient( #fee, #fff);
       border-color: #e03;
     }
 
     .urgent-not-important {
-      background: linear-gradient(#ffe 75%, #ffd);
+      background: radial-gradient( #ffe, #fff);
       border-color: #f90;
     }
 
     .not-urgent-important {
-      background: linear-gradient(#eef 75%, #ddf);
+      background: radial-gradient(#eef, #fff);
       border-color: #06c;
     }
 
     .not-urgent-not-important {
-      background: linear-gradient(#eee 75%, #ddd);
+      background: radial-gradient( #eee, #fff);
       border-color: #999;
     }
 
-    h6{
+    h6 {
       margin: 0;
       text-align: center;
     }
-    .card{
+
+    .card {
       display: grid;
       grid-template-rows: 2em 1fr;
       position: relative;
       min-width: 4em;
       min-height: 4em;
     }
-    .title{
+
+    .title {
       position: absolute;
       width: 100%;
       top: 10px;
       left: 50%;
       transform: translateX(-50%);
     }
-    .hide{
+
+    .hide {
       display: none;
     }
   </style>

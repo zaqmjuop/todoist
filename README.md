@@ -8,7 +8,7 @@
 ***
 ### 该学习项目介绍: 采用了基于原生HTML CSS JavaScript 的参照MVC设计模式的代码架构
 #### 开发过程中产生的一系列问题和最后选择参照MVC设计模式的原因
-* Q : dom操作过多导致元素之间联系过于密切，牵一发动全身
+* Q : DOM操作过多导致元素之间联系过于密切，牵一发动全身
   * A : 封装全局作用域组件 [datepicker.js](https://github.com/zaqmjuop/datepicker) 将页面元素插件化
 * Q ： 即使封装了仿JQuery的操作库[dom.js](https://github.com/zaqmjuop/todoist/blob/master/assets/scripts/dom.js)，但仍需要在js中大量的拼接元素标签，使js和html的界限有些模糊，由于html元素写在字符串中可读性不强
   * A : 从DOM拼接改为[ajax.js](https://github.com/zaqmjuop/todoist/blob/master/assets/scripts/ajax.js)请求DOM，将局部元素也写在html文件中，有编辑器原生的高亮和代码提示，具有可读性

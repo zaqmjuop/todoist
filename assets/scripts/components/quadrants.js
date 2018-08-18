@@ -1,5 +1,6 @@
 import Dom from '../dom';
 import missionCard from './missionCard';
+import mission from '../model/mission';
 
 /** 四象限组件 */
 
@@ -11,6 +12,8 @@ const param = {
     return {
       top: 5,
       left: 4,
+      urgent: true,
+      important: true,
     };
   },
   selectors: {
@@ -56,10 +59,26 @@ const param = {
       Dom.of(this.template).css('grid-template-rows', `${this.data.top}fr 1fr`);
       Dom.of(this.template).css('grid-template-columns', `${this.data.left}fr 1fr`);
     },
+    init() {
+      if (Object.keys(this.present).includes('urgent')) {
+        this.data.urgent = this.present.urgent;
+        this.data.important = this.present.important;
+      }
+    },
+    fill() {
+      const quadrantSelect = mission.quadrants.findIndex((item) => {
+        const isMatch = (item.important === !!this.data.important)
+          && (item.urgent === !!this.data.urgent);
+        return isMatch;
+      });
+      const area = ['urgent-important', 'not-urgent-important', 'urgent-not-important', 'not-urgent-not-important'];
+      Dom.of(this.template).child(`.${area[quadrantSelect]}`).click();
+    },
   },
   created() {
     this.methods.bindEvents();
-    this.template.firstElementChild.click();
+    this.methods.init();
+    this.methods.fill();
   },
 };
 export default param;

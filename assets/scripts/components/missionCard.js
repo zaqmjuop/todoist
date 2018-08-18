@@ -92,6 +92,15 @@ const param = {
         const items = this.where({ name: 'missionListItem' });
         items.forEach((item) => { item.methods.match(value); });
       });
+      // 新建任务
+      Dom.of(this.elements.create).on('click', () => {
+        const detail = { action: 'edit' };
+        if (this.present && this.present.query) {
+          detail.urgent = this.present.query.urgent;
+          detail.important = this.present.query.important;
+        }
+        window.router.methods.render('welcome', detail);
+      });
     },
   },
   created() {

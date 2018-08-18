@@ -6,7 +6,7 @@
     .template {
       padding: 10px;
       display: grid;
-      grid-template-rows: 2em 6em 1fr;
+      grid-template-rows: 2em 6em 1fr 2em;
       height: 100%;
     }
 
@@ -40,6 +40,11 @@
       display: flex;
       justify-content: space-between;
     }
+    .submits{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
   </style>
 </head>
 
@@ -48,8 +53,7 @@
     <div class="btns">
       <img class="icon" style="margin-left:10px;" title="撤销" name="cancal" src="../images/icons/left-circle.png">
       <div>
-        <img class="icon" style="margin-right:2em;" title="删除" name="remove" src="../images/icons/delete.png">
-        <img class="icon" style="margin-right:10px;" title="保存" name="submit" src="../images/icons/save.png">
+        <img class="icon" style="margin-right:10px;" title="删除" name="remove" src="../images/icons/delete.png">
       </div>
     </div>
     <div class="middle">
@@ -62,6 +66,10 @@
       <input type="text" name="date" placeholder="选择一个日期" >
     </div>
     <textarea placeholder="要做什么" autofocus></textarea>
+    <div class="submits">
+      <span></span>
+      <img class="icon" style="margin-right:10px;" title="保存" name="submit" src="../images/icons/save.png">
+    </div>
   </div>
 </body>
 

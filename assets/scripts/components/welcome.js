@@ -5,6 +5,8 @@ import quadrants from './quadrants';
 import noteCard from './noteCard';
 import noteEdit from './noteEdit';
 import Component from './component';
+import navbar from './navbar';
+import Dom from '../dom';
 
 /** 应用主体组件 */
 
@@ -17,7 +19,9 @@ const param = {
   selectors: {
     left: '.left',
     body: '.body',
+    overlay: '.overlay',
   },
+  components: [navbar],
   data() {
     return {};
   },
@@ -27,10 +31,36 @@ const param = {
       this.data.inited = 1;
       return this;
     },
-    fill() {
+    showLeft() {
+      Dom.of(this.elements.left).css('left', '0');
+      Dom.of(this.elements.overlay).css('left', '0');
+      this.data.leftSeen = true;
+    },
+    hideLeft() {
+      let width = Dom.of(this.selectors.left).css('width') || '';
+      width = width.match(/\d+/) || 0;
+      Dom.of(this.elements.left).css('left', `-${Number(width)}px`);
+      Dom.of(this.elements.overlay).css('left', '-100%');
+      this.data.leftSeen = false;
+    },
+    bindEvents() {
+      Dom.of(this.elements.overlay).on('click', () => {
+        this.methods.hideLeft();
+      });
+      const nav = this.findBy({ name: 'navbar' });
+      if (nav) {
+        nav.addEventListener('toggle', () => {
+          if (this.data.leftSeen) {
+            this.methods.hideLeft();
+          } else {
+            this.methods.showLeft();
+          }
+        });
+      }
     },
   },
   created() {
+    this.methods.bindEvents();
     // 左侧选项栏
     this.appendChild(left, this.elements.left, 0);
     // 右侧子页面
@@ -52,7 +82,6 @@ const param = {
       this.appendChild(missionCard, this.elements.body, 0);
     }
     this.methods.init();
-    this.methods.fill();
   },
 };
 export default param;

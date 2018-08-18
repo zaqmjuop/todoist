@@ -1,4 +1,5 @@
 import utils from '../utils';
+import Dom from '../dom';
 
 /** 页面左侧选项板 */
 

@@ -72,12 +72,13 @@ const router = {
       const promise = this.methods.render(this.data.path, this.data.state);
       return promise;
     },
-    back() {
+    back(detail) {
       let promise;
       if (this.data.history.length > 1) {
         this.data.history.pop();
         const prev = this.data.history.pop();
-        promise = this.methods.render(prev.path, prev.state);
+        const state = Object.assign(prev.state, detail);
+        promise = this.methods.render(prev.path, state);
       }
       return promise || Promise.resolve('没有历史');
     },

@@ -17,8 +17,8 @@
       padding: 0;
     }
 
-    .card-header {      
-      padding: 10px 2em;
+    .card-header {
+      padding: 10px;
       line-height: 2em;
       border-bottom: 1px solid #666;
       min-height: 3em;
@@ -30,30 +30,18 @@
     .new {
       user-select: none;
       position: fixed;
-      bottom: 1em;
-      right: 2.2em;
+      bottom: 1.2em;
+      right: 1.2em;
       text-align: center;
       z-index: 2;
       opacity: 0.9;
-      background-color: #0cc;
+      background-color: rgba(102, 204, 153, 0.9);
       color: #fff;
-      font-size: 2em;
+      font-size: 40px;
       line-height: 1em;
       width: 1em;
       height: 1em;
       box-shadow: 0 0 5px #f00;
-    }
-    .top-new{
-      width: 1.7em;
-      height: 1.7em;
-      display: table;
-      vertical-align: middle;
-    }
-    @media screen and (max-width: 340px)  {
-      .card-header{
-        padding-left: 10px;
-        padding-right: 10px;
-      }
     }
   </style>
 </head>
@@ -62,13 +50,10 @@
   <section class="card">
     <div class="option card-header">
       <input class="filter" type="text" placeholder="筛选">
-      <a onclick="window.router.methods.render('welcome', { action: 'edit' });">
-        <img class="top-new" src="../images/icons/plus-circle.png">
-      </a>
     </div>
     <ul class="card-body">
     </ul>
-    <div onclick="window.router.methods.render('welcome', { action: 'edit' });" class="new" name="create">+</div>
+    <div class="new" name="create">+</div>
   </section>
 </body>
 

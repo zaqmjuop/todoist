@@ -2,6 +2,7 @@ import mission from '../model/mission';
 import Dom from '../dom';
 import datepicker from '../lib/datepicker';
 import utils from '../utils';
+import quadrants from './quadrants';
 
 /** 编辑任务组件 */
 
@@ -10,7 +11,9 @@ const param = {
   url: './assets/templates/missionEdit.html',
   name: 'missionEdit',
   data() {
-    return {};
+    return {
+      item: {},
+    };
   },
   selectors: {
     content: 'textarea',
@@ -33,109 +36,117 @@ const param = {
         .then(() => this.methods.fill());
       return promise;
     },
+    cancal() {
+      let detail = {};
+      if (this.data.item.primaryKey) {
+        detail = { urgent: this.data.item.urgent, important: this.data.item.important };
+      } else if (Object.keys(this.present).includes('urgent')) {
+        detail = { urgent: this.present.urgent, important: this.present.important };
+      }
+      window.router.methods.back(detail);
+    },
+    submit() {
+      const content = this.elements.content.value;
+      if (!utils.isEffectiveString(content)) {
+        const msg = '内容不能为空';
+        window.notice.methods.noticeIn(this.template, msg, 'error');
+        return msg;
+      }
+      let date = new Date(this.elements.date.value);
+      if (!utils.isValidDate(date)) { date = ''; }
+      const quadrantSelected = Number(this.elements.quadrant.value) || 0;
+      const quadrant = mission.quadrants[quadrantSelected];
+      const now = new Date();
+      let promise;
+      // 更改数据
+      this.data.item.content = content;
+      this.data.item.date = date;
+      this.data.item.state = 'undone';
+      this.data.item.important = quadrant.important;
+      this.data.item.urgent = quadrant.urgent;
+      this.data.item.updatedAt = now;
+
+      if (this.data.item.primaryKey) {
+        promise = mission.update(this.data.item);
+      } else {
+        this.data.item.createdAt = now;
+        promise = mission.push(this.data.item);
+      }
+      promise = promise.then(() => {
+        const detail = { urgent: this.data.item.urgent, important: this.data.item.important };
+        window.router.methods.back(detail);
+        const msg = '保存成功';
+        window.notice.methods.alert(msg, 'success');
+        return msg;
+      });
+      return promise;
+    },
     bindEvents() {
       // 撤销按钮
-      Dom.of(this.elements.cancal).on('click', () => window.router.methods.back());
-      // 绑定ESC
-      const touchEsc = (event) => {
-        if (event.keyCode === 27) {
-          window.router.methods.back();
-          document.removeEventListener('keydown', touchEsc);
-        }
-      };
-      document.addEventListener('keydown', touchEsc);
+      Dom.of(this.elements.cancal).on('click', () => this.methods.cancal());
       // 删除按钮
       Dom.of(this.elements.remove).on('click', () => {
-        if (!this.data.primaryKey) { return Promise.resolve('没有查询到数据'); }
-        return mission.remove(this.data.primaryKey)
+        if (!this.data.item.primaryKey) { return Promise.resolve('没有查询到数据'); }
+        return mission.remove(this.data.item.primaryKey)
           .then(() => {
-            window.router.methods.back();
+            this.methods.cancal();
             window.notice.methods.alert('删除一条任务');
           });
       });
       // 提交按钮
       Dom.of(this.elements.submit).on('click', () => {
-        const content = this.elements.content.value;
-        if (!utils.isEffectiveString(content)) {
-          const msg = '内容不能为空';
-          window.notice.methods.noticeIn(this.template, msg, 'error');
-          return msg;
-        }
-        let date = new Date(this.elements.date.value);
-        if (!utils.isValidDate(date)) { date = ''; }
-        const quadrantSelected = this.elements.quadrant.value || 0;
-        const quadrant = mission.quadrants[quadrantSelected];
-        const now = new Date();
-        let promise;
-        if (this.data.primaryKey) {
-          promise = mission.get(this.data.primaryKey)
-            .then((res) => {
-              const data = res[0];
-              data.content = content;
-              data.date = date;
-              data.state = 'undone';
-              data.important = quadrant.important;
-              data.urgent = quadrant.urgent;
-              data.updatedAt = now;
-              return mission.update(data);
-            });
-        } else {
-          const data = {
-            content,
-            date,
-            state: 'undone',
-            important: quadrant.important,
-            urgent: quadrant.urgent,
-            createdAt: now,
-            updatedAt: now,
-          };
-          promise = mission.push(data);
-        }
-        return promise.then(() => {
-          window.router.methods.back();
-          const msg = '保存成功';
-          window.notice.methods.alert(msg, 'success');
-          return msg;
-        });
+        this.methods.submit();
       });
+      // 绑定ESC(27)
+      const touchEsc = (event) => {
+        if (event.keyCode === 27) {
+          this.methods.cancal();
+          document.removeEventListener('keydown', touchEsc);
+        }
+      };
+      document.addEventListener('keydown', touchEsc);
+      // 绑定Ctrl(17) + Enter(13)
+      const touchEnter = (event) => {
+        if (event.ctrlKey && event.keyCode === 13) {
+          this.methods.submit();
+          document.removeEventListener('keydown', touchEnter);
+        }
+      };
+      document.addEventListener('keydown', touchEnter);
     },
     loadDB() {
       if (this.data.action === 'create' || !this.present.primaryKey) {
         return Promise.resolve(1);
       }
       const promise = mission.get(this.present.primaryKey)
-        .then((items) => {
-          const item = items[0];
-          const attrs = Object.keys(item);
-          attrs.forEach((attr) => {
-            this.data[attr] = item[attr];
-          });
+        .then((res) => {
+          this.data.item = res[0];
         });
       return promise;
     },
     fill() {
-      let promise = Promise.resolve(1);
-      if (this.data.primaryKey) {
-        promise = promise
-          .then(() => mission.get(this.data.primaryKey))
-          .then((res) => {
-            const data = res[0];
-            Dom.of(this.elements.content).text(data.content);
-            Dom.of(this.elements.date).attr('value', utils.formatDate(data.date));
-            // 四象限选项
-            const quadrantSelect = mission.quadrants.findIndex((item) => {
-              const isMatch = (item.important === !!data.important)
-                && (item.urgent === !!data.urgent);
-              return isMatch;
-            });
-            if (quadrantSelect > -1) {
-              this.elements.quadrant.value = quadrantSelect;
-            }
-          });
+      // 四象限选项
+      const quadrant = {};
+      if (this.data.item.primaryKey) {
+        Dom.of(this.elements.content).text(this.data.item.content);
+        Dom.of(this.elements.date).attr('value', utils.formatDate(this.data.item.date));
+        quadrant.urgent = this.data.item.urgent;
+        quadrant.important = this.data.item.important;
       } else {
         Dom.of(this.elements.remove).addClass('hide');
+        quadrant.urgent = this.present.urgent || true;
+        quadrant.important = this.present.important || true;
       }
-      return promise;
+      // 四象限选项
+      const quadrantSelect = mission.quadrants.findIndex((item) => {
+        let isMatch = true;
+        if (item.important !== !!this.data.item.important) { isMatch = false; }
+        if (item.urgent !== !!this.data.item.urgent) { isMatch = false; }
+        return isMatch;
+      });
+      if (quadrantSelect > -1) {
+        this.elements.quadrant.value = quadrantSelect;
+      }
     },
   },
   created() {
