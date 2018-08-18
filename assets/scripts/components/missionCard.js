@@ -18,20 +18,23 @@ const param = {
   },
   passon: [], // 接受父组件全部present
   selectors: {
-    form: 'mission-form',
     cardHeader: '.card-header',
     cardBody: '.card-body',
-    create: '*[name=create]',
+    new: '*[name=new]',
     filter: '.filter',
+    create: '.create',
+    submit: '.submit',
   },
   methods: {
     init() {
       if (this.data.inited) { return false; }
-      this.data.date = this.present.date;
-      this.data.days = this.present.days;
       if (!this.present.query) {
         this.present.query = 'all';
       }
+      this.data.date = this.present.date;
+      this.data.days = this.present.days;
+      this.data.urgent = this.present.query.urgent;
+      this.data.important = this.present.query.important;
       const promise = utils.newPromise()
         .then(() => this.methods.bindEvents())
         .then(() => this.methods.loadDB())
@@ -84,7 +87,52 @@ const param = {
       const append = this.appendChild(itemParam, this.elements.cardBody, -1);
       return append;
     },
+    submit() {
+      // 快捷表单提交
+      const content = Dom.of(this.elements.create).attr('value');
+      if (!utils.isEffectiveString(content)) { return false; }
+      const now = new Date();
+      const data = {
+        content,
+        date: now,
+        createdAt: now,
+        urgent: this.data.urgent,
+        important: this.data.important,
+        state: 'undone',
+      };
+      const promise = mission.push(data)
+        .then(primaryKey => mission.get(primaryKey))
+        .then((res) => {
+          Dom.of(this.elements.create).attr('value', '');
+          // 添加li item
+          const itemParam = Object.assign({ present: res[0] }, missionListItem);
+          const append = this.appendChild(itemParam, this.elements.cardBody, 0);
+          return append;
+        });
+      return promise;
+    },
+    switching() {
+      // 提交按钮开关灯
+      const content = Dom.of(this.elements.create).attr('value');
+      const button = Dom.of(this.elements.submit);
+      const heightLight = 'height-light';
+      if (utils.isEffectiveString(content)) {
+        button.addClass(heightLight);
+      } else {
+        button.removeClass(heightLight);
+      }
+    },
     bindEvents() {
+      // 快捷表单
+      // 提交按钮
+      Dom.of(this.elements.submit).on('click', () => this.methods.submit());
+      // 输入框若有内容submit高亮
+      Dom.of(this.elements.create).on('input', () => this.methods.switching());
+      // 输入框
+      Dom.of(this.elements.create).on('keydown', (event) => {
+        if (event.keyCode !== 13) { return false; }
+        return this.methods.submit();
+      });
       // 筛选
       const filter = Dom.of(this.elements.filter);
       filter.on('input', () => {
@@ -92,19 +140,9 @@ const param = {
         const items = this.where({ name: 'missionListItem' });
         items.forEach((item) => { item.methods.match(value); });
       });
-      // 新建任务
-      Dom.of(this.elements.create).on('click', () => {
-        const detail = { action: 'edit' };
-        if (this.present && this.present.query) {
-          detail.urgent = this.present.query.urgent;
-          detail.important = this.present.query.important;
-        }
-        window.router.methods.render('welcome', detail);
-      });
     },
   },
   created() {
-    console.log('card', this.present)
     this.methods.init();
   },
 };

@@ -12,7 +12,6 @@
     }
 
     .template>div {
-      overflow-y: auto;
       border-width: 3px;
       border-style: solid;
       margin: 1px;
@@ -44,8 +43,8 @@
     }
 
     .card {
-      display: grid;
-      grid-template-rows: 2em 1fr;
+      display: flex;
+      flex-direction: column;
       position: relative;
       min-width: 4em;
       min-height: 4em;

@@ -1,5 +1,6 @@
-import Dom from "../dom";
+import Dom from '../dom';
 
+/** 上方选项栏 */
 
 const param = {
   name: 'navbar',

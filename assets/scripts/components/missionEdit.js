@@ -139,7 +139,6 @@ const param = {
           this.data.item.important = true;
         }
       }
-      console.log('fill', this.data.item)
       // 四象限选项
       const quadrantSelect = mission.quadrants.findIndex((item) => {
         let isMatch = true;
@@ -153,7 +152,6 @@ const param = {
     },
   },
   created() {
-    console.log('edit', this.present)
     this.methods.init();
   },
 };

@@ -15,6 +15,7 @@
       margin: 0;
       list-style: none;
       padding: 0;
+      overflow-y: auto;
     }
 
     .card-header {
@@ -27,21 +28,33 @@
       align-items: center;
     }
 
-    .new {
-      user-select: none;
-      position: fixed;
-      bottom: 1.2em;
-      right: 1.2em;
-      text-align: center;
-      z-index: 2;
-      opacity: 0.9;
-      background-color: rgba(102, 204, 153, 0.9);
-      color: #fff;
-      font-size: 40px;
-      line-height: 1em;
-      width: 1em;
-      height: 1em;
-      box-shadow: 0 0 5px #f00;
+    .quick-form {
+      display: flex;
+      position: absolute;
+      justify-content: space-between;
+      align-items: center;
+      align-content: stretch;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 10px;
+      background: linear-gradient(rgba(224, 255, 224, 0.9), rgba(240, 255, 240, 0.9));
+      box-shadow: 0 0 50px #cdc;
+      z-index: 1;
+    }
+
+    .quick-form>input {
+      flex-grow: 1;
+    }
+
+    .submit {
+      background-color: #ccc;
+      box-shadow: 0 0 10px #fff;
+      border-radius: 5px;
+      margin-left: 10px;
+    }
+    .height-light{
+      background-color: #096;
     }
   </style>
 </head>
@@ -53,7 +66,10 @@
     </div>
     <ul class="card-body">
     </ul>
-    <div class="new" name="create">+</div>
+    <div class="quick-form">
+      <input class="create" type="text" placeholder="要做什么">
+      <img class="icon submit" src="../images/icons/enter-white.png">
+    </div>
   </section>
 </body>
 
