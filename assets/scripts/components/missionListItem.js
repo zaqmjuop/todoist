@@ -38,7 +38,7 @@ const param = {
             data.updatedAt = new Date();
             return mission.update(data);
           }).then(() => {
-            this.data.item.state = toggleState.state;
+            this.data.item.state = toggleState;
             if (toggleState === 'done') {
               Dom.of(this.template).addClass('done');
             } else {

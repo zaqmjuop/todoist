@@ -110,6 +110,29 @@ const flat = (ary, deep) => {
   }
   return result;
 };
+/** 冒泡 返回一个新的数组
+ * @param {Array} ary - 需要排序的数组
+ * @param {Function}  callback - callback(item)比较callback的返回值
+ */
+const bubbleSort = (ary, callback) => {
+  if (!(ary instanceof Array)) { throw new TypeError(`Array不能是${ary}`); }
+  const res = ary.slice(0);
+  let bubbledCount = 0;
+  const bubble = () => {
+    for (let i = 0; i < res.length - 1 - bubbledCount; i += 1) {
+      if (callback(res[0]) > callback(res[1])) {
+        const tmp = res[i];
+        res[i] = res[i + 1];
+        res[i + 1] = tmp;
+      }
+    }
+  };
+  for (let i = 0; i < res.length - 1; i += 1) {
+    bubbledCount = i;
+    bubble();
+  }
+  return res;
+};
 
 /** 工具方法集合 */
 const utils = {
@@ -128,6 +151,7 @@ const utils = {
   classify,
   flat,
   getEnv,
+  bubbleSort,
 };
 
 export default utils;

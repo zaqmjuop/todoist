@@ -5,6 +5,8 @@ import utils from '../utils';
 
 /** 任务列表组件 */
 
+let sortCondition = 'default';
+
 const param = {
   query: 'mission-card',
   url: './assets/templates/missionCard.html',
@@ -41,11 +43,29 @@ const param = {
       const promise = utils.newPromise()
         .then(() => this.methods.bindEvents())
         .then(() => this.methods.loadDB())
-        .then(() => this.methods.sort())
-        .then(() => this.methods.initItems());
+        .then(() => this.methods.initItems())
+        .then(() => this.methods.initSort());
       this.data.inited = 1;
       return promise;
     },
+    /** 初始化排序 */
+    initSort() {
+      switch (sortCondition) {
+        case 'date':
+          this.methods.sortByDate();
+          break;
+        case 'urgent':
+          this.methods.sortByUrgent();
+          break;
+        case 'important':
+          this.methods.sortByImportant();
+          break;
+        default:
+          this.methods.sortByDefatult();
+          break;
+      }
+    },
+    /** 初始化任务 */
     initItems() {
       let promise = Promise.resolve(1);
       // 添加 li item
@@ -53,31 +73,6 @@ const param = {
         promise = promise.then(() => this.methods.appendItem(item));
       });
       return promise;
-    },
-    sort() {
-      // 排序，按完成状态分成2组，每组按时间排序，然后合并
-      const dones = [];
-      const undones = [];
-      this.data.items.forEach((item) => {
-        if (item.state === 'done') {
-          dones.push(item);
-        } else {
-          undones.push(item);
-        }
-      });
-      const sortByDate = (items) => {
-        items.sort((a, b) => {
-          const datea = (utils.isValidDate(a.date)) ? a.date.getTime() : 0;
-          const dateb = (utils.isValidDate(b.date)) ? b.date.getTime() : 0;
-          return (datea - dateb);
-        });
-        return items;
-      };
-      sortByDate(dones);
-      sortByDate(undones);
-      const sorted = undones.concat(dones);
-      this.data.items = sorted;
-      return sorted;
     },
     loadDB() {
       const filter = mission.methods.getQuery(this.present.query)
@@ -164,9 +159,6 @@ const param = {
       // 时间升序(没有时间的放最后)
       const byDate = boardDom.child('*[data-sort=date]');
       Dom.of(byDate).on('click', () => this.methods.sortByDate());
-      // 按状态排序
-      const byState = boardDom.child('*[data-sort=state]');
-      Dom.of(byState).on('click', () => this.methods.sortByState());
       // 按重要程度排序
       const byImportant = boardDom.child('*[data-sort=important]');
       Dom.of(byImportant).on('click', () => this.methods.sortByImportant());
@@ -176,20 +168,27 @@ const param = {
     },
     /** 按默认排序 */
     sortByDefatult() {
+      sortCondition = 'default';
       const sort = this.methods.sortBy((items) => {
-        items.sort((a, b) => {
-          const datea = utils.isValidDate(a.data.item.date)
-            ? a.data.item.date.getTime() : 9999999999999;
-          const dateb = utils.isValidDate(b.data.item.date)
-            ? b.data.item.date.getTime() : 9999999999999;
-          return datea - dateb;
+        const classifyByState = utils.classify(items, item => (item.data.item.state !== 'done'));
+        classifyByState[0] = utils.bubbleSort(classifyByState[0], (item) => {
+          const result = utils.isValidDate(item.data.item.date)
+            ? item.data.item.date.getTime() : 9999999999999;
+          return result;
         });
-        return items;
+        classifyByState[1] = utils.bubbleSort(classifyByState[1], (item) => {
+          const result = utils.isValidDate(item.data.item.date)
+            ? item.data.item.date.getTime() : 9999999999999;
+          return result;
+        });
+        const flat = utils.flat(classifyByState);
+        return flat;
       });
       return sort;
     },
     /** 按时间排序 */
     sortByDate() {
+      sortCondition = 'date';
       const sort = this.methods.sortBy((items) => {
         items.sort((a, b) => {
           const datea = utils.isValidDate(a.data.item.date)
@@ -197,18 +196,6 @@ const param = {
           const dateb = utils.isValidDate(b.data.item.date)
             ? b.data.item.date.getTime() : 9999999999999;
           return datea - dateb;
-        });
-        return items;
-      });
-      return sort;
-    },
-    /** 按状态排序 */
-    sortByState() {
-      const sort = this.methods.sortBy((items) => {
-        items.sort((a, b) => {
-          const statea = (a.data.item.state === 'done') ? 1 : 0;
-          const stateb = (b.data.item.state === 'done') ? 1 : 0;
-          return statea - stateb;
         });
         return items;
       });
@@ -216,6 +203,7 @@ const param = {
     },
     /** 按紧急程度排序 */
     sortByUrgent() {
+      sortCondition = 'urgent';
       const sort = this.methods.sortBy((items) => {
         items.sort((a, b) => {
           const urgenta = (a.data.item.urgent) ? 1 : 0;
@@ -228,6 +216,7 @@ const param = {
     },
     /** 按重要程度排序 */
     sortByImportant() {
+      sortCondition = 'important';
       const sort = this.methods.sortBy((items) => {
         items.sort((a, b) => {
           const importanta = (a.data.item.important) ? 1 : 0;

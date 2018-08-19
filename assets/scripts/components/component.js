@@ -709,7 +709,8 @@ class Component {
       promise = Component.getView(param)
         .then(() => {
           param.query = param.template;
-          return Component.of(param);
+          const cptLoad = Component.of(param).load();
+          return cptLoad;
         });
     }
     promise = promise.then((cpt) => {
