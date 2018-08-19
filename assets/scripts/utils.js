@@ -71,11 +71,11 @@ const isEmptyString = (content) => {
 
 const isEffectiveString = content => (typeof content === 'string' && content.match(/\S/));
 
-const divisio = (ary, callback) => {
+const classify = (ary, callback) => {
   // 把一个数组按照callback((item)=>{})分成两部分
   // 返回一个数组包含2个数组，callback返回true的在第一个一个数组，其他的在第二个数组
-  if (!(ary instanceof Array)) { throw new TypeError(`divisio ${ary} 不是Array`); }
-  if (!(callback instanceof Function)) { throw new TypeError(`divisio ${callback} 不是Function`); }
+  if (!(ary instanceof Array)) { throw new TypeError(`classify ${ary} 不是Array`); }
+  if (!(callback instanceof Function)) { throw new TypeError(`classify ${callback} 不是Function`); }
   const result = [[], []];
   ary.forEach((item) => {
     const allot = callback(item);
@@ -125,7 +125,7 @@ const utils = {
   now,
   isValidDate,
   differDay,
-  divisio,
+  classify,
   flat,
   getEnv,
 };
