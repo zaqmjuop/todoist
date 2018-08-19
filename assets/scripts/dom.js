@@ -285,8 +285,8 @@ class Dom {
   children(selector) {
     // 查找子元素集合 若没有参数则返回children()
     let elements;
-    if (selector === undefined) {
-      elements = this.dom.children();
+    if (arguments.length < 1) {
+      elements = this.dom.children;
     } else {
       if (!isEffectiveString(selector)) { throw new TypeError(`selector不能为${selector}`); }
       elements = this.dom.querySelectorAll(selector);

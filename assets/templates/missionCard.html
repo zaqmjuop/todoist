@@ -53,16 +53,49 @@
       border-radius: 5px;
       margin-left: 10px;
     }
-    .height-light{
+
+    .filter {
+      max-width: 50%;
+    }
+
+    .height-light {
       background-color: #096;
+    }
+
+    .option {
+      position: relative;
+    }
+
+    .option .board {
+      position: absolute;
+      right: 0;
+      top: 2em;
+      width: 120px;
+      z-index: 9999;
+      background-color: #fff;
+      box-shadow: 0 0 10px #999;
+    }
+
+    .board li:hover {
+      background-color: #eee;
     }
   </style>
 </head>
 
 <body>
   <section class="card">
-    <div class="option card-header">
+    <div class="card-header">
       <input class="filter" type="text" placeholder="筛选">
+      <div class="option">
+        <img class="icon" src="../images/icons/sort-ascending.png">
+        <ul class="board">
+          <li data-sort="default">默认排序</li>
+          <li data-sort="date">按时间升序</li>
+          <li data-sort="state">按状态排序</li>
+          <li data-sort="important">按重要程度排序</li>
+          <li data-sort="urgent">按紧急程度排序</li>
+        </ul>
+      </div>
     </div>
     <ul class="card-body">
     </ul>

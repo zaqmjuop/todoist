@@ -24,6 +24,8 @@ const param = {
     filter: '.filter',
     create: '.create',
     submit: '.submit',
+    option: '.option',
+    board: '.board',
   },
   methods: {
     init() {
@@ -35,6 +37,7 @@ const param = {
       this.data.days = this.present.days;
       this.data.urgent = this.present.query.urgent;
       this.data.important = this.present.query.important;
+      this.data.boardSeen = !Dom.of(this.elements.board).hasClass('hide');
       const promise = utils.newPromise()
         .then(() => this.methods.bindEvents())
         .then(() => this.methods.loadDB())
@@ -104,6 +107,7 @@ const param = {
         .then(primaryKey => mission.get(primaryKey))
         .then((res) => {
           Dom.of(this.elements.create).attr('value', '');
+          this.methods.switching();
           // 添加li item
           const itemParam = Object.assign({ present: res[0] }, missionListItem);
           const append = this.appendChild(itemParam, this.elements.cardBody, 0);
@@ -140,6 +144,109 @@ const param = {
         const items = this.where({ name: 'missionListItem' });
         items.forEach((item) => { item.methods.match(value); });
       });
+      // 右上角选项板显示切换
+      const option = Dom.of(this.elements.option);
+      const toggleIcon = Dom.of(option).child('.icon');
+      Dom.of(toggleIcon).on('click', () => {
+        if (this.data.boardSeen) {
+          Dom.of(this.elements.board).addClass('hide');
+          this.data.boardSeen = false;
+        } else {
+          Dom.of(this.elements.board).removeClass('hide');
+          this.data.boardSeen = true;
+        }
+      });
+      // 右上角选项
+      const boardDom = Dom.of(this.elements.board);
+      // 默认排序
+      const byDefatult = boardDom.child('*[data-sort=default]');
+      Dom.of(byDefatult).on('click', () => this.methods.sortByDefatult());
+      // 时间升序(没有时间的放最后)
+      const byDate = boardDom.child('*[data-sort=date]');
+      Dom.of(byDate).on('click', () => this.methods.sortByDate());
+      // 按状态排序
+      const byState = boardDom.child('*[data-sort=state]');
+      Dom.of(byState).on('click', () => this.methods.sortByState());
+      // 按重要程度排序
+      const byImportant = boardDom.child('*[data-sort=important]');
+      Dom.of(byImportant).on('click', () => this.methods.sortByImportant());
+      // 按紧急程度排序
+      const byUrgent = boardDom.child('*[data-sort=urgent]');
+      Dom.of(byUrgent).on('click', () => this.methods.sortByUrgent());
+    },
+    /** 按默认排序 */
+    sortByDefatult() {
+      const sort = this.methods.sortBy((items) => {
+        items.sort((a, b) => {
+          const datea = utils.isValidDate(a.data.item.date)
+            ? a.data.item.date.getTime() : 9999999999999;
+          const dateb = utils.isValidDate(b.data.item.date)
+            ? b.data.item.date.getTime() : 9999999999999;
+          return datea - dateb;
+        });
+        return items;
+      });
+      return sort;
+    },
+    /** 按时间排序 */
+    sortByDate() {
+      const sort = this.methods.sortBy((items) => {
+        items.sort((a, b) => {
+          const datea = utils.isValidDate(a.data.item.date)
+            ? a.data.item.date.getTime() : 9999999999999;
+          const dateb = utils.isValidDate(b.data.item.date)
+            ? b.data.item.date.getTime() : 9999999999999;
+          return datea - dateb;
+        });
+        return items;
+      });
+      return sort;
+    },
+    /** 按状态排序 */
+    sortByState() {
+      const sort = this.methods.sortBy((items) => {
+        items.sort((a, b) => {
+          const statea = (a.data.item.state === 'done') ? 1 : 0;
+          const stateb = (b.data.item.state === 'done') ? 1 : 0;
+          return statea - stateb;
+        });
+        return items;
+      });
+      return sort;
+    },
+    /** 按紧急程度排序 */
+    sortByUrgent() {
+      const sort = this.methods.sortBy((items) => {
+        items.sort((a, b) => {
+          const urgenta = (a.data.item.urgent) ? 1 : 0;
+          const urgentb = (b.data.item.urgent) ? 1 : 0;
+          return urgentb - urgenta;
+        });
+        return items;
+      });
+      return sort;
+    },
+    /** 按重要程度排序 */
+    sortByImportant() {
+      const sort = this.methods.sortBy((items) => {
+        items.sort((a, b) => {
+          const importanta = (a.data.item.important) ? 1 : 0;
+          const importantb = (b.data.item.important) ? 1 : 0;
+          return importantb - importanta;
+        });
+        return items;
+      });
+      return sort;
+    },
+    /** @param callback - 排序回调,第一个参数是一个数组，包含所有任务，应返回一个数组表示排序结果 */
+    sortBy(callback) {
+      const items = this.where({ name: 'missionListItem' });
+      const sorted = callback(items);
+      if (!(sorted instanceof Array)) { throw new Error('排序结果应是数组'); }
+      sorted.forEach((item) => {
+        Dom.of(this.elements.cardBody).append(item.template);
+      });
+      return sorted;
     },
   },
   created() {
