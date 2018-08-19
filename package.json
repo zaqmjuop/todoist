@@ -10,7 +10,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "parcel dev.html",
     "build": "parcel build dev.html -d ./docs",
-    "buildjs": "parcel build assets/scripts/index.js -d ./docs"
+    "buildjs": "parcel build assets/scripts/index.js -d ./docs",
+    "product": "parcel build assets/scripts/index.js -d ./docs && service nginx restart"
   },
   "repository": {
     "type": "git",
