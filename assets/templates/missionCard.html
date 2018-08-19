@@ -64,6 +64,7 @@
 
     .option {
       position: relative;
+      user-select: none;
     }
 
     .option .board {
@@ -74,6 +75,13 @@
       z-index: 9999;
       background-color: #fff;
       box-shadow: 0 0 10px #999;
+      border-radius: 5px;
+    }
+
+    .board li {
+      font-size: 87.5%;
+      padding-left: 5px;
+      cursor: pointer;
     }
 
     .board li:hover {
@@ -85,10 +93,10 @@
 <body>
   <section class="card">
     <div class="card-header">
-      <input class="filter" type="text" placeholder="筛选">
+      <input class="filter" type="text" placeholder="页面内筛选">
       <div class="option">
         <img class="icon" src="../images/icons/sort-ascending.png">
-        <ul class="board">
+        <ul class="board hide">
           <li data-sort="default">默认排序</li>
           <li data-sort="date">按时间升序</li>
           <li data-sort="important">按重要程度排序</li>

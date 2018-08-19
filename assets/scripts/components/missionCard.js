@@ -142,14 +142,21 @@ const param = {
       // 右上角选项板显示切换
       const option = Dom.of(this.elements.option);
       const toggleIcon = Dom.of(option).child('.icon');
-      Dom.of(toggleIcon).on('click', () => {
+      Dom.of(toggleIcon).on('click', (e) => {
+        e.stopPropagation();
         if (this.data.boardSeen) {
           Dom.of(this.elements.board).addClass('hide');
-          this.data.boardSeen = false;
         } else {
           Dom.of(this.elements.board).removeClass('hide');
-          this.data.boardSeen = true;
         }
+        this.data.boardSeen = !this.data.boardSeen;
+      });
+      /** 点击一次即隐藏右上角选项板 */
+      Dom.of(this.template).on('click', () => {
+        if (!this.data.boardSeen) { return false; }
+        Dom.of(this.elements.board).addClass('hide');
+        this.data.boardSeen = false;
+        return this.data.boardSeen;
       });
       // 右上角选项
       const boardDom = Dom.of(this.elements.board);
