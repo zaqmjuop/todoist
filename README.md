@@ -2,7 +2,7 @@
 ### <center>这是一个页面简洁且的离线web任务管理工具</center>
 ### <center>同时是一个基于原生前端语言的SPA学习项目</center>
 ### 功能：任务清单的增删查改
-### 界面预览  [尝试一下](https://zaqmjuop.github.io/todoist/)
+### 界面预览  [Github预览](https://zaqmjuop.github.io/todoist/)  [码云预览](https://1060007045.gitee.io/todoist) 
 ![Desktop](./assets/images/GIF.gif)
 
 ***
