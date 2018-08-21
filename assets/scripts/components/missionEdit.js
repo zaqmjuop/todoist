@@ -104,10 +104,11 @@ const param = {
           this.methods.cancal();
         }
       };
-      if (!isBindEsc) {
-        document.addEventListener('keydown', touchEsc);
-        isBindEsc = 1;
+      if (isBindEsc instanceof Function) {
+        document.removeEventListener('keydown', isBindEsc); // 删除上一个
       }
+      document.addEventListener('keydown', touchEsc); // 重新绑定
+      isBindEsc = touchEsc;
       // 绑定Ctrl(17) + Enter(13)
       const touchEnter = (event) => {
         if (event.ctrlKey && event.keyCode === 13) {
