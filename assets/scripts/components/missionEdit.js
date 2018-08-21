@@ -2,7 +2,8 @@ import mission from '../model/mission';
 import Dom from '../dom';
 import datepicker from '../lib/datepicker';
 import utils from '../utils';
-import quadrants from './quadrants';
+
+let isBindEsc = 0;
 
 /** 编辑任务组件 */
 
@@ -99,20 +100,22 @@ const param = {
       });
       // 绑定ESC(27)
       const touchEsc = (event) => {
-        if (event.keyCode === 27) {
+        if (Dom.of('body').hasChild(this.template) && event.keyCode === 27) {
           this.methods.cancal();
-          document.removeEventListener('keydown', touchEsc);
         }
       };
-      document.addEventListener('keydown', touchEsc);
+      if (!isBindEsc) {
+        document.addEventListener('keydown', touchEsc);
+        isBindEsc = 1;
+      }
       // 绑定Ctrl(17) + Enter(13)
       const touchEnter = (event) => {
         if (event.ctrlKey && event.keyCode === 13) {
           this.methods.submit();
-          document.removeEventListener('keydown', touchEnter);
+          Dom.of(this.elements.content).off('keydown', touchEnter);
         }
       };
-      document.addEventListener('keydown', touchEnter);
+      Dom.of(this.elements.content).on('keydown', touchEnter);
     },
     loadDB() {
       if (this.data.action === 'create' || !this.present.primaryKey) {
