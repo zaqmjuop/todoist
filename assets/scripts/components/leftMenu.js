@@ -14,14 +14,19 @@ const param = {
   },
   passon: [],
   methods: {
-    init() {
-      if (this.data.inited) { return false; }
-      this.data.inited = 1;
-      return this;
+    bindEvents() {
+      // 绑定current
+      const lis = Dom.of(this.template).children('li');
+      lis.forEach((li) => {
+        Dom.of(li).on('click', () => {
+          Dom.of('#current-li').attr('id', '');
+          Dom.of(li).attr('id', 'current-li');
+        });
+      });
     },
   },
   created() {
-    this.methods.init();
+    this.methods.bindEvents();
   },
 };
 export default param;
